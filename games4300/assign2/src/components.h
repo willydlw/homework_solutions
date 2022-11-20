@@ -79,4 +79,4 @@ class CInput
       bool shoot  = false;
 
       CInput() {}
-}
+};

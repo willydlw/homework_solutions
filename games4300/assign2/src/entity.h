@@ -1,8 +1,9 @@
 #pragma once 
 
-#include "Components.h"
+#include "components.h"
 #include <memory>
 #include <string>
+#include <cstdlib>         // size_t
 
 class Entity
 {
@@ -12,10 +13,10 @@ class Entity
    size_t         m_id     = 0;
    std::string    m_tag    = "default";
 
-   // constructor and destructor 
-   // constructor is private so that only the EntityManager can
-   // construct Entity objects
-   Entity(const size_t id, const std::string& tag);
+  
+   // constructor is private so that only the friend EntityManager 
+   // can construct Entity objects
+   Entity(const std::string& tag, const size_t id);
 
    public:
 
@@ -26,9 +27,9 @@ class Entity
       std::shared_ptr<CScore>          cScore;
       std::shared_ptr<CLifespan>       cLifespan;
 
-      // privat member access functions 
+      // private member access functions 
       bool isActive();
       const std::string & tag() const;
       const size_t id() const;
-      void destroy():
+      void destroy();
 };
