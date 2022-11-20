@@ -43,17 +43,20 @@
 */
 
 
-#ifndef ENTITY_MANAGER_HPP
-#define ENTITY_MANAGER_HPP
+#ifndef ENTITY_MANAGER_H
+#define ENTITY_MANAGER_H
 
 #include <vector>
 #include <map>
 #include <memory>    // shared_ptr
 #include <string>
-#include "entity.hpp"
+#include "entity.h"
 
-// will trade some memory for functionality (ease of use)
-// will store all Entity objects in a vector
+// Will trade some memory for functionality (ease of use)
+// Storing shared_ptr to Entities versus Enity objects
+// If we stored vector of Enity objects, then we have to shift
+// and copy a lot of dataa when deleting an Entity from the vector
+// Faster (less data overhead) when removing entities from the vector.
 typedef std::vector<std::shared_ptr<Entity>> EntityVector;
 
 // Will store separate vectors fo Entity objects by their tag for quick retrieval
@@ -65,7 +68,7 @@ class EntityManager
    EntityVector   m_entities;
    EntityVector   m_toAdd;                   // waiting room, entity objects to add
    EntityMap      m_entityMap;
-   size_t         m_totalEntities = 0;
+   size_t         m_totalEntities = 0;       // total Entities ever created
 
 
 public:

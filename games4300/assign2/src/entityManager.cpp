@@ -1,13 +1,26 @@
-#include "entityManager.hpp"
+#include "entityManager.h"
+
+#include <algorithm>          // remove_if
+
+
+EntityManager::EntityManager()
+{
+
+}
 
 
 // note: code doesn't handle some map-related edge cases but that may be covered later
-std::shared_ptr<Entity> EntityManager::addEntitiy(const std::string& tag)
+std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
 {
-   // create a new Entity object
-   // easier to use auto versus std::shared_ptr<Entity> for the type
-   // give each entity an increasing integer id
-   auto e = std::make_shared<Entity>(tag, m_totalEntities++);
+   /* create a new Entity object
+      give each entity an increasing integer id
+      
+      Cannot use make_shared because Entity has private constructor 
+      auto e = std::make_shared<Entity>(tag, m_totalEntities++);
+   */
+   
+   // must use this method because Entity constructor is private
+   auto e = std::shared_ptr<Entity>(new Entity(tag, m_totalEntities++));
 
    // store new entity in the vector of all new entities to be added later
    m_toAdd.push_back(e);
@@ -37,6 +50,12 @@ std::shared_ptr<Entity> EntityManager::addEntitiy(const std::string& tag)
 
 */
 
+
+bool remove_entity(std::shared_ptr<Entity> const &ptr)
+{ 
+   return ptr->isActive();
+}
+
 /* Delayed Effects
 
    One way to avoid iterator invalidations is to delay the effects of actions that modify collections
@@ -61,17 +80,27 @@ void EntityManager::update()
       m_entityMap[e->tag()].push_back(e);
    }
 
+   // if entity is dead, remove it from m_entities
+   m_entities.erase(
+      std::remove_if(m_entities.begin(), m_entities.end(), remove_entity),
+      m_entities.end());
+
+   
+
    for(auto e : m_entities)
    {
       // if e is dead, remove it from m_entities
       // if e is dead, remove it from m_entityMap[e->tag()]
 
       // assignment 2 std::remove if function will help deal with possible iteration invalidation
+      
    }
 
    m_toAdd.clear();
 
 }
+
+
 
 /* Entity Manager Usage example
 
