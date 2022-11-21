@@ -50,11 +50,14 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
 
 */
 
-
-bool remove_entity(std::shared_ptr<Entity> const &ptr)
+/* Returns true when Entity is not active
+*/
+bool EntityManager::remove_entity(Entity const &e)
 { 
-   return ptr->isActive();
+   return !(e.isActive());
 }
+
+
 
 /* Delayed Effects
 
@@ -70,6 +73,7 @@ bool remove_entity(std::shared_ptr<Entity> const &ptr)
 // entities added will now be available to use this frame
 void EntityManager::update()
 {
+   // Add new entities 
    for(auto e : m_toAdd)
    {
       m_entities.push_back(e);
@@ -80,24 +84,26 @@ void EntityManager::update()
       m_entityMap[e->tag()].push_back(e);
    }
 
-   // if entity is dead, remove it from m_entities
+   m_toAdd.clear();  // clear list of entities to add 
+
+   // Remove inactive entities from m_entities
    m_entities.erase(
       std::remove_if(m_entities.begin(), m_entities.end(), remove_entity),
       m_entities.end());
 
-   
-
-   for(auto e : m_entities)
+   // Remove inactive entities from m_entityMap;
+   // iterate through the map by tag
+   for(auto it = m_entityMap.begin();  it != m_entityMap.end(); )
    {
-      // if e is dead, remove it from m_entities
-      // if e is dead, remove it from m_entityMap[e->tag()]
+      // Access this tag's EntityVectore
+      EntityVector ev = it->second;
 
-      // assignment 2 std::remove if function will help deal with possible iteration invalidation
-      
+      // remove inactive Entities within the tag's EntityVector
+      ev.erase(
+         std::remove_if(ev.begin(), ev.end(), remove_entity),
+         ev.end());
+     
    }
-
-   m_toAdd.clear();
-
 }
 
 

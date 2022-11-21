@@ -69,7 +69,7 @@ class EntityManager
    EntityVector   m_toAdd;                   // waiting room, entity objects to add
    EntityMap      m_entityMap;
    size_t         m_totalEntities = 0;       // total Entities ever created
-
+   bool           remove_entity(const Entity &e); 
 
 public:
    EntityManager();
