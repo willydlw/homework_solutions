@@ -14,7 +14,7 @@ Entity::Entity(const std::string& tag, const size_t id) :
    // intentionally blank
 }
 
-bool Entity::isActive()
+bool Entity::isActive() const
 {
    return m_active;
 }
