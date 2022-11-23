@@ -232,26 +232,6 @@ void Game::sUserInput()
 }
 
 
-/* SR -  shape radius 
-*  CR -  collision radius 
-*  FR -  fill red 
-*  FG -  fill green 
-*  FB -  fill blue 
-*  OR -  outline red 
-*  OG -  outline green
-*  OB -  outline blue 
-*  OT -  outline thickness 
-*  V  -  shape vertices  
-*  S  -  speed magnitude (pixels per frame)
-*  VMIN  -  minimum vertices 
-*  VMAX  -  maximum vertices
-*  L     -  lifespan 
-*  SI    -  spawn interval 
-*  SMIN  -  minimum speed 
-*  SMAX  -  maximum speed 
-*/
-
-
 std::ostream& Game::printWindowConfig(std::ostream& os)const
 {
    os << "width:              " << m_windowConfig.W << "\n"
