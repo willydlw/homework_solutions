@@ -9,14 +9,20 @@ Game::Game(const std::string & config)
 }
 
 /* Assumptions:
-      file opens 
       no file stream read errors
 
    File Stream exceptions are not handled.
 */
 void Game::init(const std::string & path)
 {
-   std::ifstream infile(path);   
+   std::ifstream infile(path);  
+
+   if(!infile)
+   {
+      std::cerr << "ERROR: file open failure, path: " << path << "\n";
+      m_gameState = GameState::INIT_FAILURE;
+      return;
+   } 
 
    infile   >> m_windowConfig.W 
             >> m_windowConfig.H 
@@ -67,14 +73,29 @@ void Game::init(const std::string & path)
             >> m_bulletConfig.L 
             >> m_bulletConfig.S;
    
+   infile.close();
 
    // set up default window parameters
-   TO DO - change default to config params 
-   std::cerr << "Opening Window with default parameters.\n";
-   m_window.create(sf::VideoMode(1280, 720), "Geometry Wars");
-   m_window.setFramerateLimit(60);
+   std::cerr << __func__ << ", WARNING: ignoring full screen mode option\n";
+   m_window.create(sf::VideoMode(m_windowConfig.W, m_windowConfig.H), "Geometry Wars");
+   m_window.setFramerateLimit(m_windowConfig.FL);
+
+   // set up font object
+   if(!m_font.loadFromFile(m_fontConfig.F))
+   {
+      std::cerr << "ERROR: failed to load font from file: " << m_fontConfig.F << "\n";
+      m_gameState = GameState::INIT_FAILURE;
+      return;
+   }
+
+   // set up text object
+   m_text.setFont(m_font);
+   m_text.setCharacterSize(m_fontConfig.S);
+   m_text.setFillColor(sf::Color(m_fontConfig.R, m_fontConfig.G, m_fontConfig.B));
 
    spawnPlayer();
+
+   m_gameState = GameState::INIT_SUCCESS;
 }
 
 void Game::run()
@@ -83,9 +104,15 @@ void Game::run()
    //    some systems should function while paused (rendering)
    //    some systems should not function (movement / input)
 
+   if(m_gameState != GameState::INIT_SUCCESS)
+   {
+      std::cerr << "Program terminating due to initialization error\n";
+      return;
+   }
+
    while(m_running)
    {
-      m_entities.update();
+      m_entityManager.update();
 
       sEnemySpawner();
       sMovement();
@@ -97,6 +124,11 @@ void Game::run()
       // may need to be moved when pause implemented 
       m_currentFrame++;
    }
+}
+
+GameState Game::queryState()const
+{
+   return m_gameState;
 }
 
 void Game::setPaused(bool paused)
@@ -142,7 +174,7 @@ void Game::spawnEnemy()
    // optional: ensure enemy is not spawned in same location as player
 
    // record when the most recent enemy was spawned 
-   m_lastEnemySpawTime = m_currentFrame;
+   m_lastEnemySpawnTime = m_currentFrame;
 
 }
 
@@ -180,7 +212,7 @@ void Game::sRender()
 
    // set the rotation of the shape based on the entity's transform->angle
    m_player->cTransform->angle += 1.0f;
-   m_player->cShape->circlle.setRotation(m_player->cTransform->angle);
+   m_player->cShape->circle.setRotation(m_player->cTransform->angle);
 
    // draw the entity's sf::CircleShape
    m_window.draw(m_player->cShape->circle);
@@ -197,4 +229,96 @@ void Game::sUserInput()
 
    sf::Event event;
 
+}
+
+
+/* SR -  shape radius 
+*  CR -  collision radius 
+*  FR -  fill red 
+*  FG -  fill green 
+*  FB -  fill blue 
+*  OR -  outline red 
+*  OG -  outline green
+*  OB -  outline blue 
+*  OT -  outline thickness 
+*  V  -  shape vertices  
+*  S  -  speed magnitude (pixels per frame)
+*  VMIN  -  minimum vertices 
+*  VMAX  -  maximum vertices
+*  L     -  lifespan 
+*  SI    -  spawn interval 
+*  SMIN  -  minimum speed 
+*  SMAX  -  maximum speed 
+*/
+
+
+std::ostream& Game::printWindowConfig(std::ostream& os)const
+{
+   os << "width:              " << m_windowConfig.W << "\n"
+      << "height:             " << m_windowConfig.H << "\n"
+      << "frame limit:        " << m_windowConfig.FL << "\n"
+      << "full screen mode:   " << m_windowConfig.FS << "\n";
+   return os;
+}
+
+std::ostream& Game::printFontConfig(std::ostream& os)const
+{
+   os << "font file:          " << m_fontConfig.F << "\n"
+      << "font size:          " << m_fontConfig.S << "\n"
+      << "font color red:     " << m_fontConfig.R << "\n" 
+      << "font color green:   " << m_fontConfig.G << "\n" 
+      << "font color blue:    " << m_fontConfig.B << "\n";
+   return os;
+}
+
+std::ostream& Game::printPlayerConfig(std::ostream& os) const
+{
+   os << "shape radius:             " << m_playerConfig.SR << "\n"
+      << "collision radius:         " << m_playerConfig.CR << "\n"
+      << "fill color red:           " << m_playerConfig.FR << "\n"
+      << "fill color green:         " << m_playerConfig.FG << "\n"
+      << "fill color blue:          " << m_playerConfig.FB << "\n"
+      << "outline color red:        " << m_playerConfig.OR << "\n"
+      << "outline color green:      " << m_playerConfig.OG << "\n"
+      << "outline color blue:       " << m_playerConfig.OB << "\n"
+      << "outline color thickness:  " << m_playerConfig.OT << "\n"
+      << "vertices:                 " << m_playerConfig.V << "\n"
+      << "speed:                    " << m_playerConfig.S << "\n";
+   return os;
+}
+
+
+std::ostream& Game::printEnemyConfig(std::ostream& os) const
+{
+   os << "shape radius:             " << m_enemyConfig.SR << "\n"
+      << "collision radius:         " << m_enemyConfig.CR << "\n"
+      << "outline color red:        " << m_enemyConfig.OR << "\n"
+      << "outline color green:      " << m_enemyConfig.OG << "\n"
+      << "outline color blue:       " << m_enemyConfig.OB << "\n"
+      << "outline color thickness:  " << m_enemyConfig.OT << "\n"
+      << "minimum vertices:         " << m_enemyConfig.VMIN << "\n"
+      << "maximum vertices:         " << m_enemyConfig.VMAX << "\n"
+      << "small lifespan:           " << m_enemyConfig.L << "\n"
+      << "spawn interval:           " << m_enemyConfig.SI << "\n"
+      << "minimum speed:            " << m_enemyConfig.SMIN << "\n"
+      << "maximum speed:            " << m_enemyConfig.SMAX << "\n";
+   return os;
+}
+
+
+std::ostream& Game::printBulletConfig(std::ostream& os) const
+{
+   os << "shape radius:             " << m_bulletConfig.SR << "\n"
+      << "collision radius:         " << m_bulletConfig.CR << "\n"
+      << "fill color red:           " << m_bulletConfig.FR << "\n"
+      << "fill color green:         " << m_bulletConfig.FG << "\n"
+      << "fill color blue:          " << m_bulletConfig.FB << "\n"
+      << "outline color red:        " << m_playerConfig.OR << "\n"
+      << "outline color green:      " << m_bulletConfig.OG << "\n"
+      << "outline color blue:       " << m_bulletConfig.OB << "\n"
+      << "outline color thickness:  " << m_bulletConfig.OT << "\n"
+      << "vertices:                 " << m_bulletConfig.V << "\n"
+      << "lifespan:                 " << m_bulletConfig.L << "\n"
+      << "speed:                    " << m_bulletConfig.S << "\n";
+   return os;
 }
