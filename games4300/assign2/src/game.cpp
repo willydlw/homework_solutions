@@ -1,5 +1,6 @@
-#include "Game.h"
+#include "game.h"
 
+#include <fstream>
 #include <iostream>
 
 Game::Game(const std::string & config)
@@ -7,12 +8,69 @@ Game::Game(const std::string & config)
    init(config);
 }
 
+/* Assumptions:
+      file opens 
+      no file stream read errors
+
+   File Stream exceptions are not handled.
+*/
 void Game::init(const std::string & path)
 {
-   // TODO; read in config file here 
-   //    use the premade PlayerConfig, EnemyConfig, BulletConfig variables 
+   std::ifstream infile(path);   
+
+   infile   >> m_windowConfig.W 
+            >> m_windowConfig.H 
+            >> m_windowConfig.FL 
+            >> m_windowConfig.FS;
+
+   infile   >> m_fontConfig.F
+            >> m_fontConfig.S 
+            >> m_fontConfig.R 
+            >> m_fontConfig.G 
+            >> m_fontConfig.B;
+
+   infile   >> m_playerConfig.SR    // shape radius
+            >> m_playerConfig.CR    // collision radius 
+            >> m_playerConfig.FR    // fill color
+            >> m_playerConfig.FG 
+            >> m_playerConfig.FB 
+            >> m_playerConfig.OR    // outline color
+            >> m_playerConfig.OG 
+            >> m_playerConfig.OB
+            >> m_playerConfig.OT    // outline thickness
+            >> m_playerConfig.V     // shape vertices
+            >> m_playerConfig.S;    // speed (pixels per frame)
+
+   infile   >> m_enemyConfig.SR
+            >> m_enemyConfig.CR
+            >> m_enemyConfig.OR
+            >> m_enemyConfig.OG 
+            >> m_enemyConfig.OB
+            >> m_enemyConfig.OT
+            >> m_enemyConfig.VMIN
+            >> m_enemyConfig.VMAX
+            >> m_enemyConfig.L 
+            >> m_enemyConfig.SI     
+            >> m_enemyConfig.SMIN 
+            >> m_enemyConfig.SMAX;
+
+   infile   >> m_bulletConfig.SR 
+            >> m_bulletConfig.CR
+            >> m_bulletConfig.FR 
+            >> m_bulletConfig.FG
+            >> m_bulletConfig.FB 
+            >> m_bulletConfig.OR 
+            >> m_bulletConfig.OG 
+            >> m_bulletConfig.OB 
+            >> m_bulletConfig.OT 
+            >> m_bulletConfig.V 
+            >> m_bulletConfig.L 
+            >> m_bulletConfig.S;
+   
 
    // set up default window parameters
+   TO DO - change default to config params 
+   std::cerr << "Opening Window with default parameters.\n";
    m_window.create(sf::VideoMode(1280, 720), "Geometry Wars");
    m_window.setFramerateLimit(60);
 

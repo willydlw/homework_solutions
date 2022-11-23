@@ -18,13 +18,10 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
       Cannot use make_shared because Entity has private constructor 
       auto e = std::make_shared<Entity>(tag, m_totalEntities++);
    */
-   
-   // must use this method because Entity constructor is private
    auto e = std::shared_ptr<Entity>(new Entity(tag, m_totalEntities++));
 
    // store new entity in the vector of all new entities to be added later
    m_toAdd.push_back(e);
-
 
    // return the shared pointer pointing to that entry
    return e;
