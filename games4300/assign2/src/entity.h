@@ -26,6 +26,7 @@ class Entity
       std::shared_ptr<CCollision>      cCollision;
       std::shared_ptr<CScore>          cScore;
       std::shared_ptr<CLifespan>       cLifespan;
+      std::shared_ptr<CInput>          cInput;
 
       // private member access functions 
       bool isActive() const;

@@ -9,6 +9,8 @@
 */
 struct WindowConfig { int W, H, FL, FS; };
 
+
+
 /* F  -  font file 
 *  S  -  font size 
 *  R  -  font color red 
@@ -16,6 +18,10 @@ struct WindowConfig { int W, H, FL, FS; };
 *  B  -  font color blue  
 */
 struct FontConfig { std::string F; int S, R, G, B; };
+
+
+
+
 
 /* SR -  shape radius 
 *  CR -  collision radius 
@@ -40,10 +46,25 @@ struct EnemyConfig  {int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, 
 struct BulletConfig {int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S;};
 
 
-enum class GameState {INIT_SUCCESS, INIT_FAILURE, GAME_OVER};
+
+
 
 class Game
 {
+   static const std::string DEFAULT_FONT_FILE; 
+   static const WindowConfig WINDOW_CONFIG_DEFAULT;
+   static const FontConfig FONT_CONFIG_DEFAULT;
+   static const PlayerConfig PLAYER_CONFIG_DEFAULT;
+   static const EnemyConfig ENEMY_CONFIG_DEFAULT;
+   static const BulletConfig BULLET_CONFIG_DEFAULT;
+
+   enum class GameState {INIT_SUCCESS, INIT_FAILURE, GAME_OVER};
+   enum class ConfigState{WINDOW_DEFAULT, FONT_DEFAULT, PLAYER_DEFAULT, ENEMY_DEFAULT, BULLET_DEFAULT};
+
+   
+
+
+
    sf::RenderWindow     m_window;            // window we will draw to 
    EntityManager        m_entityManager;     // manages all entities
    sf::Font             m_font;              // font used to draw 
@@ -77,6 +98,14 @@ class Game
    void spawnSmallEnemies(std::shared_ptr<Entity> entity);
    void spawnBullet(std::shared_ptr<Entity> entity, const Vec2 & mousePos);
    void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
+
+   void loadConfigFromFile(const std::string &path);
+   void loadDefaultConfig(ConfigState state);
+   std::istream& loadWindowConfig(std::istream & ins);
+   std::istream& loadFontConfig(std::istream & ins);
+   std::istream& loadPlayerConfig(std::istream & ins);
+   std::istream& loadEnemyConfig(std::istream & ins);
+   std::istream& loadBulletConfig(std::istream & ins);
 
    std::ostream& printWindowConfig(std::ostream& os)const;
    std::ostream& printFontConfig(std::ostream& os)const;
