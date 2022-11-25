@@ -59,12 +59,10 @@ class Game
    static const BulletConfig BULLET_CONFIG_DEFAULT;
 
    enum class GameState {INIT_SUCCESS, INIT_FAILURE, GAME_OVER};
-   enum class ConfigState{WINDOW_DEFAULT, FONT_DEFAULT, PLAYER_DEFAULT, ENEMY_DEFAULT, BULLET_DEFAULT};
+   enum class ConfigState{WINDOW_DEFAULT, FONT_DEFAULT, PLAYER_DEFAULT, 
+                           ENEMY_DEFAULT, BULLET_DEFAULT, HANDLE_ERROR};
 
    
-
-
-
    sf::RenderWindow     m_window;            // window we will draw to 
    EntityManager        m_entityManager;     // manages all entities
    sf::Font             m_font;              // font used to draw 

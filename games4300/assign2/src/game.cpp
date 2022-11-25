@@ -52,8 +52,11 @@ Game::Game(const std::string & config)
    init(config);
 }
 
+
+
 void Game::loadConfigFromFile(const std::string &path)
 {
+  
    std::ifstream infile(path);  
 
    if(!infile)
@@ -62,10 +65,9 @@ void Game::loadConfigFromFile(const std::string &path)
                   << ", using default configuration\n";
       loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
       return;
-   } 
-
-   START REFACTOR HERE 
-   
+   }
+            
+  
    if(!loadWindowConfig(infile))
    {
       std::cerr << "WARNING: failure to load window configuration from file " << path 
@@ -382,8 +384,7 @@ std::ostream& Game::printWindowConfig(std::ostream& os)const
       << "frame limit:        " << m_windowConfig.FL << "\n"
       << "full screen mode:   " << m_windowConfig.FS << "\n";
    return os;
-} CShape(float radius, int points, const sf::Color &fill, const sf::Color & outline, float thickness)
-         : circle(radius, points)
+} 
 
 std::ostream& Game::printFontConfig(std::ostream& os)const
 {
