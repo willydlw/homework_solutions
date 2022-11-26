@@ -57,10 +57,12 @@ class Game
    static const PlayerConfig PLAYER_CONFIG_DEFAULT;
    static const EnemyConfig ENEMY_CONFIG_DEFAULT;
    static const BulletConfig BULLET_CONFIG_DEFAULT;
+   static const int LARGE_ENTITY_SCORE;
+   static const int SMALL_ENTITY_SCORE;
 
    enum class GameState {INIT_SUCCESS, INIT_FAILURE, GAME_OVER};
    enum class ConfigState{WINDOW_DEFAULT, FONT_DEFAULT, PLAYER_DEFAULT, 
-                           ENEMY_DEFAULT, BULLET_DEFAULT, HANDLE_ERROR};
+                           ENEMY_DEFAULT, BULLET_DEFAULT};
 
    
    sf::RenderWindow     m_window;            // window we will draw to 
