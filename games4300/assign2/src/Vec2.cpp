@@ -24,7 +24,7 @@ bool Vec2::operator != (const Vec2 & rhs) const
 
 Vec2 Vec2::operator + (const Vec2 & rhs) const
 {
-   // TODO
+   return Vec2(x + rhs.x, y + rhs.y);
 }
 
 Vec2 Vec2::operator - (const Vec2 & rhs) const
@@ -45,7 +45,8 @@ Vec2 Vec2::operator / (const float val) const
 
 void Vec2::operator += (const Vec2 & rhs)
 {
-   // TODO
+   x += rhs.x;
+   y += rhs.y;
 }
 
 void Vec2::operator -= (const Vec2 & rhs)
@@ -65,7 +66,7 @@ void Vec2::operator /= (const float val)
 
 float Vec2::length ()const
 {
-   // TODO
+   return sqrtf( x*x + y*y );
 }
 
 void Vec2::normalize()
