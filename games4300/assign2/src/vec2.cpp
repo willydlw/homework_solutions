@@ -30,7 +30,7 @@ Vec2 Vec2::operator + (const Vec2 & rhs) const
 
 Vec2 Vec2::operator - (const Vec2 & rhs) const
 {
-   return Vec2(x - rhs.x, y = rhs.y);
+   return Vec2(x - rhs.x, y - rhs.y);
 }
 
 Vec2 Vec2::operator * (const float val) const
@@ -60,7 +60,7 @@ void Vec2::operator += (const Vec2 & rhs)
 void Vec2::operator -= (const Vec2 & rhs)
 {
    x -= rhs.x;
-   y -= rhs.y
+   y -= rhs.y;
 }
 
 void Vec2::operator *= (const float val)
