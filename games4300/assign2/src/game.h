@@ -47,8 +47,6 @@ struct BulletConfig {int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S;};
 
 
 
-
-
 class Game
 {
    static const std::string DEFAULT_FONT_FILE; 
@@ -59,6 +57,7 @@ class Game
    static const BulletConfig BULLET_CONFIG_DEFAULT;
    static const int LARGE_ENTITY_SCORE;
    static const int SMALL_ENTITY_SCORE;
+   static const float DEFAULT_ROTATION_ANGLE;
 
    enum class GameState {INIT_SUCCESS, INIT_FAILURE, GAME_OVER};
    enum class ConfigState{WINDOW_DEFAULT, FONT_DEFAULT, PLAYER_DEFAULT, 

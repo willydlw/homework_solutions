@@ -3,6 +3,7 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <cstdlib>         // rand
 
 /* ============================
    Class Constants
@@ -10,6 +11,8 @@
 
 const int LARGE_ENTITY_SCORE = 200;
 const int SMALL_ENTITY_SCORE = 100;
+
+const float DEFAULT_ROTATION_ANGLE = 0.0f;
 
 const std::string DEFAULT_FONT_FILE = "fonts/tech.ttf";
 
@@ -38,7 +41,9 @@ const PlayerConfig PLAYER_CONFIG_DEFAULT =
 };
 
 const EnemyConfig ENEMY_CONFIG_DEFAULT =
-    {.SR = 32, .CR = 32, .OR = 255, .OG = 255, .OB = 255, .OT = 3, .VMIN = 3, .VMAX = 10, .L = 30, .SI = 60, .SMIN = 1, .SMAX = 10};
+    {.SR = 16, .CR = 16, 
+     .OR = 255, .OG = 255, .OB = 255, .OT = 3, 
+     .VMIN = 3, .VMAX = 10, .L = 30, .SI = 60, .SMIN = 1, .SMAX = 10};
 
 const BulletConfig BULLET_CONFIG_DEFAULT =
     {.SR = 10, .CR = 10, .FR = 0, .FG = 255, .FB = 0, .OR = 255, .OG = 255, .OB = 255, .OT = 2, .V = 3, .L = 60, .S = 10.0f};
@@ -239,9 +244,6 @@ void Game::setPaused(bool paused)
 
 void Game::spawnPlayer()
 {
-   // TODO: finish adding all properties of the player with the correct values from the config
-   const float ROTATION_ANGLE = 0.0f;        
-
    // We create every entity by calling EntityManager.addEntity(tag)
    // This returns a std::shared_ptr<Entity> and we use 'auto' to let C++ do the typing
    auto entity = m_entityManager.addEntity("player");
@@ -255,10 +257,12 @@ void Game::spawnPlayer()
    // when rotation angle is 0, cos(0) = 1, sin(0) = 0
    // could eliminate these calculations but will keep them in the implementation
    // in case the initial rotation angle is not zero in the future
-   float velX = m_playerConfig.S * cos(ROTATION_ANGLE);
-   float velY = m_playerConfig.S * sin(ROTATION_ANGLE);
+   float velX = m_playerConfig.S * cos(DEFAULT_ROTATION_ANGLE);
+   float velY = m_playerConfig.S * sin(DEFAULT_ROTATION_ANGLE);
 
-   entity->cTransform = std::make_shared<CTransform>(Vec2(middleX, middleY), Vec2(velX, velY), ROTATION_ANGLE);
+   entity->cTransform = std::make_shared<CTransform>( Vec2(middleX, middleY), 
+                                                      Vec2(velX, velY), 
+                                                      DEFAULT_ROTATION_ANGLE);
 
    entity->cShape = std::make_shared<CShape>(
        m_playerConfig.SR,
@@ -289,6 +293,53 @@ void Game::spawnEnemy()
    //       the enemy must be spawned completely within the bounds of the window
 
    // optional: ensure enemy is not spawned in same location as player
+
+   // create an entity with the tag name enemy
+   auto entity = m_entityManager.addEntity("enemy");
+
+   /*  Enemies are spawned in a random position within the bounds of the window
+     
+       Enemies must not overlap the sides of the screen at the time of spawn.
+
+      x = random(0 + radius, width - radius)
+      y = random(0 + radius, height - radius)
+   */
+
+   float posX = (rand() % (m_window.getSize().x - m_enemyConfig.SR)) + m_enemyConfig.SR;
+   float posY = (rand() % (m_window.getSize().y - m_enemyConfig.SR)) + m_enemyConfig.SR;
+
+   /* Enemies shapes have random number of vertices, between a given minimum and
+      maximum number, which is also specified in the config file.
+   */
+   int numVertices = (rand() %(m_enemyConfig.VMAX - m_enemyConfig.VMIN + 1)) + m_enemyConfig.VMIN;
+
+   // Enemies will be given a random color upon spawning
+   sf::Color fillColor(rand()%256, rand()%256, rand()%256);
+
+   // Outline color specified in config
+   sf::Color outlineColor(m_enemyConfig.OR, m_enemyConfig.OG, m_enemyConfig.OB);
+
+   /* Enemies will be given a random speed upon spawning, between a minimum and 
+      maximum value specified in the config file.
+   */
+   int speed = (rand() % ((int)m_enemyConfig.SMAX - (int)m_enemyConfig.SMIN + 1)) + (int)m_enemyConfig.SMIN;
+   float velX = speed * cos(DEFAULT_ROTATION_ANGLE);
+   float velY = speed * sin(DEFAULT_ROTATION_ANGLE);
+  
+   entity->cTransform = std::make_shared<CTransform>( Vec2(posX, posY), 
+                                                      Vec2(velX, velY), 
+                                                      DEFAULT_ROTATION_ANGLE);
+
+   entity->cShape = std::make_shared<CShape>(
+       m_enemyConfig.SR,
+       numVertices,
+       fillColor,
+       outlineColor,
+       m_enemyConfig.OT);
+
+   entity->cCollision = std::make_shared<CCollision>(m_enemyConfig.CR);
+
+   entity->cLifespan = std::make_shared<CLifespan>(m_enemyConfig.L);
 
    // record when the most recent enemy was spawned
    m_lastEnemySpawnTime = m_currentFrame;
