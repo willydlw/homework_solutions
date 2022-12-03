@@ -4,14 +4,15 @@
 #include <memory>
 #include <string>
 #include <cstdlib>         // size_t
+#include <iostream>
 
 class Entity
 {
    friend class EntityManager;
 
-   bool           m_active = true;
-   size_t         m_id     = 0;
    std::string    m_tag    = "default";
+   size_t         m_id     = 0;
+   bool           m_active = true;
 
   
    // constructor is private so that only the friend EntityManager 
@@ -33,4 +34,6 @@ class Entity
       const std::string & tag() const;
       const size_t id() const;
       void destroy();
+
+      friend std::ostream& operator << (std::ostream& os, const Entity &entity);
 };

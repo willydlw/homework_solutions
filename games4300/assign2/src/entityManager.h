@@ -77,6 +77,9 @@ public:
    std::shared_ptr<Entity> addEntity(const std::string& tag);
    EntityVector& getEntities();
    EntityVector& getEntities(const std::string& tag);
+   size_t getTotalEntities();
+
+   friend std::ostream& operator << (std::ostream& os, const EntityManager& em);
 
 };
 

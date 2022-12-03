@@ -8,6 +8,18 @@ EntityManager::EntityManager()
 
 }
 
+std::ostream& operator << (std::ostream& os, const EntityManager& em)
+{
+   os << "total Entities: " << em.m_totalEntities << "\n";
+
+   os << "m_entities\n";
+   os << "   capacity: " << em.m_entities.capacity() << "\n";
+   os << "   size:     " << em.m_entities.size() << "\n";
+   os << "   data:     " << em.m_entities.data() << "\n";
+
+   return os;
+}
+
 
 // note: code doesn't handle some map-related edge cases but that may be covered later
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
@@ -84,12 +96,14 @@ void EntityManager::update()
    m_toAdd.clear();  // clear list of entities to add 
 
    // Remove inactive entities from m_entities
-   m_entities.erase(
+   /* m_entities.erase(
       std::remove_if(m_entities.begin(), m_entities.end(), remove_entity),
       m_entities.end());
+   */
 
    // Remove inactive entities from m_entityMap;
    // iterate through the map by tag
+   /*
    for(auto it = m_entityMap.begin();  it != m_entityMap.end(); )
    {
       // Access this tag's EntityVectore
@@ -100,7 +114,13 @@ void EntityManager::update()
          std::remove_if(ev.begin(), ev.end(), remove_entity),
          ev.end());
      
-   }
+   } */
+}
+
+
+size_t EntityManager::getTotalEntities()
+{ 
+   return m_totalEntities;
 }
 
 
