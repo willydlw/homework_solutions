@@ -1,22 +1,12 @@
-#include "EntityManagerTest.h"
-#include "EntityManager.h"
-#include "testUtility.h"
+#pragma once 
 
-#include <cassert>
-
-void EntityManagerTest::testConstructor()
+class EntityManagerTest
 {
-	EntityManager em;
-	assert(em.m_totalEntities == 0);
-}
+	public:
 
+	EntityManagerTest();
 
-void EntityManagerTest::testAddEntity()
-{
-	EntityManager em;
-	std::string tag = random_string(4);
-	em.addEntity(tag);
-	assert(em.m_toAdd.size() == 1 && em.getTotalEntities() == 1);
-	std::cout << em << std::endl;
+	void testConstructor();
+	void testAddEntity();
 
-}
+};
