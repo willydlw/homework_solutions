@@ -1,14 +1,16 @@
-#include "entityManager.h"
+#include "EntityManagerTest.h"
 #include <iostream>
 
 int main()
 {
-    // construct object
-    EntityManager eManager;
+    {
+        EntityManagerTest emt;
+        emt.testConstructor();
+    }
 
-    std::cout << "Constructed EntityManager Object\n";
-    std::cout << eManager;
-
+    {
+        EntityManagerTest emt;
+        emt.testAddEntity();
+    }
     return 0;
-
-}
+} 
