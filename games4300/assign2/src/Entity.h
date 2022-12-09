@@ -16,11 +16,11 @@ class Entity
 
    friend class EntityManager;
 
-   std::string    m_tag    = "default";
-   size_t         m_id     = 0;
-   bool           m_active = true;
+   std::string    m_tag;
+   size_t         m_id;
+   bool           m_active;
 
-   Entity() = default;
+   Entity();
   
    // constructor is private so that only the friend EntityManager 
    // can construct Entity objects
@@ -39,7 +39,7 @@ class Entity
       // private member access functions 
       bool isActive() const;
       const std::string & tag() const;
-      const size_t id() const;
+      size_t id() const;
       void destroy();
 
       friend std::ostream& operator << (std::ostream& os, const Entity &entity);

@@ -7,9 +7,32 @@
    auto e = std::shared_ptr<Entity>(new Entity(args))
 
 */
+
+Entity::Entity() : 
+   m_tag("default"), 
+   m_id(0),
+   m_active(true),
+   cTransform(nullptr),
+   cShape(nullptr),
+   cCollision(nullptr),
+   cScore(nullptr),
+   cLifespan(nullptr),
+   cInput(nullptr)
+{
+   // intentionally blank
+}
+
+
 Entity::Entity(const std::string& tag, const size_t id) : 
    m_tag(tag), 
-   m_id(id)
+   m_id(id),
+   m_active(true),
+   cTransform(nullptr),
+   cShape(nullptr),
+   cCollision(nullptr),
+   cScore(nullptr),
+   cLifespan(nullptr),
+   cInput(nullptr)
 {
    // intentionally blank
 }
@@ -24,7 +47,7 @@ const std::string & Entity::tag() const
    return m_tag;
 }
 
-const size_t Entity::id() const
+size_t Entity::id() const
 {
    return m_id;
 }

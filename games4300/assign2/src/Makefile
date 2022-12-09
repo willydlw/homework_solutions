@@ -1,22 +1,22 @@
 # https://en.sfml-dev.org/forums/index.php?topic=9037.0
 CXX := g++ 
-CFLAGS := -c -Wall 
+CXXFLAGS := -c -Wall -Wextra -Wpedantic -Warray-bounds -Weffc++ -Werror
 LIBS= -lsfml-graphics -lsfml-window -lsfml-system
 
 all: testEntity
 
 Entity.o: Entity.cpp Entity.h
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 EntityTest: EntityTest.cpp EntityTest.h 
-	$(CXX) $(CFLAGS) $< -o $@ 
+	$(CXX) $(CXXFLAGS) $< -o $@ 
 
 testUtility.o: testUtility.cpp testUtility.h 
-	$(CXX) $(CFLAGS) $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 # specify the additional dependencies
 testEntity.o: testEntity.cpp Entity.cpp Entity.h
-	$(CXX) -c -Wall $< -o $@
+	$(CXX) $(CXXFLAGS) $< -o $@
 
 
 testEntity: testEntity.o Entity.o EntityTest.o testUtility.o
