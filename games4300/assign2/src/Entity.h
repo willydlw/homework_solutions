@@ -6,14 +6,21 @@
 #include <cstdlib>         // size_t
 #include <iostream>
 
+#define ENTITY_TEST 1
+
 class Entity
 {
+   #ifdef ENTITY_TEST
+      friend class EntityTest;
+   #endif
+
    friend class EntityManager;
 
    std::string    m_tag    = "default";
    size_t         m_id     = 0;
    bool           m_active = true;
 
+   Entity() = default;
   
    // constructor is private so that only the friend EntityManager 
    // can construct Entity objects

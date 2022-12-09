@@ -2,7 +2,7 @@
 #include "testUtility.h"
 
 const size_t MAX_SIZE_T = static_cast<size_t>(0 - 1);
-/*
+
 int main()
 {
 	{
@@ -22,4 +22,3 @@ int main()
 	return 0;
 }
 
-*/

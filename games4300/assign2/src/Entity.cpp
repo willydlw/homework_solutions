@@ -1,4 +1,4 @@
-#include "entity.h"
+#include "Entity.h"
 
 /* For private class constructors we can no long use
    std::make_shared<Entity>(args)

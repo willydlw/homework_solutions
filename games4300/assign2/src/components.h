@@ -2,7 +2,7 @@
 #pragma once 
 
 
-#include "vec2.h"
+#include "Vec2.h"
 #include <SFML/Graphics.hpp>
 
 
