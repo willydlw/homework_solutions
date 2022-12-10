@@ -50,7 +50,9 @@
 #include <map>
 #include <memory>    // shared_ptr
 #include <string>
-#include "entity.h"
+#include "Entity.h"
+
+#define TEST_ENTITY_MANAGER 1
 
 // Will trade some memory for functionality (ease of use)
 // Storing shared_ptr to Entities versus Enity objects
@@ -65,11 +67,15 @@ typedef std::map<std::string, EntityVector> EntityMap;
 
 class EntityManager
 {
+   #ifdef TEST_ENTITY_MANAGER
+      friend class EntityManagerTest;
+   #endif 
+
    EntityVector   m_entities;
    EntityVector   m_toAdd;                   // waiting room, entity objects to add
    EntityMap      m_entityMap;
-   size_t         m_totalEntities = 0;       // total Entities ever created
-   bool           remove_entity(const Entity &e); 
+   size_t         m_totalEntities;           // total Entities ever created
+   //bool           remove_entity(const Entity &e); 
 
 public:
    EntityManager();

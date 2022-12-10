@@ -1,9 +1,15 @@
-#include "entityManager.h"
+#include "EntityManager.h"
 
 #include <algorithm>          // remove_if
 
 
-EntityManager::EntityManager()
+EntityManager::EntityManager() :
+   m_entities(),        // calling default constructor due to 
+                        // -Weffc++ warning when not included 
+                        // in initialiazation list
+   m_toAdd(),
+   m_entityMap(),
+   m_totalEntities(0) 
 {
 
 }
@@ -21,7 +27,6 @@ std::ostream& operator << (std::ostream& os, const EntityManager& em)
 }
 
 
-// note: code doesn't handle some map-related edge cases but that may be covered later
 std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
 {
    /* create a new Entity object
@@ -61,10 +66,10 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
 
 /* Returns true when Entity is not active
 */
-bool EntityManager::remove_entity(Entity const &e)
+/* bool EntityManager::remove_entity(Entity const &e)
 { 
    return !(e.isActive());
-}
+}*/
 
 
 

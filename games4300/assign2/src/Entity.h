@@ -24,7 +24,7 @@ class Entity
   
    // constructor is private so that only the friend EntityManager 
    // can construct Entity objects
-   Entity(const std::string& tag, const size_t id);
+   Entity(const std::string& tag, size_t id);
 
    public:
 

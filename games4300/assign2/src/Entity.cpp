@@ -23,7 +23,7 @@ Entity::Entity() :
 }
 
 
-Entity::Entity(const std::string& tag, const size_t id) : 
+Entity::Entity(const std::string& tag, size_t id) : 
    m_tag(tag), 
    m_id(id),
    m_active(true),
