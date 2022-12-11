@@ -4,11 +4,6 @@
 
 
 EntityManager::EntityManager() :
-   m_entities(),        // calling default constructor due to 
-                        // -Weffc++ warning when not included 
-                        // in initialiazation list
-   m_toAdd(),
-   m_entityMap(),
    m_totalEntities(0) 
 {
 

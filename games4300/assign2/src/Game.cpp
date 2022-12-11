@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Vec2.h"
 
 #include <fstream>
 #include <iostream>
@@ -9,44 +10,57 @@
    Class Constants
 */
 
-const int LARGE_ENTITY_SCORE = 200;
-const int SMALL_ENTITY_SCORE = 100;
+const int Game::LARGE_ENTITY_SCORE = 200;
+const int Game::SMALL_ENTITY_SCORE = 100;
+const float Game::DEFAULT_ROTATION_ANGLE = 0.0f;
 
-const float DEFAULT_ROTATION_ANGLE = 0.0f;
+std::string const Game::DEFAULT_FONT_FILE = "fonts/tech.ttf";
 
-const std::string DEFAULT_FONT_FILE = "fonts/tech.ttf";
-
-const WindowConfig WINDOW_CONFIG_DEFAULT = { .W = 1280, .H = 720, .FL = 60, .FS = 0 };
-
-const FontConfig FONT_CONFIG_DEFAULT =
-{ .F = DEFAULT_FONT_FILE,
- .S = 32,
- .R = 255,
- .G = 255,
- .B = 255 };
-
-const PlayerConfig PLAYER_CONFIG_DEFAULT =
-{
-    .SR = 32, .CR = 32, // shape, collision radius
-    .FR = 10,
-    .FG = 10,
-    .FB = 10, // dark gray fill
-    .OR = 255,
-    .OG = 0,
-    .OB = 0,
-    .OT = 4,  // red outline, thickness
-    .V = 8,   // num vertices
-    .S = 4.0f // speed magnitude
+const WindowConfig Game::WINDOW_CONFIG_DEFAULT = { 
+    1280, 720,  // W, H
+    60,         // FL
+    0           // FS
 };
 
-const EnemyConfig ENEMY_CONFIG_DEFAULT =
-{ .SR = 16, .CR = 16,
- .OR = 255, .OG = 255, .OB = 255, .OT = 3,
- .VMIN = 3, .VMAX = 10, .L = 30, .SI = 60, .SMIN = 1, .SMAX = 10 };
 
-const BulletConfig BULLET_CONFIG_DEFAULT =
-{ .SR = 10, .CR = 10, .FR = 0, .FG = 255, .FB = 0, .OR = 255, .OG = 255, .OB = 255, .OT = 2, .V = 3, .L = 60, .S = 10.0f };
+const FontConfig Game::FONT_CONFIG_DEFAULT = { 
+    Game::DEFAULT_FONT_FILE,  // F
+    32,                 // S
+    255, 255, 255       // R, G, B
+};
 
+
+const PlayerConfig Game::PLAYER_CONFIG_DEFAULT = {
+    32, 32,         // SR, CR
+    10, 10, 10,     // FR, FG, FB
+    255, 0, 0,      // OR, OG, OB
+    4,              // OT
+    8,              // V
+    4.0f            // S
+};
+
+
+const EnemyConfig Game::ENEMY_CONFIG_DEFAULT ={ 
+    16, 16,         // SR, CR
+    255, 255, 255,  // OR, OG, OB
+    3,              // OT
+    3, 10,          // VMIN, VMAX
+    30,             // L
+    60,             // SI
+    1, 10           // SMIN, SMAX
+};
+
+
+const BulletConfig Game::BULLET_CONFIG_DEFAULT = { 
+    10,             // SR 
+    10,             // CR
+    0, 255, 0,      // FR, FG, FB,
+    255, 255, 255,  // OR, OG, OB
+    2,              // OT
+    3,              // V 
+    60,             // L
+    10.0f           // S
+ };
 
 
 
