@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <map>
 #include <string>
 #include <SFML/Graphics.hpp>
 #include "EntityManager.h"
@@ -78,6 +79,8 @@ struct BulletConfig {
 };
 
 
+
+
 class Game
 {
 #ifdef GAME_TEST
@@ -85,13 +88,17 @@ class Game
     Game() = default;
 #endif 
 
-    // class constants
+    // class enum
+    enum class ConfigCategory {BULLET, ENEMY, FONT, PLAYER, UNKNOWN, WINDOW};
 
+    // class constants
     static const int LARGE_ENTITY_SCORE;
     static const int SMALL_ENTITY_SCORE;
     static const float DEFAULT_ROTATION_ANGLE;
     static const std::string DEFAULT_FONT_FILE;
 
+    // default configuration constants
+    static const std::map<std::string, ConfigCategory> CONFIG_CATEGORY_MAP;
     static const WindowConfig WINDOW_CONFIG_DEFAULT;
     static const FontConfig FONT_CONFIG_DEFAULT;
     static const PlayerConfig PLAYER_CONFIG_DEFAULT;
@@ -141,6 +148,8 @@ class Game
     void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
     
 
+    Game::ConfigCategory readConfigCategory(std::istream& ins);
+    void processConfigCategory(std::istream& ins, ConfigCategory category);
     void loadConfigFromFile(const std::string& path);
     void loadDefaultConfig(ConfigState state);
     std::istream& loadWindowConfig(std::istream& ins);

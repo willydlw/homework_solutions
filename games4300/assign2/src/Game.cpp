@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <iostream>
+#include <utility>         // make_pair
 #include <cmath>
 #include <cstdlib>         // rand
 
@@ -14,7 +15,7 @@ const int Game::LARGE_ENTITY_SCORE = 200;
 const int Game::SMALL_ENTITY_SCORE = 100;
 const float Game::DEFAULT_ROTATION_ANGLE = 0.0f;
 
-std::string const Game::DEFAULT_FONT_FILE = "fonts/tech.ttf";
+std::string const Game::DEFAULT_FONT_FILE = "../fonts/tech.ttf";
 
 const WindowConfig Game::WINDOW_CONFIG_DEFAULT = { 
     1280, 720,  // W, H
@@ -62,15 +63,44 @@ const BulletConfig Game::BULLET_CONFIG_DEFAULT = {
     10.0f           // S
  };
 
-
+const std::map<std::string, Game::ConfigCategory> Game::CONFIG_CATEGORY_MAP = {
+    std::make_pair(std::string("BULLET"), Game::ConfigCategory::BULLET),
+    std::make_pair(std::string("ENEMY"), Game::ConfigCategory::ENEMY),
+    std::make_pair(std::string("FONT"), Game::ConfigCategory::FONT),
+    std::make_pair(std::string("PLAYER"), Game::ConfigCategory::PLAYER),
+    std::make_pair(std::string("WINDOW"), Game::ConfigCategory::WINDOW),
+    std::make_pair(std::string("UNKOWN"), Game::ConfigCategory::UNKNOWN)
+};
 
 Game::Game(const std::string& config)
 {
     init(config);
 }
 
+Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
+{
+    std::string category("UNKNOWN");
+    std::pair<std::string, Game::ConfigCategory> whichCategory;
+
+    ins >> category;
+
+    auto c = CONFIG_CATEGORY_MAP.find(category);
+    return c->second;
+}
+
+void Game::processConfigCategory(std::istream& ins, ConfigCategory category)
+{
+    switch(category)
+    {
+        case ConfigCategory::WINDOW:
+        break;
+        START HERE
+    }
+}
+
 void Game::loadConfigFromFile(const std::string& path)
 {
+    ConfigCategory category = ConfigCategory::UNKNOWN;
 
     std::ifstream infile(path);
 
@@ -81,6 +111,18 @@ void Game::loadConfigFromFile(const std::string& path)
         loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
         return;
     }
+
+    category = readConfigCategory(infile);
+    if(infile)
+    {
+        processConfigCategory(infile, category);
+    }
+    else
+    {
+        loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
+        return;
+    }
+
 
     if (!loadWindowConfig(infile))
     {

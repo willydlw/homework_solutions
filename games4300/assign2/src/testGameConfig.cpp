@@ -4,8 +4,9 @@
 int main()
 {
 	{
+		const char* filename = "../config/configBullet.txt";
 		GameTest gt;
-		gt.testLoadBulletConfig();
+		gt.testLoadBulletConfig(filename);
 	}
 
 	return 0;
