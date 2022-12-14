@@ -7,10 +7,8 @@
 void GameTest::testLoadBulletConfig(const char* filename)
 {
 	Game g;
-	std::ifstream infile(filename);
-	assert(infile.is_open());
-
-	g.loadBulletConfig(infile);
+	
+	g.loadConfigFromFile(filename);
 
 	assert(g.m_bulletConfig.SR == 10 &&
 		g.m_bulletConfig.CR == 10 &&

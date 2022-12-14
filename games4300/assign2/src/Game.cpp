@@ -64,12 +64,12 @@ const BulletConfig Game::BULLET_CONFIG_DEFAULT = {
  };
 
 const std::map<std::string, Game::ConfigCategory> Game::CONFIG_CATEGORY_MAP = {
-    std::make_pair(std::string("BULLET"), Game::ConfigCategory::BULLET),
-    std::make_pair(std::string("ENEMY"), Game::ConfigCategory::ENEMY),
-    std::make_pair(std::string("FONT"), Game::ConfigCategory::FONT),
-    std::make_pair(std::string("PLAYER"), Game::ConfigCategory::PLAYER),
-    std::make_pair(std::string("WINDOW"), Game::ConfigCategory::WINDOW),
-    std::make_pair(std::string("UNKOWN"), Game::ConfigCategory::UNKNOWN)
+    std::make_pair(std::string("unknown"), Game::ConfigCategory::UNKNOWN),
+    std::make_pair(std::string("bullet"), Game::ConfigCategory::BULLET),
+    std::make_pair(std::string("enemy"), Game::ConfigCategory::ENEMY),
+    std::make_pair(std::string("font"), Game::ConfigCategory::FONT),
+    std::make_pair(std::string("player"), Game::ConfigCategory::PLAYER),
+    std::make_pair(std::string("window"), Game::ConfigCategory::WINDOW)  
 };
 
 Game::Game(const std::string& config)
@@ -79,23 +79,59 @@ Game::Game(const std::string& config)
 
 Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
 {
-    std::string category("UNKNOWN");
-    std::pair<std::string, Game::ConfigCategory> whichCategory;
+    std::string category("unknown");
+    
+    ins >> category;    // read category
 
-    ins >> category;
+    std::cerr << __FUNCTION__ << " ,category: " << category << "\n";
+
+    std::cerr << "Troubleshooting, will now print CONFIG_CATEGORY_MAP\n";
+
+    for(auto& m : CONFIG_CATEGORY_MAP)
+    {
+        std::cerr << "first: " << m.first << ", second: " << (int) m.second << "\n";
+    }
 
     auto c = CONFIG_CATEGORY_MAP.find(category);
+
+    if(c != CONFIG_CATEGORY_MAP.end())
+    {
+        std::cerr << "not the end\n";
+    }
+
+    std::cerr << __FUNCTION__ << ", c->second: "
+        << int(c->second) << "\n";
     return c->second;
 }
 
 void Game::processConfigCategory(std::istream& ins, ConfigCategory category)
 {
+    std::cerr << "Entering " << __FUNCTION__ << "\n";
     switch(category)
     {
+        case ConfigCategory::BULLET:
+            std::cerr << "calling loadBulletConfig\n";
+            loadBulletConfig(ins);
+            break;
+        case ConfigCategory::ENEMY:
+            loadEnemyConfig(ins);
+            break;
+        case ConfigCategory::FONT:
+            loadFontConfig(ins);
+            break;
+        case ConfigCategory::PLAYER:
+            loadPlayerConfig(ins);
+            break;
         case ConfigCategory::WINDOW:
-        break;
-        START HERE
+            loadWindowConfig(ins);
+            break;
+        case ConfigCategory::UNKNOWN:
+            std::cerr << "Error, unhandled Category, " << __FUNCTION__ 
+                << "\n";
+            break;
     }
+
+    std::cerr << "leaving " << __FUNCTION__ << "\n\n";
 }
 
 void Game::loadConfigFromFile(const std::string& path)
@@ -112,17 +148,33 @@ void Game::loadConfigFromFile(const std::string& path)
         return;
     }
 
-    category = readConfigCategory(infile);
+    std::cerr << __FUNCTION__ << ", Opened file: " << path << "\n";
+
+    while(infile)
+    {
+        category = readConfigCategory(infile);
+
+        std::cerr << __FUNCTION__ << ", returned from readConfighCategory, category value: " << (int)category << "\n";
+        
+        if(category != ConfigCategory::UNKNOWN)
+        {
+            processConfigCategory(infile, category);
+            category = ConfigCategory::UNKNOWN;
+        }
+        else
+        {
+            std::cerr << __FUNCTION__ << ", category is UKNOWN, value: " << (int)category << "\n\n";
+            //loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
+            break;
+        }
+    }
+    
+    /*
     if(infile)
     {
         processConfigCategory(infile, category);
     }
-    else
-    {
-        loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
-        return;
-    }
-
+    
 
     if (!loadWindowConfig(infile))
     {
@@ -168,6 +220,7 @@ void Game::loadConfigFromFile(const std::string& path)
         infile.close();
         return;
     }
+    */
 }
 
 void Game::loadDefaultConfig(Game::ConfigState state)
@@ -235,6 +288,9 @@ std::istream& Game::loadBulletConfig(std::istream& ins)
         >> m_bulletConfig.OT 
         >> m_bulletConfig.V 
         >> m_bulletConfig.L;
+
+    std::cerr << __FUNCTION__ << " finished\n\n";
+    printBulletConfig(std::cout);
     return ins;
 }
 

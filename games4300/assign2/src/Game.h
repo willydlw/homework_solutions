@@ -89,7 +89,14 @@ class Game
 #endif 
 
     // class enum
-    enum class ConfigCategory {BULLET, ENEMY, FONT, PLAYER, UNKNOWN, WINDOW};
+    enum class ConfigCategory {
+        UNKNOWN = 0,
+        BULLET = 1, 
+        ENEMY = 2, 
+        FONT = 3, 
+        PLAYER = 4, 
+        WINDOW = 5
+    };
 
     // class constants
     static const int LARGE_ENTITY_SCORE;
