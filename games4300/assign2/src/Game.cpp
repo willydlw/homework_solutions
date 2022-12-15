@@ -80,13 +80,19 @@ Game::Game(const std::string& config)
 Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
 {
     std::string category("unknown");
+    Game::ConfigCategory categoryValue = CONFIG_CATEGORY_MAP.find(category)->second;
     
     ins >> category;    // read category
 
+    if(!ins)
+    {
+        std::cerr << __FUNCTION__ << ", WARNING: failed to read category\n";
+        categoryValue = CONFIG_CATEGORY_MAP.find("unknown")->second;
+        return categoryValue;
+    }
+
     std::cerr << __FUNCTION__ << " ,category: " << category << "\n";
-
     std::cerr << "Troubleshooting, will now print CONFIG_CATEGORY_MAP\n";
-
     for(auto& m : CONFIG_CATEGORY_MAP)
     {
         std::cerr << "first: " << m.first << ", second: " << (int) m.second << "\n";
@@ -94,14 +100,19 @@ Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
 
     auto c = CONFIG_CATEGORY_MAP.find(category);
 
-    if(c != CONFIG_CATEGORY_MAP.end())
+    if(c == CONFIG_CATEGORY_MAP.end())
     {
-        std::cerr << "not the end\n";
+        std::cerr << __FUNCTION__ << ", ERROR: category: " << category 
+                << "not found in CONFIG_CATEGORY_MAP\n";
+        categoryValue = CONFIG_CATEGORY_MAP.find("uknown")->second;
     }
+
+    categoryValue = c->second;
 
     std::cerr << __FUNCTION__ << ", c->second: "
         << int(c->second) << "\n";
-    return c->second;
+
+    return categoryValue;
 }
 
 void Game::processConfigCategory(std::istream& ins, ConfigCategory category)
@@ -280,17 +291,25 @@ std::istream& Game::loadEnemyConfig(std::istream& ins)
 
 std::istream& Game::loadBulletConfig(std::istream& ins)
 {
-    // Bullet SR CR S FR FG OR OG OB OT V L
-    ins >> m_bulletConfig.SR >> m_bulletConfig.CR 
+    // bullet SR CR S FR FG OR OG OB OT V L
+    // bullet 10 10 20 255 255 255 255 255 255 2 20 90
+
+    ins >> m_bulletConfig.SR 
+        >> m_bulletConfig.CR
         >> m_bulletConfig.S
-        >> m_bulletConfig.FR >> m_bulletConfig.FG >> m_bulletConfig.FB 
-        >> m_bulletConfig.OR >> m_bulletConfig.OG >> m_bulletConfig.OB 
+        >> m_bulletConfig.FR 
+        >> m_bulletConfig.FG 
+        >> m_bulletConfig.FB
+        >> m_bulletConfig.OR
+        >> m_bulletConfig.OG 
+        >> m_bulletConfig.OB 
         >> m_bulletConfig.OT 
         >> m_bulletConfig.V 
         >> m_bulletConfig.L;
 
     std::cerr << __FUNCTION__ << " finished\n\n";
     printBulletConfig(std::cout);
+
     return ins;
 }
 
@@ -576,7 +595,7 @@ std::ostream& Game::printBulletConfig(std::ostream& os) const
         << "fill color red:           " << m_bulletConfig.FR << "\n"
         << "fill color green:         " << m_bulletConfig.FG << "\n"
         << "fill color blue:          " << m_bulletConfig.FB << "\n"
-        << "outline color red:        " << m_playerConfig.OR << "\n"
+        << "outline color red:        " << m_bulletConfig.OR << "\n"
         << "outline color green:      " << m_bulletConfig.OG << "\n"
         << "outline color blue:       " << m_bulletConfig.OB << "\n"
         << "outline color thickness:  " << m_bulletConfig.OT << "\n"

@@ -26,7 +26,7 @@ struct WindowConfig { int W, H, FL, FS; };
 struct FontConfig {
     std::string F;
     unsigned int S;
-    uint8_t R, G, B;
+    int R, G, B;
 };
 
 
@@ -70,8 +70,8 @@ struct EnemyConfig {
 
 struct BulletConfig {
     int SR, CR;
-    uint8_t FR, FG, FB;
-    uint8_t OR, OG, OB; 
+    int FR, FG, FB;
+    int OR, OG, OB; 
     int OT;
     int V;
     int L; 
