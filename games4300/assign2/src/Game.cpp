@@ -80,7 +80,12 @@ Game::Game(const std::string& config)
 
 Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
 {
+<<<<<<< HEAD
     std::string category;
+=======
+    std::string category("unknown");
+    Game::ConfigCategory categoryValue = CONFIG_CATEGORY_MAP.find(category)->second;
+>>>>>>> 03c285f0c2ebe35c41aeda7825097f7562fffb12
     
     if(!(ins >> category))
     {
@@ -96,17 +101,31 @@ Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
     }
 
 
+<<<<<<< HEAD
     std::cerr << __FUNCTION__ << ", line: " << __LINE__ << " , read category: " << category << "\n";
 
     std::transform(category.begin(), category.end(), category.begin(), ::tolower);
 
     // Handle situation where EOF not reached before reading final new line
     if(category == "\n" && ins.eof())
+=======
+    if(!ins)
+    {
+        std::cerr << __FUNCTION__ << ", WARNING: failed to read category\n";
+        categoryValue = CONFIG_CATEGORY_MAP.find("unknown")->second;
+        return categoryValue;
+    }
+
+    std::cerr << __FUNCTION__ << " ,category: " << category << "\n";
+    std::cerr << "Troubleshooting, will now print CONFIG_CATEGORY_MAP\n";
+    for(auto& m : CONFIG_CATEGORY_MAP)
+>>>>>>> 03c285f0c2ebe35c41aeda7825097f7562fffb12
     {
         return ConfigCategory::ENDFILE;
     }
 
     auto c = CONFIG_CATEGORY_MAP.find(category);
+<<<<<<< HEAD
     if(c == CONFIG_CATEGORY_MAP.end())
     {
         std::string msg(", category: ");
@@ -117,6 +136,22 @@ Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
     }
 
     return c->second;
+=======
+
+    if(c == CONFIG_CATEGORY_MAP.end())
+    {
+        std::cerr << __FUNCTION__ << ", ERROR: category: " << category 
+                << "not found in CONFIG_CATEGORY_MAP\n";
+        categoryValue = CONFIG_CATEGORY_MAP.find("uknown")->second;
+    }
+
+    categoryValue = c->second;
+
+    std::cerr << __FUNCTION__ << ", c->second: "
+        << int(c->second) << "\n";
+
+    return categoryValue;
+>>>>>>> 03c285f0c2ebe35c41aeda7825097f7562fffb12
 }
 
 bool Game::processConfigCategory(std::istream& ins, ConfigCategory category, int& configStatus)
@@ -519,6 +554,7 @@ void Game::printErrorMessage(std::string file, std::string function,
 
 bool Game::loadBulletConfig(std::istream& ins)
 {
+<<<<<<< HEAD
     // Bullet SR CR S FR FG OR OG OB OT V L
 
     if(!(ins >> m_bulletConfig.SR)){
@@ -596,6 +632,28 @@ bool Game::loadBulletConfig(std::istream& ins)
         << " data read and stored in bullet config\n";
     printBulletConfig(std::cout);
     return true;
+=======
+    // bullet SR CR S FR FG OR OG OB OT V L
+    // bullet 10 10 20 255 255 255 255 255 255 2 20 90
+
+    ins >> m_bulletConfig.SR 
+        >> m_bulletConfig.CR
+        >> m_bulletConfig.S
+        >> m_bulletConfig.FR 
+        >> m_bulletConfig.FG 
+        >> m_bulletConfig.FB
+        >> m_bulletConfig.OR
+        >> m_bulletConfig.OG 
+        >> m_bulletConfig.OB 
+        >> m_bulletConfig.OT 
+        >> m_bulletConfig.V 
+        >> m_bulletConfig.L;
+
+    std::cerr << __FUNCTION__ << " finished\n\n";
+    printBulletConfig(std::cout);
+
+    return ins;
+>>>>>>> 03c285f0c2ebe35c41aeda7825097f7562fffb12
 }
 
 
