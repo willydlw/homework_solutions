@@ -26,7 +26,7 @@ struct WindowConfig { int W, H, FL, FS; };
 struct FontConfig {
     std::string F;
     unsigned int S;
-    uint8_t R, G, B;
+    int R, G, B;
 };
 
 
@@ -70,8 +70,8 @@ struct EnemyConfig {
 
 struct BulletConfig {
     int SR, CR;
-    uint8_t FR, FG, FB;
-    uint8_t OR, OG, OB; 
+    int FR, FG, FB;
+    int OR, OG, OB; 
     int OT;
     int V;
     int L; 
@@ -90,12 +90,13 @@ class Game
 
     // class enum
     enum class ConfigCategory {
-        UNKNOWN = 0,
-        BULLET = 1, 
-        ENEMY = 2, 
-        FONT = 3, 
-        PLAYER = 4, 
-        WINDOW = 5
+        BULLET = 0, 
+        ENEMY = 1, 
+        FONT = 2, 
+        PLAYER = 3, 
+        WINDOW = 4,
+        ENDFILE = 5,
+        UNKNOWN = 6
     };
 
     // class constants
@@ -156,20 +157,25 @@ class Game
     
 
     Game::ConfigCategory readConfigCategory(std::istream& ins);
-    void processConfigCategory(std::istream& ins, ConfigCategory category);
+    bool processConfigCategory(std::istream& ins, ConfigCategory category, int& configStatus);
     void loadConfigFromFile(const std::string& path);
     void loadDefaultConfig(ConfigState state);
-    std::istream& loadWindowConfig(std::istream& ins);
-    std::istream& loadFontConfig(std::istream& ins);
-    std::istream& loadPlayerConfig(std::istream& ins);
-    std::istream& loadEnemyConfig(std::istream& ins);
-    std::istream& loadBulletConfig(std::istream& ins);
+    bool loadWindowConfig(std::istream& ins);
+    bool loadFontConfig(std::istream& ins);
+    bool loadPlayerConfig(std::istream& ins);
+    bool loadEnemyConfig(std::istream& ins);
+    bool loadBulletConfig(std::istream& ins);
+
+    void verifyCompleteConfig(int configStatus);
 
     std::ostream& printWindowConfig(std::ostream& os)const;
     std::ostream& printFontConfig(std::ostream& os)const;
     std::ostream& printPlayerConfig(std::ostream& os) const;
     std::ostream& printEnemyConfig(std::ostream& os) const;
     std::ostream& printBulletConfig(std::ostream& os) const;
+
+    void printErrorMessage(std::string file, std::string function, 
+                    int line, std::string msg) const;
 
 
 

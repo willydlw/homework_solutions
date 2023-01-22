@@ -162,6 +162,7 @@ Bullet SR CR S FR FG FB OR OG OB OT V L
 
    Shape radius         SR             int
    Collision radius     CR             int
+   Speed                S              float 
    fill color           FR, FG, FB     int, int, int
    outline color        OR, OG, OB     int, int, int 
    outline thickness    OT             int
