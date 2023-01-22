@@ -95,16 +95,7 @@ Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
         }
     }
 
-
-    std::cerr << __FUNCTION__ << ", line: " << __LINE__ << " , read category: " << category << "\n";
-
     std::transform(category.begin(), category.end(), category.begin(), ::tolower);
-
-    // Handle situation where EOF not reached before reading final new line
-    if(category == "\n" && ins.eof())
-    {
-        return ConfigCategory::ENDFILE;
-    }
 
     auto c = CONFIG_CATEGORY_MAP.find(category);
     if(c == CONFIG_CATEGORY_MAP.end())
@@ -246,9 +237,6 @@ void Game::loadConfigFromFile(const std::string& path)
         loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
         return;
     }
-
-    std::cerr << "\n" << __FILE__ << ", " << __FUNCTION__ 
-        << ", Opened file: " << path << "\n";
 
     while(infile)
     {
@@ -425,9 +413,7 @@ bool Game::loadPlayerConfig(std::istream& ins)
         printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading vertices");
         return false;
     } 
-
-
-                                     
+                           
     return true;
 }
 
@@ -592,9 +578,6 @@ bool Game::loadBulletConfig(std::istream& ins)
         return false;
     }
     
-    std::cerr << "\n" << __FILE__ << ", " << __FUNCTION__ 
-        << " data read and stored in bullet config\n";
-    printBulletConfig(std::cout);
     return true;
 }
 
