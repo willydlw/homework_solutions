@@ -1,12 +1,12 @@
 #include "Game.h"
 #include "Vec2.h"
 
-#include <algorithm>       // transform
+#include <algorithm> // transform
 #include <fstream>
 #include <iostream>
-#include <utility>         // make_pair
+#include <utility> // make_pair
 #include <cmath>
-#include <cstdlib>         // rand
+#include <cstdlib> // rand
 
 /* ============================
    Class Constants
@@ -18,51 +18,47 @@ const float Game::DEFAULT_ROTATION_ANGLE = 0.0f;
 
 std::string const Game::DEFAULT_FONT_FILE = "../fonts/tech.ttf";
 
-const WindowConfig Game::WINDOW_CONFIG_DEFAULT = { 
-    1280, 720,  // W, H
-    60,         // FL
-    0           // FS
+const WindowConfig Game::WINDOW_CONFIG_DEFAULT = {
+    1280, 720, // W, H
+    60,        // FL
+    0          // FS
 };
 
-
-const FontConfig Game::FONT_CONFIG_DEFAULT = { 
-    Game::DEFAULT_FONT_FILE,  // F
-    32,                 // S
-    255, 255, 255       // R, G, B
+const FontConfig Game::FONT_CONFIG_DEFAULT = {
+    Game::DEFAULT_FONT_FILE, // F
+    32,                      // S
+    255, 255, 255            // R, G, B
 };
-
 
 const PlayerConfig Game::PLAYER_CONFIG_DEFAULT = {
-    32, 32,         // SR, CR
-    10, 10, 10,     // FR, FG, FB
-    255, 0, 0,      // OR, OG, OB
-    4,              // OT
-    8,              // V
-    4.0f            // S
+    32, 32,     // SR, CR
+    10, 10, 10, // FR, FG, FB
+    255, 0, 0,  // OR, OG, OB
+    4,          // OT
+    8,          // V
+    4.0f        // S
 };
 
-
-const EnemyConfig Game::ENEMY_CONFIG_DEFAULT ={ 
-    16, 16,         // SR, CR
-    255, 255, 255,  // OR, OG, OB
-    3,              // OT
-    3, 10,          // VMIN, VMAX
-    30,             // L
-    60,             // SI
-    1, 10           // SMIN, SMAX
+const EnemyConfig Game::ENEMY_CONFIG_DEFAULT = {
+    16, 16,        // SR, CR
+    255, 255, 255, // OR, OG, OB
+    3,             // OT
+    3, 10,         // VMIN, VMAX
+    30,            // L
+    60,            // SI
+    1, 10          // SMIN, SMAX
 };
 
-
-const BulletConfig Game::BULLET_CONFIG_DEFAULT = { 
-    10,             // SR 
-    10,             // CR
-    0, 255, 0,      // FR, FG, FB,
-    255, 255, 255,  // OR, OG, OB
-    2,              // OT
-    3,              // V 
-    60,             // L
-    10.0f           // S
- };
+const BulletConfig Game::BULLET_CONFIG_DEFAULT = {
+    10,            // SR
+    10,            // CR
+    0, 255, 0,     // FR, FG, FB,
+    255, 255, 255, // OR, OG, OB
+    2,             // OT
+    3,             // V
+    60,            // L
+    10.0f          // S
+};
 
 const std::map<std::string, Game::ConfigCategory> Game::CONFIG_CATEGORY_MAP = {
     std::make_pair(std::string("unknown"), Game::ConfigCategory::UNKNOWN),
@@ -70,27 +66,26 @@ const std::map<std::string, Game::ConfigCategory> Game::CONFIG_CATEGORY_MAP = {
     std::make_pair(std::string("enemy"), Game::ConfigCategory::ENEMY),
     std::make_pair(std::string("font"), Game::ConfigCategory::FONT),
     std::make_pair(std::string("player"), Game::ConfigCategory::PLAYER),
-    std::make_pair(std::string("window"), Game::ConfigCategory::WINDOW)  
-};
+    std::make_pair(std::string("window"), Game::ConfigCategory::WINDOW)};
 
-Game::Game(const std::string& config)
+Game::Game(const std::string &config)
 {
     init(config);
 }
 
-Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
+Game::ConfigCategory Game::readConfigCategory(std::istream &ins)
 {
     std::string category;
-    
-    if(!(ins >> category))
+
+    if (!(ins >> category))
     {
-        if(ins.eof())
+        if (ins.eof())
         {
             return ConfigCategory::ENDFILE;
         }
         else
         {
-            printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " ERROR reading category");
+            printErrorMessage("ERROR reading category", __FILE__, __FUNCTION__, __LINE__);
             return ConfigCategory::UNKNOWN;
         }
     }
@@ -98,131 +93,131 @@ Game::ConfigCategory Game::readConfigCategory(std::istream& ins)
     std::transform(category.begin(), category.end(), category.begin(), ::tolower);
 
     auto c = CONFIG_CATEGORY_MAP.find(category);
-    if(c == CONFIG_CATEGORY_MAP.end())
+    if (c == CONFIG_CATEGORY_MAP.end())
     {
-        std::string msg(", category: ");
+        std::string msg("WARNING, category: ");
         msg.append(category);
         msg.append(" not found in config map");
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, msg);
+        printErrorMessage(msg, __FILE__, __FUNCTION__, __LINE__);
         return ConfigCategory::UNKNOWN;
     }
 
     return c->second;
 }
 
-bool Game::processConfigCategory(std::istream& ins, ConfigCategory category, int& configStatus)
+bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int &configStatus)
 {
     int success = false;
-    switch(category)
+    switch (category)
     {
-        case ConfigCategory::BULLET:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadBulletConfig\n";
-            if(loadBulletConfig(ins))
-            {
-                configStatus |= (1 << (int)ConfigCategory::BULLET);
-                std::cout << "\nBullet Config\n";
-                printBulletConfig(std::cout);
-                 std::cout << "\n\n";
-                success = true;
-            }
-            break;
-        case ConfigCategory::ENEMY:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadEnemyConfig\n";
-            if(loadEnemyConfig(ins))
-            {
-                configStatus |= (1 << (int)ConfigCategory::ENEMY);
-                std::cout << "\nEnemy Config\n";
-                printEnemyConfig(std::cout);
-                std::cout << "\n\n";
-                success = true;
-            }
-            break;
-        case ConfigCategory::FONT:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ <<  ", calling loadFontConfig\n";
-            if(loadFontConfig(ins))
-            {
-                configStatus |= (1 << (int)ConfigCategory::FONT);
-                std::cout << "\nFont Config\n";
-                printFontConfig(std::cout);
-                std::cout << "\n\n";
-                success = true;
-            }
-            break;
-        case ConfigCategory::PLAYER:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ <<  ", calling loadPlayerConfig\n";
-            if(loadPlayerConfig(ins))
-            {
-                configStatus |= (1 << (int)ConfigCategory::PLAYER);
-                std::cout << "\nPlayer Config\n";
-                printPlayerConfig(std::cout);
-                std::cout << "\n\n";
-                success = true;
-            }
-            break;
-        case ConfigCategory::WINDOW:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ <<  ", calling loadWinowConfig\n";
-            if(loadWindowConfig(ins)){
-                configStatus |= (1 << (int)ConfigCategory::WINDOW);
-                std::cout << "\nWindow Config\n";
-                printWindowConfig(std::cout);
-                std::cout << "\n\n";
-                success = true;
-            }
-            break;
-        case ConfigCategory::ENDFILE:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ <<  ", case ENDFILE\n";
+    case ConfigCategory::BULLET:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadBulletConfig\n";
+        if (loadBulletConfig(ins))
+        {
+            configStatus |= (1 << (int)ConfigCategory::BULLET);
+            std::cout << "\nBullet Config\n";
+            printBulletConfig(std::cout);
+            std::cout << "\n\n";
             success = true;
-            break;
-        case ConfigCategory::UNKNOWN:
-            std::cerr << __FUNCTION__ << ", line: " << __LINE__ 
-                << ", Error, unhandled Category, " << "\n";
-            break;
+        }
+        break;
+    case ConfigCategory::ENEMY:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadEnemyConfig\n";
+        if (loadEnemyConfig(ins))
+        {
+            configStatus |= (1 << (int)ConfigCategory::ENEMY);
+            std::cout << "\nEnemy Config\n";
+            printEnemyConfig(std::cout);
+            std::cout << "\n\n";
+            success = true;
+        }
+        break;
+    case ConfigCategory::FONT:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadFontConfig\n";
+        if (loadFontConfig(ins))
+        {
+            configStatus |= (1 << (int)ConfigCategory::FONT);
+            std::cout << "\nFont Config\n";
+            printFontConfig(std::cout);
+            std::cout << "\n\n";
+            success = true;
+        }
+        break;
+    case ConfigCategory::PLAYER:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadPlayerConfig\n";
+        if (loadPlayerConfig(ins))
+        {
+            configStatus |= (1 << (int)ConfigCategory::PLAYER);
+            std::cout << "\nPlayer Config\n";
+            printPlayerConfig(std::cout);
+            std::cout << "\n\n";
+            success = true;
+        }
+        break;
+    case ConfigCategory::WINDOW:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadWinowConfig\n";
+        if (loadWindowConfig(ins))
+        {
+            configStatus |= (1 << (int)ConfigCategory::WINDOW);
+            std::cout << "\nWindow Config\n";
+            printWindowConfig(std::cout);
+            std::cout << "\n\n";
+            success = true;
+        }
+        break;
+    case ConfigCategory::ENDFILE:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", case ENDFILE\n";
+        success = true;
+        break;
+    case ConfigCategory::UNKNOWN:
+        std::cerr << __FUNCTION__ << ", line: " << __LINE__
+                  << ", Error, unhandled Category, "
+                  << "\n";
+        break;
     }
 
-    return success;   
+    return success;
 }
 
 void Game::verifyCompleteConfig(int configStatus)
 {
-    if( !(configStatus & (1 << (int)ConfigCategory::BULLET)))
+    if (!(configStatus & (1 << (int)ConfigCategory::BULLET)))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, 
-            "Warning: Using default bullet configuration\n");
+        printErrorMessage("Warning: Using default bullet configuration", 
+                        __FILE__, __FUNCTION__, __LINE__);
         m_bulletConfig = BULLET_CONFIG_DEFAULT;
     }
 
-    if( !(configStatus & (1 << (int)ConfigCategory::FONT)))
+    if (!(configStatus & (1 << (int)ConfigCategory::FONT)))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, 
-            "Warning: Using default font configuration\n");
+        printErrorMessage( "Warning: Using default font configuration",
+                            __FILE__, __FUNCTION__, __LINE__);
         m_fontConfig = FONT_CONFIG_DEFAULT;
     }
 
-    if( !(configStatus & (1 << (int)ConfigCategory::ENEMY)))
+    if (!(configStatus & (1 << (int)ConfigCategory::ENEMY)))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, 
-            "Warning: Using default enemy configuration\n");
+        printErrorMessage("Warning: Using default enemy configuration", 
+                            __FILE__, __FUNCTION__, __LINE__);
         m_enemyConfig = ENEMY_CONFIG_DEFAULT;
     }
 
-    if( !(configStatus & (1 << (int)ConfigCategory::PLAYER)))
+    if (!(configStatus & (1 << (int)ConfigCategory::PLAYER)))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, 
-            "Warning: Using default player configuration\n");
+        printErrorMessage("Warning: Using default player configuration",
+                            __FILE__, __FUNCTION__, __LINE__);
         m_playerConfig = PLAYER_CONFIG_DEFAULT;
     }
 
-    if( !(configStatus & (1 << (int)ConfigCategory::WINDOW)))
+    if (!(configStatus & (1 << (int)ConfigCategory::WINDOW)))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, 
-            "Warning: Using default window configuration\n");
+        printErrorMessage( "Warning: Using default window configuration", 
+                            __FILE__, __FUNCTION__, __LINE__);
         m_windowConfig = WINDOW_CONFIG_DEFAULT;
     }
-
-
 }
 
-void Game::loadConfigFromFile(const std::string& path)
+void Game::loadConfigFromFile(const std::string &path)
 {
     ConfigCategory category = ConfigCategory::UNKNOWN;
 
@@ -232,19 +227,21 @@ void Game::loadConfigFromFile(const std::string& path)
 
     if (!infile)
     {
-        std::cerr << "WARNING: file open failure, path: " << path
-            << ", using default configuration\n";
+        std::string msg("WARNING: file open failure, path: ");
+        msg.append(path);
+        msg.append(", using default configuration\n");
+        printErrorMessage(msg, __FILE__, __FUNCTION__, __LINE__);
         loadDefaultConfig(ConfigState::WINDOW_DEFAULT);
         return;
     }
 
-    while(infile)
+    while (infile)
     {
         category = readConfigCategory(infile);
-        
-        if(category != ConfigCategory::UNKNOWN)
+
+        if (category != ConfigCategory::UNKNOWN)
         {
-            if(!processConfigCategory(infile, category, configStatus))
+            if (!processConfigCategory(infile, category, configStatus))
             {
                 break;
             }
@@ -261,8 +258,8 @@ void Game::loadConfigFromFile(const std::string& path)
 
 void Game::loadDefaultConfig(Game::ConfigState state)
 {
-    // Note: There are intentionally no break statements. Once there 
-    // is a failure to load the configuration data, we need to 
+    // Note: There are intentionally no break statements. Once there
+    // is a failure to load the configuration data, we need to
     // configure all states below the case with the defaults.
     switch (state)
     {
@@ -283,326 +280,317 @@ void Game::loadDefaultConfig(Game::ConfigState state)
     };
 }
 
-bool Game::loadWindowConfig(std::istream& ins)
+bool Game::loadWindowConfig(std::istream &ins)
 {
-    if( !(ins >> m_windowConfig.W))
+    if (!(ins >> m_windowConfig.W))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading width");
+        printErrorMessage("ERROR reading width", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if( !(ins >> m_windowConfig.H ))
+
+    if (!(ins >> m_windowConfig.H))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading height");
+        printErrorMessage( "ERROR reading height", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if( !(ins >> m_windowConfig.FL))
+
+    if (!(ins >> m_windowConfig.FL))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading frame limit");
+        printErrorMessage("ERROR reading frame limit", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if( !(ins >> m_windowConfig.FS))
+
+    if (!(ins >> m_windowConfig.FS))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading full screen mode");
+        printErrorMessage("ERROR reading full screen mode", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     return true;
 }
 
-bool Game::loadFontConfig(std::istream& ins)
+bool Game::loadFontConfig(std::istream &ins)
 {
-    if(!(ins >> m_fontConfig.F))
+    if (!(ins >> m_fontConfig.F))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading font file");
+        printErrorMessage("ERROR reading font file", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_fontConfig.S))
+
+    if (!(ins >> m_fontConfig.S))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading font size");
+        printErrorMessage("ERROR reading font size", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_fontConfig.R))
+
+    if (!(ins >> m_fontConfig.R))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading font red");
+        printErrorMessage("ERROR reading font red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_fontConfig.G))
+
+    if (!(ins >> m_fontConfig.G))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading font green");
+        printErrorMessage("ERROR reading font green", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_fontConfig.B))
+
+    if (!(ins >> m_fontConfig.B))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading font blue");
+        printErrorMessage("ERROR reading font blue", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
 
     return true;
 }
 
-bool Game::loadPlayerConfig(std::istream& ins)
+bool Game::loadPlayerConfig(std::istream &ins)
 {
-    if(!(ins >> m_playerConfig.SR))
+    if (!(ins >> m_playerConfig.SR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading shape radius");
+        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.CR))
-    {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading collision radius");
-        return false;
-    }   
 
-    if(!(ins >> m_playerConfig.S))
+    if (!(ins >> m_playerConfig.CR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading speed");
+        printErrorMessage("ERROR reading collision radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
-    } 
+    }
 
-    if(!(ins >> m_playerConfig.FR))
+    if (!(ins >> m_playerConfig.S))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill red");
-        return false;
-    }                                           // fill color
-    if(!(ins >> m_playerConfig.FG)) 
-    {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill green");
+        printErrorMessage("ERROR reading speed", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.FB))
+
+    if (!(ins >> m_playerConfig.FR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill blue");
+        printErrorMessage("ERROR reading fill red", __FILE__, __FUNCTION__, __LINE__ );
+        return false;
+    } // fill color
+    if (!(ins >> m_playerConfig.FG))
+    {
+        printErrorMessage("ERROR reading fill green", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.OR))
+
+    if (!(ins >> m_playerConfig.FB))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline red");
+        printErrorMessage("ERROR reading fill blue", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.OG))
+
+    if (!(ins >> m_playerConfig.OR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline green");
+        printErrorMessage("ERROR reading outline red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if( !(ins >> m_playerConfig.OB))
+
+    if (!(ins >> m_playerConfig.OG))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline blue");
+        printErrorMessage("ERROR reading outline green", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.OT))
+
+    if (!(ins >> m_playerConfig.OB))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline thickness");
+        printErrorMessage("ERROR reading outline blue", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_playerConfig.V))
+
+    if (!(ins >> m_playerConfig.OT))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading vertices");
+        printErrorMessage("ERROR reading outline thickness", __FILE__, __FUNCTION__, __LINE__ );
         return false;
-    } 
-                           
+    }
+
+    if (!(ins >> m_playerConfig.V))
+    {
+        printErrorMessage("ERROR reading vertices", __FILE__, __FUNCTION__, __LINE__);
+        return false;
+    }
+
     return true;
 }
 
-bool Game::loadEnemyConfig(std::istream& ins)
+bool Game::loadEnemyConfig(std::istream &ins)
 {
-    if(!(ins >> m_enemyConfig.SR))
+    if (!(ins >> m_enemyConfig.SR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading shape radius");
+        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-   
-    if(!(ins >> m_enemyConfig.CR))
-    {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading collision radius");
-        return false;
-    }   
 
-        if(!(ins >> m_enemyConfig.SMIN))
+    if (!(ins >> m_enemyConfig.CR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading speed min");
+        printErrorMessage("ERROR reading collision radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.SMAX))
+
+    if (!(ins >> m_enemyConfig.SMIN))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading speed max");
+        printErrorMessage("ERROR reading speed min", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.OR))
+
+    if (!(ins >> m_enemyConfig.SMAX))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline red");
+        printErrorMessage("ERROR reading speed max", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.OG))
+
+    if (!(ins >> m_enemyConfig.OR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline green");
+        printErrorMessage("ERROR reading outline red", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.OB))
+
+    if (!(ins >> m_enemyConfig.OG))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline blue");
+        printErrorMessage("ERROR reading outline green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.OT))
+
+    if (!(ins >> m_enemyConfig.OB))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline thickness");
+        printErrorMessage("ERROR reading outline blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.VMIN))
+
+    if (!(ins >> m_enemyConfig.OT))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading vertices min");
+        printErrorMessage("ERROR reading outline thickness", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.VMAX))
+
+    if (!(ins >> m_enemyConfig.VMIN))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading vertices max");
+        printErrorMessage("ERROR reading vertices min", __FILE__, __FUNCTION__, __LINE__) ;
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.L))
+
+    if (!(ins >> m_enemyConfig.VMAX))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading lifespan");
+        printErrorMessage("ERROR reading vertices max", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-    
-    if(!(ins >> m_enemyConfig.SI))
+
+    if (!(ins >> m_enemyConfig.L))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading spawn interval");
+        printErrorMessage("ERROR reading lifespan", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-        
+
+    if (!(ins >> m_enemyConfig.SI))
+    {
+        printErrorMessage( "ERROR reading spawn interval", __FILE__, __FUNCTION__, __LINE__);
+        return false;
+    }
+
     return true;
 }
 
-void Game::printErrorMessage(std::string file, std::string function, 
-            int line, std::string msg) const
+void Game::printErrorMessage(std::string msg, std::string file, std::string function,
+                             int line) const
 {
-    std::cerr << "ERROR: " << ", " << file
-            << ", " << function 
-            << ", line: " << line 
-            << ", " << msg << "\n";
+    std::cerr << msg
+              << ", " << file
+              << ", " << function
+              << ", line: " << line
+              << "\n";
 }
 
-bool Game::loadBulletConfig(std::istream& ins)
+bool Game::loadBulletConfig(std::istream &ins)
 {
     // Bullet SR CR S FR FG OR OG OB OT V L
 
-    if(!(ins >> m_bulletConfig.SR)){
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading shape radius");
-        return false;
-    }
-  
-    if(!(ins >> m_bulletConfig.CR))
+    if (!(ins >> m_bulletConfig.SR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading collision radius");
+        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.S))
+    if (!(ins >> m_bulletConfig.CR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading speed");
+        printErrorMessage("ERROR reading collision radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.FR))
+    if (!(ins >> m_bulletConfig.S))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill red");
+        printErrorMessage("ERROR reading speed", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.FG))
+    if (!(ins >> m_bulletConfig.FR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill green");
+        printErrorMessage("ERROR reading fill red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.FB))
+    if (!(ins >> m_bulletConfig.FG))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading fill blue");
+        printErrorMessage("ERROR reading fill green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.OR))
+    if (!(ins >> m_bulletConfig.FB))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline red");
+        printErrorMessage("ERROR reading fill blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.OG))
+    if (!(ins >> m_bulletConfig.OR))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline green");
+        printErrorMessage("ERROR reading outline red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.OB))
+    if (!(ins >> m_bulletConfig.OG))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline blue");
+        printErrorMessage("ERROR reading outline green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.OT))
+    if (!(ins >> m_bulletConfig.OB))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading outline thickness");
+        printErrorMessage("ERROR reading outline blue",__FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.V))
+    if (!(ins >> m_bulletConfig.OT))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading vertices");
+        printErrorMessage("ERROR reading outline thickness",__FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
-    if(!(ins >> m_bulletConfig.L))
+    if (!(ins >> m_bulletConfig.V))
     {
-        printErrorMessage(__FILE__, __FUNCTION__, __LINE__, " reading lifespan");
+        printErrorMessage("ERROR reading vertices",__FILE__, __FUNCTION__, __LINE__);
         return false;
     }
-    
+
+    if (!(ins >> m_bulletConfig.L))
+    {
+        printErrorMessage("ERROR reading lifespan",__FILE__, __FUNCTION__, __LINE__);
+        return false;
+    }
+
     return true;
 }
 
-
-void Game::init(const std::string& path)
+void Game::init(const std::string &path)
 {
     loadConfigFromFile(path);
 
-    std::cerr << "\n\n" << __FUNCTION__ << ", line: " << __LINE__ 
-        << "  *** TODO - error check (test) rest of init function ***\n\n";
-
-    // set up default window parameters
-    std::cerr << __func__ << ", WARNING: ignoring full screen mode option\n";
+    // window parameters - full screen mode not working in a dual monitor setup
+    // disabling for development and testing
+    printErrorMessage("INFO:  ignoring full screen mode option",__FILE__, __FUNCTION__, __LINE__);
     m_window.create(sf::VideoMode(m_windowConfig.W, m_windowConfig.H), "Geometry Wars");
     m_window.setFramerateLimit(m_windowConfig.FL);
 
-    // set up font object
-    if (!m_font.loadFromFile(m_fontConfig.F))
-    {
-        std::cerr << "ERROR: failed to load font from file: " << m_fontConfig.F << "\n";
-        m_gameState = GameState::INIT_FAILURE;
-        return;
-    }
-
-    // set up text object
+    // text object
     m_text.setFont(m_font);
     m_text.setCharacterSize(m_fontConfig.S);
     m_text.setFillColor(sf::Color(m_fontConfig.R, m_fontConfig.G, m_fontConfig.B));
@@ -610,6 +598,11 @@ void Game::init(const std::string& path)
     spawnPlayer();
 
     m_gameState = GameState::INIT_SUCCESS;
+}
+
+void Game::end(void)
+{
+    m_window.close();
 }
 
 void Game::run()
@@ -620,7 +613,9 @@ void Game::run()
 
     if (m_gameState != GameState::INIT_SUCCESS)
     {
-        std::cerr << "Program terminating due to initialization error\n";
+        printErrorMessage("ERROR: Program terminating due to initialization error",
+                            __FUNCTION__, __FILE__, __LINE__);
+        this->end();
         return;
     }
 
@@ -649,11 +644,11 @@ void Game::setPaused(bool paused)
     // TODO
 }
 
-
 void Game::spawnPlayer()
 {
     // We create every entity by calling EntityManager.addEntity(tag)
-    // This returns a std::shared_ptr<Entity> and we use 'auto' to let C++ do the typing
+    // This returns a std::shared_ptr<Entity> and we use 'auto' to let
+    // C++ determine data type
     auto entity = m_entityManager.addEntity("player");
 
     // Player must spawn in the center of the screen at the beginning of the
@@ -669,8 +664,8 @@ void Game::spawnPlayer()
     float velY = m_playerConfig.S * sin(DEFAULT_ROTATION_ANGLE);
 
     entity->cTransform = std::make_shared<CTransform>(Vec2(middleX, middleY),
-        Vec2(velX, velY),
-        DEFAULT_ROTATION_ANGLE);
+                                                      Vec2(velX, velY),
+                                                      DEFAULT_ROTATION_ANGLE);
 
     entity->cShape = std::make_shared<CShape>(
         m_playerConfig.SR,
@@ -689,7 +684,7 @@ void Game::spawnPlayer()
     // construct these components with make_shared.
 
     // since we want this entity to be our player, set our Game's player variable
-    // to be this Entity. This goes slightly against the EntityManager paradigm, 
+    // to be this Entity. This goes slightly against the EntityManager paradigm,
     // but we use the player so much it's worth it
     m_player = entity;
 }
@@ -712,7 +707,7 @@ void Game::spawnEnemy()
        x = random(0 + radius, width - radius)
        y = random(0 + radius, height - radius)
     */
-    
+
     float posX = static_cast<float>(rand() % (m_window.getSize().x - m_enemyConfig.SR)) + m_enemyConfig.SR;
     float posY = static_cast<float>(rand() % (m_window.getSize().y - m_enemyConfig.SR)) + m_enemyConfig.SR;
 
@@ -735,8 +730,8 @@ void Game::spawnEnemy()
     float velY = speed * sin(DEFAULT_ROTATION_ANGLE);
 
     entity->cTransform = std::make_shared<CTransform>(Vec2(posX, posY),
-        Vec2(velX, velY),
-        DEFAULT_ROTATION_ANGLE);
+                                                      Vec2(velX, velY),
+                                                      DEFAULT_ROTATION_ANGLE);
 
     entity->cShape = std::make_shared<CShape>(
         m_enemyConfig.SR,
@@ -800,74 +795,74 @@ void Game::sUserInput()
     //    you should not implement teh player's movement logic here
     //    the movement system will read the variables you set in this function
 
-    //sf::Event event;
+    // sf::Event event;
 }
 
-std::ostream& Game::printWindowConfig(std::ostream& os) const
+std::ostream &Game::printWindowConfig(std::ostream &os) const
 {
     os << "width:              " << m_windowConfig.W << "\n"
-        << "height:             " << m_windowConfig.H << "\n"
-        << "frame limit:        " << m_windowConfig.FL << "\n"
-        << "full screen mode:   " << m_windowConfig.FS << "\n";
+       << "height:             " << m_windowConfig.H << "\n"
+       << "frame limit:        " << m_windowConfig.FL << "\n"
+       << "full screen mode:   " << m_windowConfig.FS << "\n";
     return os;
 }
 
-std::ostream& Game::printFontConfig(std::ostream& os) const
+std::ostream &Game::printFontConfig(std::ostream &os) const
 {
     os << "font file:          " << m_fontConfig.F << "\n"
-        << "font size:          " << m_fontConfig.S << "\n"
-        << "font color red:     " << m_fontConfig.R << "\n"
-        << "font color green:   " << m_fontConfig.G << "\n"
-        << "font color blue:    " << m_fontConfig.B << "\n";
+       << "font size:          " << m_fontConfig.S << "\n"
+       << "font color red:     " << m_fontConfig.R << "\n"
+       << "font color green:   " << m_fontConfig.G << "\n"
+       << "font color blue:    " << m_fontConfig.B << "\n";
     return os;
 }
 
-std::ostream& Game::printPlayerConfig(std::ostream& os) const
+std::ostream &Game::printPlayerConfig(std::ostream &os) const
 {
     os << "shape radius:             " << m_playerConfig.SR << "\n"
-        << "collision radius:         " << m_playerConfig.CR << "\n"
-        << "fill color red:           " << m_playerConfig.FR << "\n"
-        << "fill color green:         " << m_playerConfig.FG << "\n"
-        << "fill color blue:          " << m_playerConfig.FB << "\n"
-        << "outline color red:        " << m_playerConfig.OR << "\n"
-        << "outline color green:      " << m_playerConfig.OG << "\n"
-        << "outline color blue:       " << m_playerConfig.OB << "\n"
-        << "outline color thickness:  " << m_playerConfig.OT << "\n"
-        << "vertices:                 " << m_playerConfig.V << "\n"
-        << "speed:                    " << m_playerConfig.S << "\n";
+       << "collision radius:         " << m_playerConfig.CR << "\n"
+       << "fill color red:           " << m_playerConfig.FR << "\n"
+       << "fill color green:         " << m_playerConfig.FG << "\n"
+       << "fill color blue:          " << m_playerConfig.FB << "\n"
+       << "outline color red:        " << m_playerConfig.OR << "\n"
+       << "outline color green:      " << m_playerConfig.OG << "\n"
+       << "outline color blue:       " << m_playerConfig.OB << "\n"
+       << "outline color thickness:  " << m_playerConfig.OT << "\n"
+       << "vertices:                 " << m_playerConfig.V << "\n"
+       << "speed:                    " << m_playerConfig.S << "\n";
     return os;
 }
 
-std::ostream& Game::printEnemyConfig(std::ostream& os) const
+std::ostream &Game::printEnemyConfig(std::ostream &os) const
 {
-    os  << "shape radius:             " << m_enemyConfig.SR << "\n"
-        << "collision radius:         " << m_enemyConfig.CR << "\n"
-        << "outline color red:        " << m_enemyConfig.OR << "\n"
-        << "outline color green:      " << m_enemyConfig.OG << "\n"
-        << "outline color blue:       " << m_enemyConfig.OB << "\n"
-        << "outline color thickness:  " << m_enemyConfig.OT << "\n"
-        << "minimum vertices:         " << m_enemyConfig.VMIN << "\n"
-        << "maximum vertices:         " << m_enemyConfig.VMAX << "\n"
-        << "small lifespan:           " << m_enemyConfig.L << "\n"
-        << "spawn interval:           " << m_enemyConfig.SI << "\n"
-        << "minimum speed:            " << m_enemyConfig.SMIN << "\n"
-        << "maximum speed:            " << m_enemyConfig.SMAX << "\n";
+    os << "shape radius:             " << m_enemyConfig.SR << "\n"
+       << "collision radius:         " << m_enemyConfig.CR << "\n"
+       << "outline color red:        " << m_enemyConfig.OR << "\n"
+       << "outline color green:      " << m_enemyConfig.OG << "\n"
+       << "outline color blue:       " << m_enemyConfig.OB << "\n"
+       << "outline color thickness:  " << m_enemyConfig.OT << "\n"
+       << "minimum vertices:         " << m_enemyConfig.VMIN << "\n"
+       << "maximum vertices:         " << m_enemyConfig.VMAX << "\n"
+       << "small lifespan:           " << m_enemyConfig.L << "\n"
+       << "spawn interval:           " << m_enemyConfig.SI << "\n"
+       << "minimum speed:            " << m_enemyConfig.SMIN << "\n"
+       << "maximum speed:            " << m_enemyConfig.SMAX << "\n";
     return os;
 }
 
-std::ostream& Game::printBulletConfig(std::ostream& os) const
+std::ostream &Game::printBulletConfig(std::ostream &os) const
 {
-    os  << "shape radius:             " << m_bulletConfig.SR << "\n"
-        << "collision radius:         " << m_bulletConfig.CR << "\n"
-        << "fill color red:           " << m_bulletConfig.FR << "\n"
-        << "fill color green:         " << m_bulletConfig.FG << "\n"
-        << "fill color blue:          " << m_bulletConfig.FB << "\n"
-        << "outline color red:        " << m_bulletConfig.OR << "\n"
-        << "outline color green:      " << m_bulletConfig.OG << "\n"
-        << "outline color blue:       " << m_bulletConfig.OB << "\n"
-        << "outline color thickness:  " << m_bulletConfig.OT << "\n"
-        << "vertices:                 " << m_bulletConfig.V << "\n"
-        << "lifespan:                 " << m_bulletConfig.L << "\n"
-        << "speed:                    " << m_bulletConfig.S << "\n";
+    os << "shape radius:             " << m_bulletConfig.SR << "\n"
+       << "collision radius:         " << m_bulletConfig.CR << "\n"
+       << "fill color red:           " << m_bulletConfig.FR << "\n"
+       << "fill color green:         " << m_bulletConfig.FG << "\n"
+       << "fill color blue:          " << m_bulletConfig.FB << "\n"
+       << "outline color red:        " << m_bulletConfig.OR << "\n"
+       << "outline color green:      " << m_bulletConfig.OG << "\n"
+       << "outline color blue:       " << m_bulletConfig.OB << "\n"
+       << "outline color thickness:  " << m_bulletConfig.OT << "\n"
+       << "vertices:                 " << m_bulletConfig.V << "\n"
+       << "lifespan:                 " << m_bulletConfig.L << "\n"
+       << "speed:                    " << m_bulletConfig.S << "\n";
     return os;
 }

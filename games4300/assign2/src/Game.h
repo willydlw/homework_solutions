@@ -174,10 +174,10 @@ class Game
     std::ostream& printEnemyConfig(std::ostream& os) const;
     std::ostream& printBulletConfig(std::ostream& os) const;
 
-    void printErrorMessage(std::string file, std::string function, 
-                    int line, std::string msg) const;
+    void printErrorMessage(std::string msg, std::string file, std::string function, 
+                    int line) const;
 
-
+    void end(void);
 
 public:
 

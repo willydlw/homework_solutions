@@ -2,7 +2,7 @@ CXX := g++
 CXXFLAGS := -c -Wall -Wextra -Wpedantic -Warray-bounds
 LIBS= -lsfml-graphics -lsfml-window -lsfml-system
 
-all: testEntity testEntityManager testGameConfig
+all: testEntity testEntityManager testGameConfig playGame
 
 Vec2.o: Vec2.cpp Vec2.h
 	@echo "** Buiding Vec2.o"
@@ -19,6 +19,10 @@ EntityManager.o: EntityManager.cpp EntityManager.h Entity.h
 Game.o: Game.cpp Game.h EntityManager.h Vec2.h
 	@echo "** Building Game.o"
 	$(CXX) $(CXXFLAGS) $< -o $@
+
+main.o: main.cpp 
+	@echo "** Building main.o"
+	$(CXX) $(CXXFLAGS) $< -o $@ 
 
 testUtility.o: testUtility.cpp testUtility.h 
 	@echo "** Building testUtility.o"
@@ -70,13 +74,18 @@ testGameConfig: testGameConfig.o GameTest.o Game.o EntityManager.o Entity.o Vec2
 	$(CXX) -o testGameConfig testGameConfig.o GameTest.o Game.o EntityManager.o Entity.o Vec2.o $(LIBS)
 
 
+playGame: main.o Game.o EntityManager.o Entity.o Vec2.o 
+	@echo "** Building playGame"
+	$(CXX) -o playGame main.o Game.o EntityManager.o Entity.o Vec2.o $(LIBS)
+
+
 # inform make about targets that are not files 
 .PHONY: all clean #install uninstall 
 
 
 clean:
 	@echo "** Removing object files and executable ..."
-	rm -f testEntity testEntityManager testGameConfig *.o 
+	rm -f playGame testEntity testEntityManager testGameConfig *.o 
 
 
 
