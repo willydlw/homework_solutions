@@ -111,7 +111,7 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
     switch (category)
     {
     case ConfigCategory::BULLET:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadBulletConfig\n";
+        std::cerr << __FILE__ << ", " << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadBulletConfig\n";
         if (loadBulletConfig(ins))
         {
             configStatus |= (1 << (int)ConfigCategory::BULLET);
@@ -122,7 +122,7 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
         }
         break;
     case ConfigCategory::ENEMY:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadEnemyConfig\n";
+        std::cerr << __FILE__ << ", " << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadEnemyConfig\n";
         if (loadEnemyConfig(ins))
         {
             configStatus |= (1 << (int)ConfigCategory::ENEMY);
@@ -133,7 +133,7 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
         }
         break;
     case ConfigCategory::FONT:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadFontConfig\n";
+        std::cerr << __FILE__ << ", " << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadFontConfig\n";
         if (loadFontConfig(ins))
         {
             configStatus |= (1 << (int)ConfigCategory::FONT);
@@ -144,7 +144,7 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
         }
         break;
     case ConfigCategory::PLAYER:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadPlayerConfig\n";
+        std::cerr << __FILE__ << ", " << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadPlayerConfig\n";
         if (loadPlayerConfig(ins))
         {
             configStatus |= (1 << (int)ConfigCategory::PLAYER);
@@ -155,7 +155,7 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
         }
         break;
     case ConfigCategory::WINDOW:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadWinowConfig\n";
+        std::cerr << __FILE__ << ", " << __FUNCTION__ << ", line: " << __LINE__ << ", calling loadWindowConfig\n";
         if (loadWindowConfig(ins))
         {
             configStatus |= (1 << (int)ConfigCategory::WINDOW);
@@ -166,11 +166,12 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
         }
         break;
     case ConfigCategory::ENDFILE:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__ << ", case ENDFILE\n";
+        std::cerr << __FILE__ << ", "<< __FUNCTION__ << ", line: " << __LINE__ << ", case ENDFILE\n";
         success = true;
         break;
     case ConfigCategory::UNKNOWN:
-        std::cerr << __FUNCTION__ << ", line: " << __LINE__
+        std::cerr << __FILE__ << ", " 
+                  << __FUNCTION__ << ", line: " << __LINE__
                   << ", Error, unhandled Category, "
                   << "\n";
         break;
@@ -258,26 +259,34 @@ void Game::loadConfigFromFile(const std::string &path)
 
 void Game::loadDefaultConfig(Game::ConfigState state)
 {
+    printErrorMessage("DEBUG status, entering function\n", __FUNCTION__, __FILE__, __LINE__);
     // Note: There are intentionally no break statements. Once there
     // is a failure to load the configuration data, we need to
     // configure all states below the case with the defaults.
     switch (state)
     {
     case ConfigState::WINDOW_DEFAULT:
+        printErrorMessage("DEBUG status, case WINDOW_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_windowConfig = Game::WINDOW_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::FONT_DEFAULT:
+    printErrorMessage("DEBUG status, case FONT_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_fontConfig = Game::FONT_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::PLAYER_DEFAULT:
+    printErrorMessage("DEBUG status, case PLAYER_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_playerConfig = Game::PLAYER_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::ENEMY_DEFAULT:
+    printErrorMessage("DEBUG status, case ENEMY_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_enemyConfig = Game::ENEMY_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::BULLET_DEFAULT:
+    printErrorMessage("DEBUG status, case BULLET_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_bulletConfig = Game::BULLET_CONFIG_DEFAULT;
     };
+
+    printErrorMessage("DEBUG status, leaving function\n", __FUNCTION__, __FILE__, __LINE__);
 }
 
 bool Game::loadWindowConfig(std::istream &ins)
@@ -322,7 +331,7 @@ bool Game::loadFontConfig(std::istream &ins)
         printErrorMessage("ERROR reading font size", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-
+ 
     if (!(ins >> m_fontConfig.R))
     {
         printErrorMessage("ERROR reading font red", __FILE__, __FUNCTION__, __LINE__);
@@ -334,7 +343,7 @@ bool Game::loadFontConfig(std::istream &ins)
         printErrorMessage("ERROR reading font green", __FILE__, __FUNCTION__, __LINE__ );
         return false;
     }
-
+ 
     if (!(ins >> m_fontConfig.B))
     {
         printErrorMessage("ERROR reading font blue", __FILE__, __FUNCTION__, __LINE__ );

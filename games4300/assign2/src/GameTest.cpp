@@ -4,143 +4,178 @@
 #include <fstream>
 #include <cassert>
 
-void GameTest::testLoadBulletConfig(const char* filename)
+void GameTest::testLoadBulletConfig(const char* filename, BulletConfig b)
 {
 	Game g;
+	g.loadConfigFromFile(filename);
+	assert(bool(equalto(g.m_bulletConfig, b)) == true);
+}
+
+void GameTest::testLoadFontConfig(const char* filename, FontConfig f)
+{
+	Game g;
+	g.loadConfigFromFile(filename);
+	assert(bool(equalto(g.m_fontConfig, f)) == true);
+}
+
+void GameTest::testLoadPlayerConfig(const char* filename, PlayerConfig p)
+{
+	Game g;
+	g.loadConfigFromFile(filename);
+	assert(bool(equalto(g.m_playerConfig, p)) == true);
+}
+
+void GameTest::testLoadEnemyConfig(const char* filename, EnemyConfig e)
+{
+	Game g;
+	g.loadConfigFromFile(filename);
+
+	assert(bool(equalto(g.m_enemyConfig, e)) == true);
+}
+
+void GameTest::testLoadWindowConfig(const char* filename, WindowConfig w)
+{
+	Game g;	
+	g.loadConfigFromFile(filename);
+	assert(bool(equalto(g.m_windowConfig, w)) == true);
+}
+
+void GameTest::testLoadConfig(const char* filename, BulletConfig b, EnemyConfig e,
+							FontConfig f, PlayerConfig p, WindowConfig w)
+{
+	Game g;	
+	g.loadConfigFromFile(filename);
+
+	assert(bool(equalto(g.m_bulletConfig, b)) == true);
+	assert(bool(equalto(g.m_enemyConfig, e)) == true);
+	assert(bool(equalto(g.m_fontConfig, f)) == true);
+	assert(bool(equalto(g.m_playerConfig, p)) == true);
+	assert(bool(equalto(g.m_windowConfig, w)) == true);
+}
+
+bool GameTest::equalto (WindowConfig a, WindowConfig e)
+{
+	return a.W == e.W &&
+		a.H ==  e.H &&
+		a.FL == e.FL &&
+		a.FS == e.FS;
+}
+
+bool GameTest::equalto(FontConfig a, FontConfig e)
+{
+	return a.F == e.F &&
+		a.S == e.S &&
+		a.R == e.R &&
+		a.G == e.G &&
+		a.B == e.B;
+}
+
+bool GameTest::equalto(BulletConfig a, BulletConfig e)
+{
+	assert( a.SR == e.SR);
+	assert(a.CR == e.CR);
+	assert(a.S == e.S);
+	assert(a.FR == e.FR);
+	assert(a.FG == e.FG);
+	assert(a.FB == e.FB);
+	assert(a.OR == e.OR);
+	assert(a.OG == e.OG);
+	assert(a.OB == e.OB);
+	assert(a.OT == e.OT);
+	assert(a.V == e.V);
+	assert(a.L == e.L);
+
+	return a.SR == e.SR &&
+		a.CR == e.CR &&
+		a.S == e.S &&
+		a.FR == e.FR &&
+		a.FG == e.FG &&
+		a.FB == e.FB &&
+		a.OR == e.OR &&
+		a.OG == e.OG &&
+		a.OB == e.OB &&
+		a.OT == e.OT &&
+		a.V == e.V &&
+		a.L == e.L;
+
+}
+
+
+bool GameTest::equalto(PlayerConfig a, PlayerConfig e)
+{
+	assert(a.CR == e.CR);
+	assert(a.SR == e.SR);
+	assert(a.FR == e.FR);
+	assert(a.FG == e.FG);
+	assert(a.FB == e.FB);
+	assert(a.OR == e.OR);
+	assert(a.OG == e.OG);
+	assert(a.OB == e.OB);
+	assert(a.OT == e.OT);
+	assert(a.S == e.S);
+	assert(a.V == e.V);
+
+	return
+		a.SR == e.SR &&
+		a.CR == e.CR &&
+		a.FR == e.FR &&
+		a.FG == e.FG &&
+		a.FB == e.FB &&
+		a.OR == e.OR &&
+		a.OG == e.OG &&
+		a.OB == e.OB &&
+		a.OT == e.OT &&
+		a.S == e.S &&
+		a.V == e.V;
+
+}
+
+bool GameTest::equalto(EnemyConfig a, EnemyConfig e)
+{
+	assert(a.CR == e.CR);
+	assert(a.SR == e.SR);
 	
-	g.loadConfigFromFile(filename);
+	assert(a.OR == e.OR);
+	assert(a.OG == e.OG);
+	assert(a.OB == e.OB);
+	assert(a.OT == e.OT);
+	assert(a.SMIN == e.SMIN);
+	assert(a.SMAX == e.SMAX);
+	assert(a.VMIN == e.VMIN);
+	assert(a.VMAX == e.VMAX);
+	assert(a.L == e.L);
+	assert(a.SI == e.SI);
 
-	assert(g.m_bulletConfig.SR == 10 &&
-		g.m_bulletConfig.CR == 10 &&
-		g.m_bulletConfig.S == 20 &&
-		g.m_bulletConfig.FR == 255 &&
-		g.m_bulletConfig.FG == 255 &&
-		g.m_bulletConfig.FB == 255 &&
-		g.m_bulletConfig.OR == 255 &&
-		g.m_bulletConfig.OG == 255 &&
-		g.m_bulletConfig.OB == 255 &&
-		g.m_bulletConfig.OT == 2 &&
-		g.m_bulletConfig.V == 20 &&
-		g.m_bulletConfig.L == 90);
+	return a.SR == e.SR &&
+		a.CR == e.CR &&
+		a.SMIN == e.SMIN &&
+		a.SMAX == e.SMAX &&
+		a.OR == e.OR &&
+		a.OG == e.OG &&
+		a.OB == e.OB &&
+		a.OT == e.OT &&
+		a.VMIN == e.VMIN &&
+		a.VMAX == e.VMAX &&
+		a.L == e.L &&
+		a.SI == e.SI;
 
 }
 
-void GameTest::testLoadFontConfig(const char* filename)
+void GameTest::testDefaultConfig(const char* filename)
 {
-	Game g;
-	g.loadConfigFromFile(filename);
+	WindowConfig w = Game::WINDOW_CONFIG_DEFAULT;
+	FontConfig f = Game::FONT_CONFIG_DEFAULT;
+	BulletConfig b = Game::BULLET_CONFIG_DEFAULT;
+	EnemyConfig e = Game::ENEMY_CONFIG_DEFAULT;	
+	PlayerConfig p = Game::PLAYER_CONFIG_DEFAULT;
 
-	assert(g.m_fontConfig.F == "fonts/tech.ttf" &&
-		g.m_fontConfig.S == 24 &&
-		g.m_fontConfig.R == 255 &&
-		g.m_fontConfig.G == 255 &&
-		g.m_fontConfig.B == 255);
-}
-
-
-void GameTest::testLoadPlayerConfig(const char* filename)
-{
-	Game g;
-	g.loadConfigFromFile(filename);
-
-	assert(g.m_playerConfig.SR == 32 &&
-		g.m_playerConfig.CR == 32 &&
-		g.m_playerConfig.FR == 250 &&
-		g.m_playerConfig.FG == 200 &&
-		g.m_playerConfig.FB == 150 &&
-		g.m_playerConfig.OR == 255 &&
-		g.m_playerConfig.OG == 255 &&
-		g.m_playerConfig.OB == 255 &&
-		g.m_playerConfig.OT == 2 &&
-		g.m_playerConfig.S == 4 &&
-		g.m_playerConfig.V == 8);
-}
-
-void GameTest::testLoadEnemyConfig(const char* filename)
-{
-	Game g;
-	g.loadConfigFromFile(filename);
-
-	assert(g.m_enemyConfig.SR == 32 &&
-		g.m_enemyConfig.CR == 32 &&
-		g.m_enemyConfig.SMIN == 3 &&
-		g.m_enemyConfig.SMAX == 8 &&
-		g.m_enemyConfig.OR == 255 &&
-		g.m_enemyConfig.OG == 255 &&
-		g.m_enemyConfig.OB == 255 &&
-		g.m_enemyConfig.OT == 2 &&
-		g.m_enemyConfig.VMIN == 3 &&
-		g.m_enemyConfig.VMAX == 8 &&
-		g.m_enemyConfig.L == 90 &&
-		g.m_enemyConfig.SI == 60);
-}
-
-
-
-void GameTest::testLoadWindowConfig(const char* filename)
-{
 	Game g;	
 	g.loadConfigFromFile(filename);
 
-	assert(g.m_windowConfig.W == 1280 &&
-		g.m_windowConfig.H == 720 &&
-		g.m_windowConfig.FL == 60 &&
-		g.m_windowConfig.FS == 0);
-}
-
-
-void GameTest::testLoadConfig(const char* filename)
-{
-	Game g;	
-	g.loadConfigFromFile(filename);
-
-	assert(g.m_windowConfig.W == 1280 &&
-		g.m_windowConfig.H == 720 &&
-		g.m_windowConfig.FL == 60 &&
-		g.m_windowConfig.FS == 0);
-
-	assert(g.m_fontConfig.F == "fonts/tech.ttf" &&
-		g.m_fontConfig.S == 24 &&
-		g.m_fontConfig.R == 255 &&
-		g.m_fontConfig.G == 255 &&
-		g.m_fontConfig.B == 255);
-
-	assert(g.m_bulletConfig.SR == 10 &&
-		g.m_bulletConfig.CR == 10 &&
-		g.m_bulletConfig.S == 20 &&
-		g.m_bulletConfig.FR == 255 &&
-		g.m_bulletConfig.FG == 255 &&
-		g.m_bulletConfig.FB == 255 &&
-		g.m_bulletConfig.OR == 255 &&
-		g.m_bulletConfig.OG == 255 &&
-		g.m_bulletConfig.OB == 255 &&
-		g.m_bulletConfig.OT == 2 &&
-		g.m_bulletConfig.V == 20 &&
-		g.m_bulletConfig.L == 90);
-
-	assert(g.m_enemyConfig.SR == 32 &&
-		g.m_enemyConfig.CR == 32 &&
-		g.m_enemyConfig.SMIN == 3 &&
-		g.m_enemyConfig.SMAX == 8 &&
-		g.m_enemyConfig.OR == 255 &&
-		g.m_enemyConfig.OG == 255 &&
-		g.m_enemyConfig.OB == 255 &&
-		g.m_enemyConfig.OT == 2 &&
-		g.m_enemyConfig.VMIN == 3 &&
-		g.m_enemyConfig.VMAX == 8 &&
-		g.m_enemyConfig.L == 90 &&
-		g.m_enemyConfig.SI == 60);
-
-	assert(g.m_playerConfig.SR == 32 &&
-		g.m_playerConfig.CR == 32 &&
-		g.m_playerConfig.FR == 250 &&
-		g.m_playerConfig.FG == 200 &&
-		g.m_playerConfig.FB == 150 &&
-		g.m_playerConfig.OR == 255 &&
-		g.m_playerConfig.OG == 255 &&
-		g.m_playerConfig.OB == 255 &&
-		g.m_playerConfig.OT == 2 &&
-		g.m_playerConfig.S == 4 &&
-		g.m_playerConfig.V == 8);
-
+	assert(bool(equalto(g.m_windowConfig, w)) == true);
+	assert(bool(equalto(g.m_fontConfig, f)) == true);
+	assert(bool(equalto(g.m_bulletConfig, b)) == true);
+	assert(bool(equalto(g.m_playerConfig, p)) == true);
+	assert(bool(equalto(g.m_enemyConfig, e)) == true);
+	
 }

@@ -52,7 +52,7 @@ struct PlayerConfig {
     int SR, CR;           
     int FR, FG, FB;
     int OR, OG, OB; 
-    float OT;               
+    int OT;               
     int V; 
     float S;
 };
