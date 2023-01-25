@@ -13,6 +13,8 @@ public:
 	void testLoadConfig(const char* filename, BulletConfig b, EnemyConfig e,
 							FontConfig f, PlayerConfig p, WindowConfig w);
 
+	
+
 	// filename should be a non-existent configuration file
 	void testDefaultConfig(const char* filename);
 
