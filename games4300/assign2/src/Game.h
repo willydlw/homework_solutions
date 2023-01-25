@@ -149,6 +149,9 @@ class Game
     void sEnemySpawner();                     // System: Spawns enemies 
     void sCollision();                        // System: Collisions 
 
+    void sPlayerMovement();
+
+    void sRenderPlayer();
     void spawnPlayer();
     void spawnEnemy();
     void spawnSmallEnemies(std::shared_ptr<Entity> entity);
@@ -168,11 +171,15 @@ class Game
 
     void verifyCompleteConfig(int configStatus);
 
+    // Print Configuration
     std::ostream& printWindowConfig(std::ostream& os)const;
     std::ostream& printFontConfig(std::ostream& os)const;
     std::ostream& printPlayerConfig(std::ostream& os) const;
     std::ostream& printEnemyConfig(std::ostream& os) const;
     std::ostream& printBulletConfig(std::ostream& os) const;
+
+    // Print Components
+    std::ostream& printCTransform(std::ostream& os, std::shared_ptr<CTransform> ct) const;
 
     void printErrorMessage(std::string msg, std::string file, std::string function, 
                     int line) const;

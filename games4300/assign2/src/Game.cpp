@@ -7,6 +7,7 @@
 #include <utility> // make_pair
 #include <cmath>
 #include <cstdlib> // rand
+#include <string>
 
 /* ============================
    Class Constants
@@ -604,7 +605,10 @@ void Game::init(const std::string &path)
     m_text.setCharacterSize(m_fontConfig.S);
     m_text.setFillColor(sf::Color(m_fontConfig.R, m_fontConfig.G, m_fontConfig.B));
 
+    printErrorMessage("DEBUG: calling spawnPlayer()",__FILE__, __FUNCTION__, __LINE__);
     spawnPlayer();
+
+    printErrorMessage("DEBUG: returned from spawnPlayer()",__FILE__, __FUNCTION__, __LINE__);
 
     m_gameState = GameState::INIT_SUCCESS;
 }
@@ -627,21 +631,26 @@ void Game::run()
         this->end();
         return;
     }
+    else{
+        printErrorMessage("DEBUG: gameState is INIT_SUCCESS",
+                                 __FUNCTION__, __FILE__, __LINE__);
+    }
 
     while (m_running)
     {
-        /*m_entityManager.update();
+
+        // m_entityManager.update();
 
         if (!m_paused)
         {
-            sEnemySpawner();
+            //sEnemySpawner();
             sMovement();
-            sCollision();
+            //sCollision();
         }
-
+        
         sUserInput();
         sRender();
-        */
+        
         // increment the current frame
         // may need to be moved when pause implemented
         m_currentFrame++;
@@ -672,6 +681,7 @@ void Game::spawnPlayer()
     float velX = m_playerConfig.S * cos(DEFAULT_ROTATION_ANGLE);
     float velY = m_playerConfig.S * sin(DEFAULT_ROTATION_ANGLE);
 
+
     entity->cTransform = std::make_shared<CTransform>(Vec2(middleX, middleY),
                                                       Vec2(velX, velY),
                                                       DEFAULT_ROTATION_ANGLE);
@@ -696,6 +706,11 @@ void Game::spawnPlayer()
     // to be this Entity. This goes slightly against the EntityManager paradigm,
     // but we use the player so much it's worth it
     m_player = entity;
+
+    /*** DEBUGGING ****/
+    std::cerr << "\nPlayer Transform\n";
+    printCTransform(std::cout, m_player->cTransform);
+    std::cerr << "\n";
 }
 
 // spawn an enemy at a random position
@@ -777,13 +792,79 @@ void Game::sEnemySpawner()
     //    how long it has been since the last enemy spawned
 }
 
-void Game::sRender()
+void Game::sPlayerMovement()
 {
-    // TODO: change the code below to draw all the entities
-    //    sample drawing of the player Entity that we have created
+    static int messageCount = 0;
 
-    m_window.clear();
+    if(messageCount % 240 == 0)
+    {
+        printErrorMessage("TODO: incremental velocity is hard-coded", 
+                __FILE__, __FUNCTION__, __LINE__);
+    }
+    ++messageCount;
+    // TODO: implement all entity movement in this function
+    //  you should read the m_player->cInput component to determine if the player is moving
 
+    // set velocity to zero
+    m_player->cTransform->velocity = { 0, 0};
+
+    // implement player movement
+    if(m_player->cInput->up)
+    {
+        m_player->cTransform->velocity.y = -5;
+    }
+
+    if(m_player->cInput->down)
+    {
+        m_player->cTransform->velocity.y = +5;
+    }
+
+    if(m_player->cInput->left)
+    {
+        m_player->cTransform->velocity.x = -5;
+    }
+
+    if(m_player->cInput->right)
+    {
+        m_player->cTransform->velocity.x = +5;
+    }
+
+
+    // Update position 
+    m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
+    m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
+
+    float radius = m_player->cShape->circle.getRadius();
+
+    // constrain to window
+    if( (m_player->cTransform->pos.x + radius) >= m_window.getSize().x)
+    {
+        m_player->cTransform->pos.x = m_window.getSize().x - radius;
+    }
+    else if( (m_player->cTransform->pos.x - radius) <= 0)
+    {
+        m_player->cTransform->pos.x = radius;
+    }
+
+    if( (m_player->cTransform->pos.y + radius) >= m_window.getSize().y)
+    {
+        m_player->cTransform->pos.y = m_window.getSize().y - radius;
+    }
+    else if( (m_player->cTransform->pos.y - radius) <= 0)
+    {
+        m_player->cTransform->pos.y = radius;
+    }
+
+}
+
+void Game::sMovement()
+{
+    sPlayerMovement();
+}
+
+void Game::sRenderPlayer()
+{
+    static int messageCount = 0;
     // set the position of the shape based on the entity's tranform->pos
     m_player->cShape->circle.setPosition(m_player->cTransform->pos.x, m_player->cTransform->pos.y);
 
@@ -791,22 +872,91 @@ void Game::sRender()
     m_player->cTransform->angle += 1.0f;
     m_player->cShape->circle.setRotation(m_player->cTransform->angle);
 
+    if(messageCount % 240 == 0)
+    {
+        printErrorMessage("TODO: angle rotation is hard-coded",
+            __FILE__, __FUNCTION__, __LINE__);
+        std::cerr << "m_player->cTransform->angle: " << m_player->cTransform->angle << "\n";
+    }
+
+    ++messageCount;
+    
+
     // draw the entity's sf::CircleShape
     m_window.draw(m_player->cShape->circle);
+}
 
+void Game::sRender()
+{
+    // TODO: change the code below to draw all the entities
+    //    sample drawing of the player Entity that we have created
+
+    m_window.clear();
+    sRenderPlayer();
     m_window.display();
 }
 
 void Game::sUserInput()
 {
     // TODO: handle user input here
-    //    note taht you should only be setting the player's input component variables here
-    //    you should not implement teh player's movement logic here
+    //    note that you should only be setting the player's input component variables here
+    //    you should not implement the player's movement logic here
     //    the movement system will read the variables you set in this function
 
-    // sf::Event event;
+    sf::Event event;
+ 
+    while(m_window.pollEvent(event))
+    {
+        if(event.type == sf::Event::Closed)
+        {
+            m_running = false;
+        }
+
+        if(event.type == sf::Event::KeyPressed)
+        {
+            switch(event.key.code)
+            {
+                case sf::Keyboard::W:
+                    m_player->cInput->up = true;
+                    break;
+                case sf::Keyboard::A:
+                    m_player->cInput->left = true;
+                    break;
+                case sf::Keyboard::S:
+                    m_player->cInput->down = true;
+                    break;
+                case sf::Keyboard::D:
+                    m_player->cInput->right = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        if(event.type == sf::Event::KeyReleased)
+        {
+            switch(event.key.code)
+            {
+                case sf::Keyboard::W:
+                    m_player->cInput->up = false;
+                break;
+                case sf::Keyboard::A:
+                    m_player->cInput->left = false;
+                    break;
+                case sf::Keyboard::S:
+                    m_player->cInput->down = false;
+                    break;
+                case sf::Keyboard::D:
+                    m_player->cInput->right = false;
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
 }
 
+/**** Debugging Print Functions *****/
 std::ostream &Game::printWindowConfig(std::ostream &os) const
 {
     os << "width:              " << m_windowConfig.W << "\n"
@@ -873,5 +1023,17 @@ std::ostream &Game::printBulletConfig(std::ostream &os) const
        << "vertices:                 " << m_bulletConfig.V << "\n"
        << "lifespan:                 " << m_bulletConfig.L << "\n"
        << "speed:                    " << m_bulletConfig.S << "\n";
+    return os;
+}
+
+
+std::ostream& Game::printCTransform(std::ostream& os,  std::shared_ptr<CTransform> ct) const
+{
+    os  << "pos x: " << ct->pos.x   << "\n"
+        << "pos y: " << ct->pos.y   << "\n" 
+        << "vel x: " << ct->velocity.x << "\n"
+        << "vel y: " << ct->velocity.y << "\n"
+        << "angle: " << ct->angle   << "\n"
+        << "\n";
     return os;
 }
