@@ -639,11 +639,11 @@ void Game::run()
     while (m_running)
     {
 
-        // m_entityManager.update();
+        m_entityManager.update();
 
         if (!m_paused)
         {
-            //sEnemySpawner();
+            sEnemySpawner();
             sMovement();
             //sCollision();
         }
@@ -779,6 +779,35 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
     // when we create the smaller enemy, we have to read the values of the original enemy
 }
 
+// spawns a bullet from a given entity to a target location
+ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
+ {
+    // TODO: Implement the spawning of a bullet which travels toward target
+    //      - bullet speed is given as a scalar speed 
+    //      - you must set the velocity by using formula in notes 
+    auto bullet = m_entityManager.addEntity("bullet");
+
+    // give bullet its properties
+    bullet->cTransform = std::make_shared<CTransform>(mousePos, Vec2(0,0), 0);
+    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR, 
+            m_bulletConfig.V, 
+            sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB), 
+            sf::Color(m_bulletConfig.OR, m_bulletConfig.OG, m_bulletConfig.OB), 
+            m_bulletConfig.OT);
+
+    bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
+
+    bullet->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L);
+
+
+ }
+
+void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
+{
+
+}
+    
+
 void Game::sCollision()
 {
     // TODO: implement all proper collisions between entities
@@ -853,30 +882,6 @@ void Game::sMovement()
     sPlayerMovement();
 }
 
-void Game::sRenderPlayer()
-{
-    static int messageCount = 0;
-
-    // set the position of the shape based on the entity's tranform->pos
-    m_player->cShape->circle.setPosition(m_player->cTransform->pos.x, m_player->cTransform->pos.y);
-
-    // set the rotation of the shape based on the entity's transform->angle
-    m_player->cTransform->angle += 1.0f;
-    m_player->cShape->circle.setRotation(m_player->cTransform->angle);
-
-    if(messageCount % 240 == 0)
-    {
-        printErrorMessage("TODO: angle rotation is hard-coded",
-            __FILE__, __FUNCTION__, __LINE__);
-        std::cerr << "m_player->cTransform->angle: " << m_player->cTransform->angle << "\n";
-    }
-
-    ++messageCount;
-    
-
-    // draw the entity's sf::CircleShape
-    m_window.draw(m_player->cShape->circle);
-}
 
 void Game::sRender()
 {
@@ -884,7 +889,21 @@ void Game::sRender()
     //    sample drawing of the player Entity that we have created
 
     m_window.clear();
-    sRenderPlayer();
+    std::cout << "How many entities? : " << m_entityManager.getEntities().size()
+        << "\n";
+    for(auto e : m_entityManager.getEntities())
+    {
+        // set the position of the shape based on the entity's tranform->pos
+        e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
+        
+        // set the rotation of the shape based on the entity's transform->angle
+        e->cTransform->angle += 1.0f;
+        e->cShape->circle.setRotation(e->cTransform->angle);
+        
+        // draw the entity's sf::CircleShape
+        m_window.draw(e->cShape->circle);
+    }
+
     m_window.display();
 }
 
@@ -943,6 +962,28 @@ void Game::sUserInput()
                     break;
                 default:
                     break;
+            }
+        }
+
+        if(event.type == sf::Event::MouseButtonPressed)
+        {
+            if(event.mouseButton.button == sf::Mouse::Left)
+            {
+                std::cout << "Left Mouse button clicked at ("
+                    << event.mouseButton.x << ", "
+                    << event.mouseButton.y << ")\n";
+
+                // call spawnBullet here
+                spawnBullet(m_player, Vec2(event.mouseButton.x, event.mouseButton.y));
+            }
+
+            if(event.mouseButton.button == sf::Mouse::Right)
+            {
+                std::cout << "Right Mouse button clicked at ("
+                    << event.mouseButton.x << ", "
+                    << event.mouseButton.y << ")\n";
+
+                // call spawnSpecialWeapon here
             }
         }
     }

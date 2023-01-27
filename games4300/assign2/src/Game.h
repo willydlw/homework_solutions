@@ -151,7 +151,6 @@ class Game
 
     void sPlayerMovement();
 
-    void sRenderPlayer();
     void spawnPlayer();
     void spawnEnemy();
     void spawnSmallEnemies(std::shared_ptr<Entity> entity);
