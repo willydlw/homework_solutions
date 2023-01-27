@@ -794,39 +794,28 @@ void Game::sEnemySpawner()
 
 void Game::sPlayerMovement()
 {
-    static int messageCount = 0;
-
-    if(messageCount % 240 == 0)
-    {
-        printErrorMessage("TODO: incremental velocity is hard-coded", 
-                __FILE__, __FUNCTION__, __LINE__);
-    }
-    ++messageCount;
-    // TODO: implement all entity movement in this function
-    //  you should read the m_player->cInput component to determine if the player is moving
-
     // set velocity to zero
     m_player->cTransform->velocity = { 0, 0};
 
-    // implement player movement
+    // Update velocity based on user input
     if(m_player->cInput->up)
     {
-        m_player->cTransform->velocity.y = -5;
+        m_player->cTransform->velocity.y = -m_playerConfig.S;
     }
 
     if(m_player->cInput->down)
     {
-        m_player->cTransform->velocity.y = +5;
+        m_player->cTransform->velocity.y = +m_playerConfig.S;
     }
 
     if(m_player->cInput->left)
     {
-        m_player->cTransform->velocity.x = -5;
+        m_player->cTransform->velocity.x = -m_playerConfig.S;
     }
 
     if(m_player->cInput->right)
     {
-        m_player->cTransform->velocity.x = +5;
+        m_player->cTransform->velocity.x = +m_playerConfig.S;
     }
 
 
@@ -859,12 +848,15 @@ void Game::sPlayerMovement()
 
 void Game::sMovement()
 {
+    // TODO: implement all entity movement in this function
+
     sPlayerMovement();
 }
 
 void Game::sRenderPlayer()
 {
     static int messageCount = 0;
+
     // set the position of the shape based on the entity's tranform->pos
     m_player->cShape->circle.setPosition(m_player->cTransform->pos.x, m_player->cTransform->pos.y);
 
