@@ -117,6 +117,11 @@ void EntityManager::update()
    } */
 }
 
+EntityVector& EntityManager::getEntities()
+{
+   return m_entities;
+}
+
 
 size_t EntityManager::getTotalEntities()
 { 
