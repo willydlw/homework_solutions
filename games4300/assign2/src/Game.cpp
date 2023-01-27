@@ -645,7 +645,7 @@ void Game::run()
         {
             sEnemySpawner();
             sMovement();
-            //sCollision();
+            sCollision();
         }
         
         sUserInput();
@@ -753,6 +753,7 @@ void Game::spawnEnemy()
     float velX = speed * cos(DEFAULT_ROTATION_ANGLE);
     float velY = speed * sin(DEFAULT_ROTATION_ANGLE);
 
+    // change 100,100 to posX, posY
     entity->cTransform = std::make_shared<CTransform>(Vec2(posX, posY),
                                                       Vec2(velX, velY),
                                                       DEFAULT_ROTATION_ANGLE);
@@ -819,6 +820,11 @@ void Game::sEnemySpawner()
     // TODO: code which implements enemy spawing should go here
     //    (use m_currentFrame - m_lastEnemySpawnTime) to determine
     //    how long it has been since the last enemy spawned
+    if((m_currentFrame - m_lastEnemySpawnTime) >= m_enemyConfig.SI)
+    {
+        spawnEnemy();
+    }
+
 }
 
 void Game::sPlayerMovement()
@@ -889,8 +895,7 @@ void Game::sRender()
     //    sample drawing of the player Entity that we have created
 
     m_window.clear();
-    std::cout << "How many entities? : " << m_entityManager.getEntities().size()
-        << "\n";
+   
     for(auto e : m_entityManager.getEntities())
     {
         // set the position of the shape based on the entity's tranform->pos
