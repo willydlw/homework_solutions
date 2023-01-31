@@ -166,12 +166,14 @@ bool Game::processConfigCategory(std::istream &ins, ConfigCategory category, int
             success = true;
         }
         break;
+
+    // why ENDFILE state? to handle final new line extraction
+    // when reading config file
     case ConfigCategory::ENDFILE:
-        std::cerr << __FILE__ << ", "<< __FUNCTION__ << ", line: " << __LINE__ << ", case ENDFILE\n";
         success = true;
         break;
     case ConfigCategory::UNKNOWN:
-        std::cerr << __FILE__ << ", " 
+        std::cerr << __FILE__ << ", "
                   << __FUNCTION__ << ", line: " << __LINE__
                   << ", Error, unhandled Category, "
                   << "\n";
@@ -185,36 +187,36 @@ void Game::verifyCompleteConfig(int configStatus)
 {
     if (!(configStatus & (1 << (int)ConfigCategory::BULLET)))
     {
-        printErrorMessage("Warning: Using default bullet configuration", 
-                        __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("Warning: Using default bullet configuration",
+                          __FILE__, __FUNCTION__, __LINE__);
         m_bulletConfig = BULLET_CONFIG_DEFAULT;
     }
 
     if (!(configStatus & (1 << (int)ConfigCategory::FONT)))
     {
-        printErrorMessage( "Warning: Using default font configuration",
-                            __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("Warning: Using default font configuration",
+                          __FILE__, __FUNCTION__, __LINE__);
         m_fontConfig = FONT_CONFIG_DEFAULT;
     }
 
     if (!(configStatus & (1 << (int)ConfigCategory::ENEMY)))
     {
-        printErrorMessage("Warning: Using default enemy configuration", 
-                            __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("Warning: Using default enemy configuration",
+                          __FILE__, __FUNCTION__, __LINE__);
         m_enemyConfig = ENEMY_CONFIG_DEFAULT;
     }
 
     if (!(configStatus & (1 << (int)ConfigCategory::PLAYER)))
     {
         printErrorMessage("Warning: Using default player configuration",
-                            __FILE__, __FUNCTION__, __LINE__);
+                          __FILE__, __FUNCTION__, __LINE__);
         m_playerConfig = PLAYER_CONFIG_DEFAULT;
     }
 
     if (!(configStatus & (1 << (int)ConfigCategory::WINDOW)))
     {
-        printErrorMessage( "Warning: Using default window configuration", 
-                            __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("Warning: Using default window configuration",
+                          __FILE__, __FUNCTION__, __LINE__);
         m_windowConfig = WINDOW_CONFIG_DEFAULT;
     }
 }
@@ -271,19 +273,19 @@ void Game::loadDefaultConfig(Game::ConfigState state)
         m_windowConfig = Game::WINDOW_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::FONT_DEFAULT:
-    printErrorMessage("DEBUG status, case FONT_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
+        printErrorMessage("DEBUG status, case FONT_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_fontConfig = Game::FONT_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::PLAYER_DEFAULT:
-    printErrorMessage("DEBUG status, case PLAYER_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
+        printErrorMessage("DEBUG status, case PLAYER_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_playerConfig = Game::PLAYER_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::ENEMY_DEFAULT:
-    printErrorMessage("DEBUG status, case ENEMY_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
+        printErrorMessage("DEBUG status, case ENEMY_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_enemyConfig = Game::ENEMY_CONFIG_DEFAULT;
         [[fallthrough]]; // fallthrough is explicit
     case ConfigState::BULLET_DEFAULT:
-    printErrorMessage("DEBUG status, case BULLET_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
+        printErrorMessage("DEBUG status, case BULLET_DEFAULT\n", __FUNCTION__, __FILE__, __LINE__);
         m_bulletConfig = Game::BULLET_CONFIG_DEFAULT;
     };
 
@@ -300,7 +302,7 @@ bool Game::loadWindowConfig(std::istream &ins)
 
     if (!(ins >> m_windowConfig.H))
     {
-        printErrorMessage( "ERROR reading height", __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading height", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -323,16 +325,16 @@ bool Game::loadFontConfig(std::istream &ins)
 {
     if (!(ins >> m_fontConfig.F))
     {
-        printErrorMessage("ERROR reading font file", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading font file", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_fontConfig.S))
     {
-        printErrorMessage("ERROR reading font size", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading font size", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
- 
+
     if (!(ins >> m_fontConfig.R))
     {
         printErrorMessage("ERROR reading font red", __FILE__, __FUNCTION__, __LINE__);
@@ -341,13 +343,13 @@ bool Game::loadFontConfig(std::istream &ins)
 
     if (!(ins >> m_fontConfig.G))
     {
-        printErrorMessage("ERROR reading font green", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading font green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
- 
+
     if (!(ins >> m_fontConfig.B))
     {
-        printErrorMessage("ERROR reading font blue", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading font blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -358,7 +360,7 @@ bool Game::loadPlayerConfig(std::istream &ins)
 {
     if (!(ins >> m_playerConfig.SR))
     {
-        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -376,18 +378,18 @@ bool Game::loadPlayerConfig(std::istream &ins)
 
     if (!(ins >> m_playerConfig.FR))
     {
-        printErrorMessage("ERROR reading fill red", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading fill red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     } // fill color
     if (!(ins >> m_playerConfig.FG))
     {
-        printErrorMessage("ERROR reading fill green", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading fill green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_playerConfig.FB))
     {
-        printErrorMessage("ERROR reading fill blue", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading fill blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -399,19 +401,19 @@ bool Game::loadPlayerConfig(std::istream &ins)
 
     if (!(ins >> m_playerConfig.OG))
     {
-        printErrorMessage("ERROR reading outline green", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading outline green", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_playerConfig.OB))
     {
-        printErrorMessage("ERROR reading outline blue", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading outline blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_playerConfig.OT))
     {
-        printErrorMessage("ERROR reading outline thickness", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading outline thickness", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -428,7 +430,7 @@ bool Game::loadEnemyConfig(std::istream &ins)
 {
     if (!(ins >> m_enemyConfig.SR))
     {
-        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading shape radius", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -440,19 +442,19 @@ bool Game::loadEnemyConfig(std::istream &ins)
 
     if (!(ins >> m_enemyConfig.SMIN))
     {
-        printErrorMessage("ERROR reading speed min", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading speed min", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_enemyConfig.SMAX))
     {
-        printErrorMessage("ERROR reading speed max", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading speed max", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_enemyConfig.OR))
     {
-        printErrorMessage("ERROR reading outline red", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading outline red", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -476,25 +478,25 @@ bool Game::loadEnemyConfig(std::istream &ins)
 
     if (!(ins >> m_enemyConfig.VMIN))
     {
-        printErrorMessage("ERROR reading vertices min", __FILE__, __FUNCTION__, __LINE__) ;
+        printErrorMessage("ERROR reading vertices min", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_enemyConfig.VMAX))
     {
-        printErrorMessage("ERROR reading vertices max", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading vertices max", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_enemyConfig.L))
     {
-        printErrorMessage("ERROR reading lifespan", __FILE__, __FUNCTION__, __LINE__ );
+        printErrorMessage("ERROR reading lifespan", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_enemyConfig.SI))
     {
-        printErrorMessage( "ERROR reading spawn interval", __FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading spawn interval", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -565,25 +567,25 @@ bool Game::loadBulletConfig(std::istream &ins)
 
     if (!(ins >> m_bulletConfig.OB))
     {
-        printErrorMessage("ERROR reading outline blue",__FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading outline blue", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_bulletConfig.OT))
     {
-        printErrorMessage("ERROR reading outline thickness",__FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading outline thickness", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_bulletConfig.V))
     {
-        printErrorMessage("ERROR reading vertices",__FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading vertices", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
     if (!(ins >> m_bulletConfig.L))
     {
-        printErrorMessage("ERROR reading lifespan",__FILE__, __FUNCTION__, __LINE__);
+        printErrorMessage("ERROR reading lifespan", __FILE__, __FUNCTION__, __LINE__);
         return false;
     }
 
@@ -596,7 +598,7 @@ void Game::init(const std::string &path)
 
     // window parameters - full screen mode not working in a dual monitor setup
     // disabling for development and testing
-    printErrorMessage("INFO:  ignoring full screen mode option",__FILE__, __FUNCTION__, __LINE__);
+    printErrorMessage("INFO:  ignoring full screen mode option", __FILE__, __FUNCTION__, __LINE__);
     m_window.create(sf::VideoMode(m_windowConfig.W, m_windowConfig.H), "Geometry Wars");
     m_window.setFramerateLimit(m_windowConfig.FL);
 
@@ -605,10 +607,7 @@ void Game::init(const std::string &path)
     m_text.setCharacterSize(m_fontConfig.S);
     m_text.setFillColor(sf::Color(m_fontConfig.R, m_fontConfig.G, m_fontConfig.B));
 
-    printErrorMessage("DEBUG: calling spawnPlayer()",__FILE__, __FUNCTION__, __LINE__);
     spawnPlayer();
-
-    printErrorMessage("DEBUG: returned from spawnPlayer()",__FILE__, __FUNCTION__, __LINE__);
 
     m_gameState = GameState::INIT_SUCCESS;
 }
@@ -627,13 +626,14 @@ void Game::run()
     if (m_gameState != GameState::INIT_SUCCESS)
     {
         printErrorMessage("ERROR: Program terminating due to initialization error",
-                            __FUNCTION__, __FILE__, __LINE__);
+                          __FUNCTION__, __FILE__, __LINE__);
         this->end();
         return;
     }
-    else{
+    else
+    {
         printErrorMessage("DEBUG: gameState is INIT_SUCCESS",
-                                 __FUNCTION__, __FILE__, __LINE__);
+                          __FUNCTION__, __FILE__, __LINE__);
     }
 
     while (m_running)
@@ -643,14 +643,15 @@ void Game::run()
 
         if (!m_paused)
         {
-            sEnemySpawner();
+            //sEnemySpawner();
             sMovement();
-            sCollision();
+            //sCollision();
+            sLifeSpan();
         }
-        
+
         sUserInput();
         sRender();
-        
+
         // increment the current frame
         // may need to be moved when pause implemented
         m_currentFrame++;
@@ -680,7 +681,6 @@ void Game::spawnPlayer()
     // in case the initial rotation angle is not zero in the future
     float velX = m_playerConfig.S * cos(DEFAULT_ROTATION_ANGLE);
     float velY = m_playerConfig.S * sin(DEFAULT_ROTATION_ANGLE);
-
 
     entity->cTransform = std::make_shared<CTransform>(Vec2(middleX, middleY),
                                                       Vec2(velX, velY),
@@ -781,33 +781,56 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 }
 
 // spawns a bullet from a given entity to a target location
- void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2& mousePos)
- {
+void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2 &mousePos)
+{
     // TODO: Implement the spawning of a bullet which travels toward target
-    //      - bullet speed is given as a scalar speed 
-    //      - you must set the velocity by using formula in notes 
+    //      - bullet speed is given as a scalar speed
+    //      - you must set the velocity by using formula in notes
     auto bullet = m_entityManager.addEntity("bullet");
 
+    // bullet should be spawned at the origin of the player entity
+    Vec2 startPos = entity->cTransform->pos;
+
+    // calculate per frame bullet velocity based on speed magnitude
+    // specified in the configuration
+    Vec2 targetPos = mousePos;
+
+    // Difference vector D = Mouse Pos - Player Pos
+    Vec2 diff = targetPos - startPos;
+
+    // speed is the desired magnitude of the vector from bullet pos to target pos
+    // need to calculate angle theta
+
+    float theta = std::atan2(diff.y, diff.x);
+
+    std::cout << "startPos,  x: " << startPos.x << ", y: " << startPos.y << "\n";
+    std::cout << "targetPos, x: " << targetPos.x << ", y: " << targetPos.y << "\n";
+    std::cout << "diff,      x: " << diff.x << ", y: " << diff.y << "\n";
+    std::cout << "theta,   rad: " << theta << ", deg: "
+              << theta * 180.0f / 3.1415f << "\n";
+
+    // compute x, y components of bullet velocity
+    Vec2 bulletVel(m_bulletConfig.S * cos(theta), m_bulletConfig.S * sin(theta));
+
+    std::cout << "speed: " << m_bulletConfig.S << ", bullet vel x: " << bulletVel.x
+              << ", y: " << bulletVel.y << "\n";
+
     // give bullet its properties
-    bullet->cTransform = std::make_shared<CTransform>(mousePos, Vec2(0,0), 0);
-    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR, 
-            m_bulletConfig.V, 
-            sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB), 
-            sf::Color(m_bulletConfig.OR, m_bulletConfig.OG, m_bulletConfig.OB), 
-            m_bulletConfig.OT);
+    bullet->cTransform = std::make_shared<CTransform>(startPos, bulletVel, 0);
+    bullet->cShape = std::make_shared<CShape>(m_bulletConfig.SR,
+                                              m_bulletConfig.V,
+                                              sf::Color(m_bulletConfig.FR, m_bulletConfig.FG, m_bulletConfig.FB),
+                                              sf::Color(m_bulletConfig.OR, m_bulletConfig.OG, m_bulletConfig.OB),
+                                              m_bulletConfig.OT);
 
     bullet->cCollision = std::make_shared<CCollision>(m_bulletConfig.CR);
 
     bullet->cLifespan = std::make_shared<CLifespan>(m_bulletConfig.L);
-
-
- }
+}
 
 void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 {
-
 }
-    
 
 void Game::sCollision()
 {
@@ -820,74 +843,110 @@ void Game::sEnemySpawner()
     // TODO: code which implements enemy spawing should go here
     //    (use m_currentFrame - m_lastEnemySpawnTime) to determine
     //    how long it has been since the last enemy spawned
-    if((m_currentFrame - m_lastEnemySpawnTime) >= m_enemyConfig.SI)
+    if ((m_currentFrame - m_lastEnemySpawnTime) >= m_enemyConfig.SI)
     {
         spawnEnemy();
     }
-
 }
 
 void Game::sPlayerMovement()
 {
     // set velocity to zero
-    m_player->cTransform->velocity = { 0, 0};
+    m_player->cTransform->velocity = {0, 0};
 
     // Update velocity based on user input
-    if(m_player->cInput->up)
+    if (m_player->cInput->up)
     {
         m_player->cTransform->velocity.y = -m_playerConfig.S;
     }
 
-    if(m_player->cInput->down)
+    if (m_player->cInput->down)
     {
         m_player->cTransform->velocity.y = +m_playerConfig.S;
     }
 
-    if(m_player->cInput->left)
+    if (m_player->cInput->left)
     {
         m_player->cTransform->velocity.x = -m_playerConfig.S;
     }
 
-    if(m_player->cInput->right)
+    if (m_player->cInput->right)
     {
         m_player->cTransform->velocity.x = +m_playerConfig.S;
     }
 
-
-    // Update position 
+    // Update position
     m_player->cTransform->pos.x += m_player->cTransform->velocity.x;
     m_player->cTransform->pos.y += m_player->cTransform->velocity.y;
 
     float radius = m_player->cShape->circle.getRadius();
 
     // constrain to window
-    if( (m_player->cTransform->pos.x + radius) >= m_window.getSize().x)
+    if ((m_player->cTransform->pos.x + radius) >= m_window.getSize().x)
     {
         m_player->cTransform->pos.x = m_window.getSize().x - radius;
     }
-    else if( (m_player->cTransform->pos.x - radius) <= 0)
+    else if ((m_player->cTransform->pos.x - radius) <= 0)
     {
         m_player->cTransform->pos.x = radius;
     }
 
-    if( (m_player->cTransform->pos.y + radius) >= m_window.getSize().y)
+    if ((m_player->cTransform->pos.y + radius) >= m_window.getSize().y)
     {
         m_player->cTransform->pos.y = m_window.getSize().y - radius;
     }
-    else if( (m_player->cTransform->pos.y - radius) <= 0)
+    else if ((m_player->cTransform->pos.y - radius) <= 0)
     {
         m_player->cTransform->pos.y = radius;
     }
+}
 
+void Game::sBulletMovement()
+{
+    for(auto& b : m_entityManager.getEntities("bullet"))
+    {
+        std::cout << "bullet id: " << b.get()->id() 
+                << ", alive: " << b.get()->isActive() << "\n";
+        // update position
+        b->cTransform->pos.x += b->cTransform->velocity.x;
+        b->cTransform->pos.y += b->cTransform->velocity.y;
+        
+        // update fill color alpha value
+        if(b->cLifespan->remaining > 0)
+        {
+            std::cout << "lifespan remaining: " << b->cLifespan->remaining 
+            << ", total: " << b->cLifespan->total  
+            << ", alpha: " << b->cLifespan->remaining * 255 /b->cLifespan->total << "\n";
+        }
+        
+        b->cShape->circle.setFillColor(sf::Color(m_bulletConfig.FR, m_bulletConfig.FG,
+            m_bulletConfig.FB, b->cLifespan->remaining * 255 /b->cLifespan->total));
+    }
+
+}
+
+void Game::sLifeSpan()
+{
+    for(auto& b : m_entityManager.getEntities("bullet"))
+    {
+        //printErrorMessage("There is a bullet, updating its lifespan\n", 
+        //                __FILE__, __FUNCTION__, __LINE__);
+        b->cLifespan->remaining -= 1;
+
+        if(b->cLifespan->remaining <= 0)
+        {
+            //std::cerr << "bullet number " << b->id() << " has no lifespan\n";
+            b->destroy();
+        }
+    }
 }
 
 void Game::sMovement()
 {
     // TODO: implement all entity movement in this function
-
     sPlayerMovement();
+    sBulletMovement();
 }
-
 
 void Game::sRender()
 {
@@ -895,16 +954,16 @@ void Game::sRender()
     //    sample drawing of the player Entity that we have created
 
     m_window.clear();
-   
-    for(auto e : m_entityManager.getEntities())
+
+    for (auto e : m_entityManager.getEntities())
     {
         // set the position of the shape based on the entity's tranform->pos
         e->cShape->circle.setPosition(e->cTransform->pos.x, e->cTransform->pos.y);
-        
+
         // set the rotation of the shape based on the entity's transform->angle
         e->cTransform->angle += 1.0f;
         e->cShape->circle.setRotation(e->cTransform->angle);
-        
+
         // draw the entity's sf::CircleShape
         m_window.draw(e->cShape->circle);
     }
@@ -920,73 +979,73 @@ void Game::sUserInput()
     //    the movement system will read the variables you set in this function
 
     sf::Event event;
- 
-    while(m_window.pollEvent(event))
+
+    while (m_window.pollEvent(event))
     {
-        if(event.type == sf::Event::Closed)
+        if (event.type == sf::Event::Closed)
         {
             m_running = false;
         }
 
-        if(event.type == sf::Event::KeyPressed)
+        if (event.type == sf::Event::KeyPressed)
         {
-            switch(event.key.code)
+            switch (event.key.code)
             {
-                case sf::Keyboard::W:
-                    m_player->cInput->up = true;
-                    break;
-                case sf::Keyboard::A:
-                    m_player->cInput->left = true;
-                    break;
-                case sf::Keyboard::S:
-                    m_player->cInput->down = true;
-                    break;
-                case sf::Keyboard::D:
-                    m_player->cInput->right = true;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        if(event.type == sf::Event::KeyReleased)
-        {
-            switch(event.key.code)
-            {
-                case sf::Keyboard::W:
-                    m_player->cInput->up = false;
+            case sf::Keyboard::W:
+                m_player->cInput->up = true;
                 break;
-                case sf::Keyboard::A:
-                    m_player->cInput->left = false;
-                    break;
-                case sf::Keyboard::S:
-                    m_player->cInput->down = false;
-                    break;
-                case sf::Keyboard::D:
-                    m_player->cInput->right = false;
-                    break;
-                default:
-                    break;
+            case sf::Keyboard::A:
+                m_player->cInput->left = true;
+                break;
+            case sf::Keyboard::S:
+                m_player->cInput->down = true;
+                break;
+            case sf::Keyboard::D:
+                m_player->cInput->right = true;
+                break;
+            default:
+                break;
             }
         }
 
-        if(event.type == sf::Event::MouseButtonPressed)
+        if (event.type == sf::Event::KeyReleased)
         {
-            if(event.mouseButton.button == sf::Mouse::Left)
+            switch (event.key.code)
+            {
+            case sf::Keyboard::W:
+                m_player->cInput->up = false;
+                break;
+            case sf::Keyboard::A:
+                m_player->cInput->left = false;
+                break;
+            case sf::Keyboard::S:
+                m_player->cInput->down = false;
+                break;
+            case sf::Keyboard::D:
+                m_player->cInput->right = false;
+                break;
+            default:
+                break;
+            }
+        }
+
+        if (event.type == sf::Event::MouseButtonPressed)
+        {
+            if (event.mouseButton.button == sf::Mouse::Left)
             {
                 std::cout << "Left Mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")\n";
+                          << event.mouseButton.x << ", "
+                          << event.mouseButton.y << ")\n";
 
                 // call spawnBullet here
                 spawnBullet(m_player, Vec2(event.mouseButton.x, event.mouseButton.y));
             }
 
-            if(event.mouseButton.button == sf::Mouse::Right)
+            if (event.mouseButton.button == sf::Mouse::Right)
             {
                 std::cout << "Right Mouse button clicked at ("
-                    << event.mouseButton.x << ", "
-                    << event.mouseButton.y << ")\n";
+                          << event.mouseButton.x << ", "
+                          << event.mouseButton.y << ")\n";
 
                 // call spawnSpecialWeapon here
             }
@@ -1064,14 +1123,13 @@ std::ostream &Game::printBulletConfig(std::ostream &os) const
     return os;
 }
 
-
-std::ostream& Game::printCTransform(std::ostream& os,  std::shared_ptr<CTransform> ct) const
+std::ostream &Game::printCTransform(std::ostream &os, std::shared_ptr<CTransform> ct) const
 {
-    os  << "pos x: " << ct->pos.x   << "\n"
-        << "pos y: " << ct->pos.y   << "\n" 
-        << "vel x: " << ct->velocity.x << "\n"
-        << "vel y: " << ct->velocity.y << "\n"
-        << "angle: " << ct->angle   << "\n"
-        << "\n";
+    os << "pos x: " << ct->pos.x << "\n"
+       << "pos y: " << ct->pos.y << "\n"
+       << "vel x: " << ct->velocity.x << "\n"
+       << "vel y: " << ct->velocity.y << "\n"
+       << "angle: " << ct->angle << "\n"
+       << "\n";
     return os;
 }

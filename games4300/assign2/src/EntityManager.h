@@ -77,6 +77,7 @@ class EntityManager
    size_t         m_totalEntities;           // total Entities ever created
    //bool           remove_entity(const Entity &e); 
 
+
 public:
    EntityManager();
    void update();

@@ -78,6 +78,7 @@ std::shared_ptr<Entity> EntityManager::addEntity(const std::string& tag)
    Idea: Only add or remove entities at the beginning of a frame when it is safe
 */
 
+
 // called at beginning of each frame by game engine
 // entities added will now be available to use this frame
 void EntityManager::update()
@@ -95,31 +96,30 @@ void EntityManager::update()
 
    m_toAdd.clear();  // clear list of entities to add 
 
+ 
    // Remove inactive entities from m_entities
-   /* m_entities.erase(
-      std::remove_if(m_entities.begin(), m_entities.end(), remove_entity),
-      m_entities.end());
-   */
+   m_entities.erase(std::remove_if(m_entities.begin(), m_entities.end(), 
+      [](auto &e){return !e->isActive();}), m_entities.end());
 
-   // Remove inactive entities from m_entityMap;
-   // iterate through the map by tag
-   /*
-   for(auto it = m_entityMap.begin();  it != m_entityMap.end(); )
+
+   // Compact version of above block removes inactive entities from the map
+   for(auto itMap = m_entityMap.begin(); itMap != m_entityMap.end(); ++itMap)
    {
-      // Access this tag's EntityVectore
-      EntityVector ev = it->second;
+      itMap->second.erase(
+        std::remove_if(itMap->second.begin(), itMap->second.end(), [](auto &e){return !e.get()->isActive();}),
+         itMap->second.end());
+   }
 
-      // remove inactive Entities within the tag's EntityVector
-      ev.erase(
-         std::remove_if(ev.begin(), ev.end(), remove_entity),
-         ev.end());
-     
-   } */
 }
 
 EntityVector& EntityManager::getEntities()
 {
    return m_entities;
+}
+
+EntityVector& EntityManager::getEntities(const std::string& tag)
+{
+   return m_entityMap.find(tag)->second;
 }
 
 
@@ -130,18 +130,7 @@ size_t EntityManager::getTotalEntities()
 
 
 
-/* Entity Manager Usage example
-
-
-   EntityManager m_entities;
-
-   void spawnEnemy()
-   {
-      auto e = m_entities.addEntity("enemy");
-      e->cTranform = std::make_shared<CTransform>(args);
-      e->cShape = std::make_share<cShape>(args);
-   }
-
+/* 
    void collisions()
    {
       for(auto b : m_entities.getEntities("bullet"))

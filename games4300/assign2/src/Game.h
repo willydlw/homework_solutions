@@ -150,6 +150,7 @@ class Game
     void sCollision();                        // System: Collisions 
 
     void sPlayerMovement();
+    void sBulletMovement();
 
     void spawnPlayer();
     void spawnEnemy();
