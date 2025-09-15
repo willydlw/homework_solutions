@@ -1,0 +1,31 @@
+# Project name (can be different from directory name)
+project(GWARS)
+
+
+# Include Directories 
+include_directories("include")
+
+# create executable or library 
+add_executable(demo)
+target_sources(demo PRIVATE 
+    src/demo.cpp
+)
+
+
+# Link to other libraries (if needed)
+# PUBLIC m links math library
+target_link_libraries(demo 
+    PRIVATE SFML::Graphics 
+    PRIVATE ImGui-SFML::ImGui-SFML
+    PUBLIC m)
+#target_link_libraries(demo PRIVATE ImGui-SFML::ImGui-SFML)
+#target_compile_options(demo PRIVATE ${IMGUI_SFML_WARNINGS})
+
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -pedantic")
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/fonts")
+file(COPY fonts/ DESTINATION "${CMAKE_BINARY_DIR}/bin/fonts")
+
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/config")
+file(COPY config/ DESTINATION "${CMAKE_BINARY_DIR}/bin/config")
