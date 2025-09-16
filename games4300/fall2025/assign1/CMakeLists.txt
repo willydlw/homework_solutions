@@ -1,6 +1,6 @@
 # Project name (can be different from directory name)
 project(GWARS)
-
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 # Include Directories 
 include_directories("include")
