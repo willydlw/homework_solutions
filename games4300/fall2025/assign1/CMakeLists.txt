@@ -11,6 +11,12 @@ target_sources(demo PRIVATE
     src/demo.cpp
 )
 
+add_executable(assign1)
+target_sources(assign1 PRIVATE 
+    src/main.cpp
+    src/config.cpp
+)
+
 
 # Link to other libraries (if needed)
 # PUBLIC m links math library
@@ -18,8 +24,11 @@ target_link_libraries(demo
     PRIVATE SFML::Graphics 
     PRIVATE ImGui-SFML::ImGui-SFML
     PUBLIC m)
-#target_link_libraries(demo PRIVATE ImGui-SFML::ImGui-SFML)
-#target_compile_options(demo PRIVATE ${IMGUI_SFML_WARNINGS})
+
+target_link_libraries(assign1
+    PRIVATE SFML::Graphics
+    PRIVATE ImGui-SFML::ImGui-SFML
+)
 
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -pedantic")
