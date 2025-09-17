@@ -6,23 +6,31 @@
 struct VectorConfig{
     float x;
     float y;
+    VectorConfig(): x(0.0f), y(0.0f){}
+    VectorConfig(float x, float y): x(x), y(y){}
 };
 
 struct ColorRGB{
-    int red;
-    int green;
-    int blue;
+    std::uint8_t red;
+    std::uint8_t green;
+    std::uint8_t blue;
+    ColorRGB() : red(255), green(255), blue(255) {} 
+    ColorRGB(std::uint8_t r, std::uint8_t g, std::uint8_t b) : 
+        red(r), green(g), blue(b) {}
 };
 
 struct WindowConfig{
     int width;
     int height;
+    WindowConfig() : width(640), height(480) {}
+    WindowConfig(int w, int h) : width(w), height(h) {}
 };
 
 struct FontConfig{
     std::string fileName;
     int fontSize;
     ColorRGB color;
+    FontConfig() : fileName("fonts/arial.ttf"), fontSize(32) {}
 };
 
 struct RectangleConfig{
