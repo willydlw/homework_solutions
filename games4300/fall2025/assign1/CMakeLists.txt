@@ -15,6 +15,8 @@ add_executable(assign1)
 target_sources(assign1 PRIVATE 
     src/main.cpp
     src/config.cpp
+    src/circle.cpp
+    src/rectangle.cpp
 )
 
 
