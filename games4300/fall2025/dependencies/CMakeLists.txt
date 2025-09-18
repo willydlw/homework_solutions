@@ -14,12 +14,11 @@ add_subdirectory(sfml)
 FetchContent_Declare(
     imgui
     GIT_REPOSITORY https://github.com/ocornut/imgui
-    GIT_TAG v1.91.1
+    GIT_TAG v1.91.9
     GIT_SHALLOW ON
     EXCLUDE_FROM_ALL
     SYSTEM)
 FetchContent_MakeAvailable(imgui)
-#FetchContent_GetProperties(ImGui SOURCE_DIR IMGUI_DIR)
 
 # ImGui-SFML
 #set(IMGUI_SFML_FIND_SFML OFF)

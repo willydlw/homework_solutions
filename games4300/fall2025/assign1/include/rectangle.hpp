@@ -20,10 +20,14 @@ class Rectangle{
 
     void setName(std::string& name);
     void setSize(sf::Vector2f size);
+    void setPosition(sf::Vector2f position);
+    void setVelocity(sf::Vector2f velocity);
 
 
     std::string getName() const;
     sf::Vector2f getSize() const;
+    sf::Vector2f getPosition() const;
+    sf::Vector2f getVelocity() const;
 
 
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);

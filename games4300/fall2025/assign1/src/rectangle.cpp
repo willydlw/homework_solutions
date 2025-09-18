@@ -8,6 +8,8 @@ Rectangle::Rectangle(   sf::Vector2f size,
 {
     setSize(size);
     setName(name);
+    setPosition(position);
+    setVelocity(velocity);
 }
 
 
@@ -19,6 +21,16 @@ void Rectangle::setName(std::string& name)
 void Rectangle::setSize(sf::Vector2f size)
 {
     m_rectangle.setSize(size);
+}
+
+void Rectangle::setPosition(sf::Vector2f position)
+{
+    m_rectangle.setPosition(position);
+}
+
+void Rectangle::setVelocity(sf::Vector2f velocity)
+{
+    m_velocity = velocity;
 }
 
 
@@ -36,4 +48,14 @@ std::string Rectangle::getName()const
 sf::Vector2f Rectangle::getSize()const
 {
     return m_rectangle.getSize();
+}
+
+sf::Vector2f Rectangle::getPosition()const
+{
+    return m_rectangle.getPosition();
+}
+
+sf::Vector2f Rectangle::getVelocity()const 
+{
+    return m_velocity;
 }
