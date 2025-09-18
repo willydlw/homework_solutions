@@ -21,9 +21,9 @@ struct ColorRGB{
 };
 
 struct WindowConfig{
-    int width;
-    int height;
-    WindowConfig() : width(640), height(480) {}
+    unsigned int width;
+    unsigned int height;
+    WindowConfig() : width(640U), height(480U) {}
     WindowConfig(int w, int h) : width(w), height(h) {}
 };
 

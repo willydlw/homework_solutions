@@ -1,7 +1,9 @@
 #include "rectangle.hpp"
 
 Rectangle::Rectangle(   sf::Vector2f size,
-                        std::string name
+                        std::string name,
+                        sf::Vector2f position,
+                        sf::Vector2f velocity
                     )
 {
     setSize(size);

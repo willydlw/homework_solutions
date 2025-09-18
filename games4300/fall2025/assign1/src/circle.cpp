@@ -1,7 +1,6 @@
 #include "circle.hpp"
 
-Circle::Circle( float radius, 
-                std::size_t pointCount,
+Circle::Circle( float radius,
                 sf::Color color,
                 sf::Vector2f position,
                 sf::Vector2f velocity,
@@ -9,7 +8,6 @@ Circle::Circle( float radius,
                 )
 {
     setRadius(radius);
-    setPointCount(pointCount);
     setPosition(position);
     setVelocity(velocity);
     setColor(color);
@@ -28,16 +26,6 @@ void Circle::setRadius(float radius)
     }
     else{
         m_circle.setRadius(DEFAULT_RADIUS);
-    }
-}
-
-void Circle::setPointCount(std::size_t pointCount)
-{
-    if(pointCount >= MIN_POINT_COUNT && pointCount <= MAX_POINT_COUNT){
-        m_circle.setPointCount(pointCount);
-    }
-    else{
-        m_circle.setPointCount(DEFAULT_POINT_COUNT);
     }
 }
 
@@ -80,11 +68,6 @@ float Circle::getRadius()const
 sf::Color Circle::getColor()const 
 {
     return m_circle.getFillColor();
-}
-
-std::size_t Circle::getPointCount()const 
-{
-    return m_circle.getPointCount();
 }
 
 std::string Circle::getName()const 
