@@ -26,6 +26,34 @@ int main(void)
     std::string configFileName("assign1/config/config.txt");
     readConfigFile(configFileName, &gameConfig);
 
+    std::filesystem::path workingDirPath = getWorkingDirectory();
+
+    std::vector<std::filesystem::path> foundFontFiles;
+    foundFontFiles = findFileRecursive(workingDirPath, gameConfig.font.fileName);
+
+    if(foundFontFiles.empty()){
+        std::cerr << "ERROR, failed to find file: " << gameConfig.font.fileName 
+            << " in working directory: " << workingDirPath 
+            << "\n";
+        std::exit(-1);
+    }
+
+    
+
+    sf::Font myFont;
+
+    for(const auto &found : foundFontFiles){
+        std::cerr << found << "\n";
+
+        if(myFont.openFromFile(found)){
+            std::cerr << "Opened Font\n";
+            break;
+        }
+       
+    }
+
+
+    #if 0
     sf::RenderWindow window(sf::VideoMode({gameConfig.window.width, gameConfig.window.height}), "Assign 1");
     window.setFramerateLimit(60);
 
@@ -42,9 +70,12 @@ int main(void)
     ImGui::GetIO().FontGlobalScale = 2.0f;
 
 
-        // let's load a font so we can display some text
-    sf::Font myFont;
+    // let's load a font so we can display some text
+    sf::Font myFont(gameConfig.font.fileName);
 
+    #endif
+
+    #if 0
     // attempt to load the font from a file
     if(myFont.openFromFile(gameConfig.font.fileName))
     //if(myFont.openFromFile("/fonts/tech.ttf"))
@@ -53,7 +84,7 @@ int main(void)
             << gameConfig.font.fileName << "\n";
         std::exit(-1);
     }
-
+    
 
     while(window.isOpen()){
         while(const std::optional event = window.pollEvent()){
@@ -69,6 +100,8 @@ int main(void)
         window.clear(sf::Color::Blue);
         window.display();
     }
+
+    #endif
 
     return 0;
 }

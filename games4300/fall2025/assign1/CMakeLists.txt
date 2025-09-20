@@ -25,6 +25,16 @@ target_sources(assign1 PRIVATE
     src/rectangle.cpp
 )
 
+add_executable(workDir)
+target_sources(workDir PRIVATE 
+    src/printWorkingDirectory.cpp
+)
+
+add_executable(findFile)
+target_sources(findFile PRIVATE 
+    src/findFile.cpp
+)
+
 
 # Link to other libraries (if needed)
 # PUBLIC m links math library
@@ -39,7 +49,7 @@ target_link_libraries(assign1
 )
 
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -pedantic")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall -Wextra -pedantic")
 
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/fonts")
 file(COPY fonts/ DESTINATION "${CMAKE_BINARY_DIR}/bin/fonts")

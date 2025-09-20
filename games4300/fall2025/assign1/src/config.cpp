@@ -1,8 +1,42 @@
 #include "config.h"
 #include <fstream>
 #include <iostream>
-#include <filesystem>
 #include <sstream>
+
+std::filesystem::path getWorkingDirectory(void){
+    try {
+        std::filesystem::path currentPath = std::filesystem::current_path();
+        std::cout << "Current working directory: " << currentPath << std::endl;
+        return currentPath;
+    } catch (const std::filesystem::filesystem_error& e) {
+        std::cerr << "Error getting current path: " << e.what() << std::endl;
+        std::exit(-1);
+    }
+}
+
+
+// Function to recursively search for a file
+std::vector<std::filesystem::path> findFileRecursive(const std::filesystem::path& startPath, const std::string& filenameToFind) {
+    std::vector<std::filesystem::path> foundFiles;
+
+    std::cerr << "Entered " << __func__ << ", startPath: " << startPath << "\n";
+    std::cerr << "Searching for file: " << filenameToFind << "\n\n";
+
+    // Check if the starting path is a directory
+    if (!std::filesystem::is_directory(startPath)) {
+        std::cerr << "Error: " << startPath << " is not a directory." << std::endl;
+        return foundFiles;
+    }
+
+    // Iterate through the directory recursively
+    for (const auto& entry : std::filesystem::recursive_directory_iterator(startPath)) {
+        // Check if the current entry is a regular file and its name matches the target
+        if (entry.is_regular_file() && entry.path().filename() == filenameToFind) {
+            foundFiles.push_back(entry.path());
+        }
+    }
+    return foundFiles;
+}
 
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)

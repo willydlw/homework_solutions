@@ -3,6 +3,7 @@
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <filesystem>
 
 struct VectorConfig{
     float x;
@@ -59,5 +60,11 @@ struct GameConfig{
     std::vector<RectangleConfig> rects;
     std::vector<CircleConfig>circles;
 };
+
+
+std::filesystem::path getWorkingDirectory(void);
+
+std::vector<std::filesystem::path> findFileRecursive(
+    const std::filesystem::path& startPath, const std::string& filenameToFind);
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
