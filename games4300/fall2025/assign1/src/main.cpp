@@ -22,35 +22,19 @@ int main(void)
     GameConfig gameConfig;
     std::vector<Circle> circles;
     std::vector<Rectangle> rects;
+    sf::Font gameFont;
 
     std::string configFileName("assign1/config/config.txt");
     readConfigFile(configFileName, &gameConfig);
 
-    std::filesystem::path workingDirPath = getWorkingDirectory();
-
-    std::vector<std::filesystem::path> foundFontFiles;
-    foundFontFiles = findFileRecursive(workingDirPath, gameConfig.font.fileName);
-
-    if(foundFontFiles.empty()){
-        std::cerr << "ERROR, failed to find file: " << gameConfig.font.fileName 
-            << " in working directory: " << workingDirPath 
-            << "\n";
+    if(!initFont(gameFont, gameConfig.font.fileName))
+    {
+        std::cerr << "ERROR, failed to open font: " << gameConfig.font.fileName
+                << "\n";
         std::exit(-1);
     }
 
-    
-
-    sf::Font myFont;
-
-    for(const auto &found : foundFontFiles){
-        std::cerr << found << "\n";
-
-        if(myFont.openFromFile(found)){
-            std::cerr << "Opened Font\n";
-            break;
-        }
-       
-    }
+ 
 
 
     #if 0

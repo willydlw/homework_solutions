@@ -133,3 +133,32 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
     inFile.close();
     return true;
 }
+
+
+bool initFont(sf::Font& font, const std::string& fileName)
+{
+    // Get the current working directory
+    std::filesystem::path workingDirPath = getWorkingDirectory();
+
+    // Search for font file in current working directory
+    std::vector<std::filesystem::path> foundFontFiles;
+    foundFontFiles = findFileRecursive(workingDirPath, fileName);
+
+    if(foundFontFiles.empty()){
+        std::cerr << "ERROR, failed to find file: " << fileName 
+            << " in working directory: " << workingDirPath 
+            << "\n";
+        return false;
+    }
+
+    for(const auto &found : foundFontFiles){
+        std::cerr << found << "\n";
+
+        if(font.openFromFile(found)){
+            std::cerr << "Opened Font\n";
+            return true;
+        }
+       
+    }
+    return false;
+}

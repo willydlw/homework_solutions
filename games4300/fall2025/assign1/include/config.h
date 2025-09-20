@@ -5,6 +5,8 @@
 #include <vector>
 #include <filesystem>
 
+#include <SFML/Graphics/Font.hpp>
+
 struct VectorConfig{
     float x;
     float y;
@@ -68,3 +70,5 @@ std::vector<std::filesystem::path> findFileRecursive(
     const std::filesystem::path& startPath, const std::string& filenameToFind);
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
+
+bool initFont(sf::Font& font, const std::string& fontFileName);
