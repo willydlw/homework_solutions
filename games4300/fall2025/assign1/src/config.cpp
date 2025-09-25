@@ -73,9 +73,9 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
             // 
             if( !(iss >> gameConfig->font.fileName) || 
                 !(iss >> gameConfig->font.fontSize) || 
-                !(iss >> gameConfig->font.color.red) ||
-                !(iss >> gameConfig->font.color.green) || 
-                !(iss >> gameConfig->font.color.blue) ){
+                !(iss >> gameConfig->font.color.r) ||
+                !(iss >> gameConfig->font.color.g) || 
+                !(iss >> gameConfig->font.color.b) ){
                     std::cerr << "Warning: " << __func__ 
                     << ", error extracting font data from input: "
                     << line << "\n";
@@ -87,11 +87,11 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
             if(!(iss >> cc.shapeName)   || 
                 !(iss >> cc.position.x) ||
                 !(iss >> cc.position.y) ||
-                !(iss >> cc.speed.x)    ||
-                !(iss >> cc.speed.y)    ||
-                !(iss >> cc.color.red)  ||
-                !(iss >> cc.color.green) ||
-                !(iss >> cc.color.blue) ||
+                !(iss >> cc.velocity.x)    ||
+                !(iss >> cc.velocity.y)    ||
+                !(iss >> cc.color.r)  ||
+                !(iss >> cc.color.g) ||
+                !(iss >> cc.color.b) ||
                 !(iss >> cc.radius)
             ){
                 std::cerr << "Warning: " << __func__ 
@@ -107,11 +107,11 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
             if(!(iss >> rc.shapeName)   || 
                 !(iss >> rc.position.x) ||
                 !(iss >> rc.position.y) ||
-                !(iss >> rc.speed.x)    ||
-                !(iss >> rc.speed.y)    ||
-                !(iss >> rc.color.red)  ||
-                !(iss >> rc.color.green) ||
-                !(iss >> rc.color.blue) ||
+                !(iss >> rc.velocity.x)    ||
+                !(iss >> rc.velocity.y)    ||
+                !(iss >> rc.color.r)  ||
+                !(iss >> rc.color.g) ||
+                !(iss >> rc.color.b) ||
                 !(iss >> rc.width)      ||
                 !(iss >> rc.height)
             ){
@@ -134,31 +134,3 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
     return true;
 }
 
-
-bool initFont(sf::Font& font, const std::string& fileName)
-{
-    // Get the current working directory
-    std::filesystem::path workingDirPath = getWorkingDirectory();
-
-    // Search for font file in current working directory
-    std::vector<std::filesystem::path> foundFontFiles;
-    foundFontFiles = findFileRecursive(workingDirPath, fileName);
-
-    if(foundFontFiles.empty()){
-        std::cerr << "ERROR, failed to find file: " << fileName 
-            << " in working directory: " << workingDirPath 
-            << "\n";
-        return false;
-    }
-
-    for(const auto &found : foundFontFiles){
-        std::cerr << found << "\n";
-
-        if(font.openFromFile(found)){
-            std::cerr << "Opened Font\n";
-            return true;
-        }
-       
-    }
-    return false;
-}

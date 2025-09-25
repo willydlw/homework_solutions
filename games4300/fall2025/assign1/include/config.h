@@ -5,23 +5,10 @@
 #include <vector>
 #include <filesystem>
 
-#include <SFML/Graphics/Font.hpp>
 
-struct VectorConfig{
-    float x;
-    float y;
-    VectorConfig(): x(0.0f), y(0.0f){}
-    VectorConfig(float x, float y): x(x), y(y){}
-};
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Color.hpp>
 
-struct ColorRGB{
-    std::uint8_t red;
-    std::uint8_t green;
-    std::uint8_t blue;
-    ColorRGB() : red(255), green(255), blue(255) {} 
-    ColorRGB(std::uint8_t r, std::uint8_t g, std::uint8_t b) : 
-        red(r), green(g), blue(b) {}
-};
 
 struct WindowConfig{
     unsigned int width;
@@ -33,15 +20,15 @@ struct WindowConfig{
 struct FontConfig{
     std::string fileName;
     int fontSize;
-    ColorRGB color;
+    sf::Color color;
     FontConfig() : fileName("fonts/arial.ttf"), fontSize(32) {}
 };
 
 struct RectangleConfig{
     std::string shapeName;
-    VectorConfig position;
-    VectorConfig speed;
-    ColorRGB color;
+    sf::Vector2f position;
+    sf::Vector2f velocity;
+    sf::Color color;
     float width;
     float height;
 };
@@ -49,9 +36,9 @@ struct RectangleConfig{
 
 struct CircleConfig{
     std::string shapeName;
-    VectorConfig position;
-    VectorConfig speed;
-    ColorRGB color;
+    sf::Vector2f position;
+    sf::Vector2f velocity;
+    sf::Color color;
     float radius;
 };
 
@@ -71,4 +58,4 @@ std::vector<std::filesystem::path> findFileRecursive(
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
 
-bool initFont(sf::Font& font, const std::string& fontFileName);
+

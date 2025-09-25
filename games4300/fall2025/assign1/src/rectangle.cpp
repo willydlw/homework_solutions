@@ -3,15 +3,20 @@
 Rectangle::Rectangle(   sf::Vector2f size,
                         std::string name,
                         sf::Vector2f position,
-                        sf::Vector2f velocity
+                        sf::Vector2f velocity, 
+                        sf::Color color
                     )
 {
     setSize(size);
     setName(name);
     setPosition(position);
     setVelocity(velocity);
+    setColor(color);
 }
 
+void Rectangle::setColor(sf::Color color){
+    m_color = color;
+}
 
 void Rectangle::setName(std::string& name)
 {

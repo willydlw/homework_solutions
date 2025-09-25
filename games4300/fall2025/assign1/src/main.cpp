@@ -11,6 +11,7 @@
 #include <imgui.h>
 
 
+#include "game.hpp"
 #include "config.h"
 #include "circle.hpp"
 #include "rectangle.hpp"
@@ -19,22 +20,14 @@
 
 int main(void)
 {
+    Game game;
     GameConfig gameConfig;
-    std::vector<Circle> circles;
-    std::vector<Rectangle> rects;
-    sf::Font gameFont;
-
+   
     std::string configFileName("assign1/config/config.txt");
     readConfigFile(configFileName, &gameConfig);
 
-    if(!initFont(gameFont, gameConfig.font.fileName))
-    {
-        std::cerr << "ERROR, failed to open font: " << gameConfig.font.fileName
-                << "\n";
-        std::exit(-1);
-    }
+    game.init(&gameConfig);
 
- 
 
 
     #if 0

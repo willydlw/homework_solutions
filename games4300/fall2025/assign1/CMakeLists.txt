@@ -23,6 +23,7 @@ target_sources(assign1 PRIVATE
     src/config.cpp
     src/circle.cpp
     src/rectangle.cpp
+    src/game.cpp
 )
 
 add_executable(workDir)
