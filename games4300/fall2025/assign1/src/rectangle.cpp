@@ -1,21 +1,27 @@
 #include "rectangle.hpp"
 
 Rectangle::Rectangle(   sf::Vector2f size,
-                        std::string name,
                         sf::Vector2f position,
                         sf::Vector2f velocity, 
-                        sf::Color color
+                        sf::Color color,
+                        std::string name
                     )
 {
     setSize(size);
-    setName(name);
     setPosition(position);
     setVelocity(velocity);
     setColor(color);
+    setName(name);
+}
+
+void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+    target.draw(m_rectangle, states);
 }
 
 void Rectangle::setColor(sf::Color color){
-    m_color = color;
+    m_rectangle.setFillColor(color);
 }
 
 void Rectangle::setName(std::string& name)
@@ -43,6 +49,11 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 {
     os << "name: " << obj.m_name << "\n";
     return os;
+}
+
+sf::Color Rectangle::getColor()const 
+{
+    return m_rectangle.getFillColor();
 }
 
 std::string Rectangle::getName()const 

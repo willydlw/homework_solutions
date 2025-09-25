@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 
-class Rectangle{
+class Rectangle : public sf::Drawable, public sf::Transformable
+{
     public:
     static constexpr sf::Vector2f DEFAULT_SIZE = {10.0f, 15.0f};
     static constexpr std::string_view DEFAULT_NAME = "Default";
@@ -14,11 +15,13 @@ class Rectangle{
     
 
     Rectangle(  sf::Vector2f size = DEFAULT_SIZE,
-                std::string name = std::string(DEFAULT_NAME),
                 sf::Vector2f position = DEFAULT_POSITION,
                 sf::Vector2f velocity = DEFAULT_VELOCITY,
-                sf::Color color = DEFAULT_COLOR
+                sf::Color color = DEFAULT_COLOR,
+                std::string name = std::string(DEFAULT_NAME)
             );
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
     void setColor(sf::Color color);
     void setName(std::string& name);
@@ -27,7 +30,8 @@ class Rectangle{
     void setVelocity(sf::Vector2f velocity);
 
 
-    std::string getName() const;
+    sf::Color    getColor() const;
+    std::string  getName() const;
     sf::Vector2f getSize() const;
     sf::Vector2f getPosition() const;
     sf::Vector2f getVelocity() const;
@@ -39,6 +43,4 @@ class Rectangle{
     sf::RectangleShape m_rectangle;
     sf::Vector2f m_velocity;
     std::string m_name;
-    sf::Color m_color;
-
 };

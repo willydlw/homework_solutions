@@ -52,7 +52,7 @@ void Game::initRectangles(const std::vector<RectangleConfig>& rConfig)
     for(const auto& rc : rConfig)
     {
         sf::Vector2f rectSize{rc.width, rc.height};
-        Rectangle rect(rectSize, rc.shapeName, rc.position, rc.velocity, rc.color);
+        Rectangle rect(rectSize, rc.position, rc.velocity, rc.color, rc.shapeName);
         m_rectangles.push_back(rect);
     }
 }
@@ -64,4 +64,40 @@ void Game::initCircles(const std::vector<CircleConfig>& cConfig)
         Circle circle(c.radius, c.color, c.position, c.velocity, c.shapeName);
         m_circles.push_back(circle);
     }
+}
+
+
+
+void Game::update(void)
+{
+    static int count = 0;
+    if(count == 0){
+         std::cerr << "TODO: complete function: " << __func__ << std::endl;
+         count++;
+    }
+    
+   
+}
+
+void Game::draw(sf::RenderWindow& window)
+{
+    static int count = 0;
+    if(count == 0){
+         std::cerr << "TODO: complete function: " << __func__ << std::endl;
+         count++;
+    }
+
+    for(const auto& r : m_rectangles)
+    {
+        window.draw(r);
+    }
+}
+
+
+std::ostream& operator << (std::ostream& os, const Game& obj)
+{
+    os << "TODO: complete function: " << __func__ << std::endl;
+    os << "num rectangles: " << obj.m_rectangles.size() << "\n";
+    os << "num circles:    " << obj.m_circles.size() << "\n";
+    return os;
 }

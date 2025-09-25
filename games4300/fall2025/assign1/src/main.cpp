@@ -28,12 +28,10 @@ int main(void)
 
     game.init(&gameConfig);
 
-
-
-    #if 0
     sf::RenderWindow window(sf::VideoMode({gameConfig.window.width, gameConfig.window.height}), "Assign 1");
     window.setFramerateLimit(60);
 
+    #if 0
     // initialize imgui and create a clock used for its internal timing
     if(!ImGui::SFML::Init(window))
     {
@@ -49,24 +47,27 @@ int main(void)
 
     #endif
 
-    #if 0
  
     while(window.isOpen()){
         while(const std::optional event = window.pollEvent()){
             
+            #if 0
             // pass the event to imgui to be parsed 
             ImGui::SFML::ProcessEvent(window, *event);
+            #endif 
 
             if(event->is<sf::Event::Closed>()){
                 window.close();
             }
         }
 
+        game.update();
+
         window.clear(sf::Color::Blue);
+        game.draw(window);
         window.display();
     }
 
-    #endif
 
     return 0;
 }
