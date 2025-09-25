@@ -47,22 +47,10 @@ int main(void)
     ImGui::GetIO().FontGlobalScale = 2.0f;
 
 
-    // let's load a font so we can display some text
-    sf::Font myFont(gameConfig.font.fileName);
-
     #endif
 
     #if 0
-    // attempt to load the font from a file
-    if(myFont.openFromFile(gameConfig.font.fileName))
-    //if(myFont.openFromFile("/fonts/tech.ttf"))
-    {
-        std::cerr << "Failed to load font from file: "
-            << gameConfig.font.fileName << "\n";
-        std::exit(-1);
-    }
-    
-
+ 
     while(window.isOpen()){
         while(const std::optional event = window.pollEvent()){
             
