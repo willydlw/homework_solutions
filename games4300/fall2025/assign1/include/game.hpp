@@ -4,7 +4,7 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "config.h"
+#include "gameConfig.hpp"
 #include "rectangle.hpp"
 #include "circle.hpp"
 

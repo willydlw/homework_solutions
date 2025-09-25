@@ -12,7 +12,7 @@
 
 
 #include "game.hpp"
-#include "config.h"
+#include "gameConfig.hpp"
 #include "circle.hpp"
 #include "rectangle.hpp"
 
