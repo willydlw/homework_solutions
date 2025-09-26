@@ -85,35 +85,28 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
         }
         else if(firstWord == "Circle"){
             CircleConfig cc;
-            if(!(iss >> cc.shapeName)   || 
-                !(iss >> cc.position.x) ||
-                !(iss >> cc.position.y) ||
-                !(iss >> cc.velocity.x)    ||
-                !(iss >> cc.velocity.y)    ||
-                !(iss >> cc.color.r)  ||
-                !(iss >> cc.color.g) ||
-                !(iss >> cc.color.b) ||
+            if( !(iss >> cc.shapeName)            || 
+                !(readVector2f(iss, cc.position)) ||
+                !(readVector2f(iss, cc.velocity)) ||
+                !(readColor(iss, cc.color))       ||
                 !(iss >> cc.radius)
-            ){
+            )
+            {
                 std::cerr << "Warning: " << __func__ 
                     << ", error extracting circle data from input: " 
                     << line << "\n";
                 continue;
             }
-
+            
             gameConfig->circles.push_back(cc);
         }
         else if(firstWord == "Rectangle"){
             RectangleConfig rc;
-            if(!(iss >> rc.shapeName)   || 
-                !(iss >> rc.position.x) ||
-                !(iss >> rc.position.y) ||
-                !(iss >> rc.velocity.x)    ||
-                !(iss >> rc.velocity.y)    ||
-                !(iss >> rc.color.r)  ||
-                !(iss >> rc.color.g) ||
-                !(iss >> rc.color.b) ||
-                !(iss >> rc.width)      ||
+            if( !(iss >> rc.shapeName)              || 
+                !(readVector2f(iss, rc.position))   ||
+                !(readVector2f(iss, rc.velocity))   ||
+                !(readColor(iss, rc.color))         ||
+                !(iss >> rc.width)                  ||
                 !(iss >> rc.height)
             ){
                 std::cerr << "Warning: " << __func__ 
@@ -132,6 +125,47 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
     }
 
     inFile.close();
+    return true;
+}
+
+
+bool readVector2f(std::istringstream& iss, sf::Vector2f& v2)
+{
+    if(!(iss >> v2.x) || !(iss >> v2.y))
+    {
+        std::cerr << "ERROR function " << __func__ << "\n";
+        return false;
+    }
+
+    return true;
+}
+
+/* sf::color type uint8_t 
+   istringstream operator >> interprets uint8_t as unsigned char
+   
+   If we try iss >> color.r, only the character 2 will be extracted
+   from the input 255. 
+   
+   To read the entire value of 255, we declare local unsigned int 
+   variables to extract the entire value and then cast unsigned int 
+   to uint8_t when assigning to color fields
+
+*/ 
+            
+bool readColor(std::istringstream& iss, sf::Color& color)
+{
+    unsigned red, green, blue;
+    if( !(iss >> red)   ||
+        !(iss >> green) ||
+        !(iss >> blue))
+    {
+        return false;
+    }
+    
+    color.r = static_cast<uint8_t>(red);
+    color.g = static_cast<uint8_t>(green);
+    color.b = static_cast<uint8_t>(blue);
+       
     return true;
 }
 

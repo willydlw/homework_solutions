@@ -1,12 +1,12 @@
 #include "game.hpp"
 
+#include <iomanip>
+
 
 Game::Game(){/* intentionally blank */}
 
 void Game::init(const GameConfig *gc)
 {
-    std::cerr << "TODO: complete function: " << __func__ << std::endl;
-
     if(!initFont(gc->font.fileName))
     {
         std::cerr << "ERROR, failed to open font: " << gc->font.fileName
@@ -36,13 +36,16 @@ bool Game::initFont(const std::string& fileName)
     }
 
     for(const auto &found : foundFontFiles){
-        std::cerr << found << "\n";
-
+    
         if(m_font.openFromFile(found)){
-            std::cerr << "Opened Font\n";
             return true;
         }
-       
+        else{
+            std::cerr << "ERROR  function: " << __func__ 
+                << " failed to open font file: " 
+                << found << "\n";
+            return false;
+        }
     }
     return false;
 }
@@ -81,23 +84,34 @@ void Game::update(void)
 
 void Game::draw(sf::RenderWindow& window)
 {
-    static int count = 0;
-    if(count == 0){
-         std::cerr << "TODO: complete function: " << __func__ << std::endl;
-         count++;
-    }
-
     for(const auto& r : m_rectangles)
     {
         window.draw(r);
+    }
+
+    for(const auto& c : m_circles)
+    {
+        window.draw(c);
     }
 }
 
 
 std::ostream& operator << (std::ostream& os, const Game& obj)
 {
-    os << "TODO: complete function: " << __func__ << std::endl;
-    os << "num rectangles: " << obj.m_rectangles.size() << "\n";
-    os << "num circles:    " << obj.m_circles.size() << "\n";
+    std::ios_base::fmtflags oldFlags = os.flags();
+
+    os << "**** Rectangle Data ***\n\n";
+    for(const auto& r : obj.m_rectangles){
+        os << r << "\n";
+    }
+    os << "**** End Rectangle Data\n\n";
+
+    os << "**** Circle Data ***\n\n";
+    for(const auto& c : obj.m_circles){
+        os << c << "\n";
+    }
+    os << "**** End Circle Data\n\n";
+
+    os.flags(oldFlags);
     return os;
 }

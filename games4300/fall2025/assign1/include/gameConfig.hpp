@@ -58,4 +58,7 @@ std::vector<std::filesystem::path> findFileRecursive(
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
 
+bool readVector2f(std::istringstream& iss, sf::Vector2f& v2);
+bool readColor(std::istringstream& iss, sf::Color& color);
+
 

@@ -1,5 +1,7 @@
 #include "rectangle.hpp"
 
+#include <iomanip>
+
 Rectangle::Rectangle(   sf::Vector2f size,
                         sf::Vector2f position,
                         sf::Vector2f velocity, 
@@ -47,9 +49,35 @@ void Rectangle::setVelocity(sf::Vector2f velocity)
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 {
-    os << "name: " << obj.m_name << "\n";
+    static constexpr int PRINT_WIDTH = 8;
+    std::ios_base::fmtflags oldFlags = os.flags();
+
+    sf::Color color = obj.getColor();
+    sf::Vector2f size = obj.getSize();
+    sf::Vector2f position = obj.getPosition();
+
+    os << std::fixed << std::setprecision(2);
+
+    os << "name:         "  << obj.m_name << "\n";
+    
+    os << "width:        "  << std::setw(PRINT_WIDTH) << size.x 
+                            << ", height: " << std::setw(PRINT_WIDTH) << size.y << "\n";
+
+    os << "position   x: "  << std::setw(PRINT_WIDTH) << position.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << position.y << "\n";
+    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.m_velocity.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << obj.m_velocity.y << "\n";
+   
+
+    os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
+                            << "  g: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.g) 
+                            << "  b: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.b)
+                            << "\n";
+
+    os.flags(oldFlags);
     return os;
 }
+
 
 sf::Color Rectangle::getColor()const 
 {

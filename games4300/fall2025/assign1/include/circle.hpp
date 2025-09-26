@@ -5,7 +5,8 @@
 #include <string>
 #include <string_view>
 
-class Circle{
+class Circle : public sf::Drawable, public sf::Transformable
+{
     public:
     static constexpr float MIN_RADIUS = 5.0f;
     static constexpr float MAX_RADIUS = 50.0f;
@@ -22,6 +23,8 @@ class Circle{
             sf::Vector2f velocity = DEFAULT_VELOCITY,
             std::string name = std::string(DEFAULT_NAME)
           );
+
+    virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     
     // Setter Member Functions
     void setPosition(sf::Vector2f position);

@@ -1,4 +1,7 @@
 #include "circle.hpp"
+#include <iomanip>
+
+#include <SFML/Graphics.hpp>
 
 Circle::Circle( float radius,
                 sf::Color color,
@@ -44,10 +47,36 @@ void Circle::setName(std::string& name){
 }
 
 
+void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
+{
+    states.transform *= getTransform();
+    target.draw(m_circle, states);
+}
+
+
 std::ostream& operator <<(std::ostream& os, const Circle& obj)
 {
-    std::cerr << __func__ << " incomplete\n";
-    os << "name: " << obj.m_name << "\n";
+    static constexpr int PRINT_WIDTH = 8;
+    std::ios_base::fmtflags oldFlags = os.flags();
+
+    sf::Color color = obj.getColor();
+    sf::Vector2f position = obj.getPosition();
+
+    os << std::fixed << std::setprecision(2);
+
+    os << "name:         "  << obj.m_name << "\n";
+    os << "radius:       "  << std::setw(PRINT_WIDTH) << obj.getRadius() << "\n"; 
+    os << "position   x: "  << std::setw(PRINT_WIDTH) << position.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << position.y << "\n";
+    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.m_velocity.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << obj.m_velocity.y << "\n";
+    
+     os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
+                            << "  g: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.g) 
+                            << "  b: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.b)
+                            << "\n";
+
+    os.flags(oldFlags);
     return os;
 }
 
