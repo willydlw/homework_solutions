@@ -71,15 +71,24 @@ void Game::initCircles(const std::vector<CircleConfig>& cConfig)
 
 
 
-void Game::update(void)
+void Game::update(const sf::Vector2u& boundary)
 {
     static int count = 0;
     if(count == 0){
          std::cerr << "TODO: complete function: " << __func__ << std::endl;
+         std::cerr << "display text on objects\n";
          count++;
     }
-    
-   
+
+    for(auto& r : m_rectangles)
+    {
+        r.update(boundary);
+    }
+
+    for(auto& c: m_circles)
+    {
+        c.update(boundary);
+    }
 }
 
 void Game::draw(sf::RenderWindow& window)

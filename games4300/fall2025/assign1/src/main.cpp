@@ -63,7 +63,7 @@ int main(void)
             }
         }
 
-        game.update();
+        game.update(window.getSize());
 
         window.clear(sf::Color::Blue);
         game.draw(window);

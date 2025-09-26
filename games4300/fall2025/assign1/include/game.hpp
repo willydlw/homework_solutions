@@ -18,7 +18,7 @@ class Game
     void init(const GameConfig *gc);
 
 
-    void update();
+    void update(const sf::Vector2u& boundary);
     void draw(sf::RenderWindow& window);
 
 

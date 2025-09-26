@@ -24,6 +24,8 @@ class Circle : public sf::Drawable, public sf::Transformable
             std::string name = std::string(DEFAULT_NAME)
           );
 
+
+    void update(const sf::Vector2u& boundary);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     
     // Setter Member Functions

@@ -16,6 +16,28 @@ Rectangle::Rectangle(   sf::Vector2f size,
     setName(name);
 }
 
+void Rectangle::update(const sf::Vector2u& boundary)
+{
+    sf::Vector2f position = m_rectangle.getPosition();
+    position.x += m_velocity.x;
+    position.y += m_velocity.y;
+    setPosition(position);
+
+    
+    sf::Vector2f size = getSize();
+    // position.y is rectangle top
+    if(position.y + size.y > boundary.y || position.y < 0)
+    {
+        m_velocity.y = -m_velocity.y;
+    }
+
+    // position.x is rectangle top left 
+    if(position.x + size.x > boundary.x || position.x < 0)
+    {
+        m_velocity.x = -m_velocity.x;
+    }
+}
+
 void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();

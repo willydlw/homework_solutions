@@ -47,6 +47,25 @@ void Circle::setName(std::string& name){
 }
 
 
+void Circle::update(const sf::Vector2u& boundary)
+{
+    sf::Vector2f position = m_circle.getPosition();
+    position.x += m_velocity.x;
+    position.y += m_velocity.y;
+    setPosition(position);
+
+    float radius = getRadius();
+    if(position.y + radius > boundary.y || position.y - radius < 0)
+    {
+        m_velocity.y = -m_velocity.y;
+    }
+
+    if(position.x + radius > boundary.x || position.x - radius < 0)
+    {
+        m_velocity.x = -m_velocity.x;
+    }
+}
+
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();

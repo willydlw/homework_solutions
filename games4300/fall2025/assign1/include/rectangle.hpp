@@ -23,6 +23,8 @@ class Rectangle : public sf::Drawable, public sf::Transformable
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+    void update(const sf::Vector2u& boundary);
+
     void setColor(sf::Color color);
     void setName(std::string& name);
     void setSize(sf::Vector2f size);
