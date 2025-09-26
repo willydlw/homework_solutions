@@ -14,12 +14,9 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     static constexpr sf::Color DEFAULT_COLOR = {255, 255, 255};
     
 
-    Rectangle(  sf::Vector2f size = DEFAULT_SIZE,
-                sf::Vector2f position = DEFAULT_POSITION,
-                sf::Vector2f velocity = DEFAULT_VELOCITY,
-                sf::Color color = DEFAULT_COLOR,
-                std::string name = std::string(DEFAULT_NAME)
-            );
+    Rectangle(const RectConfig* rectConfigt, const TextConfig* textConfig);
+
+    void initText(const sf::Font &font, sf::Color fontColor, int fontSize);
 
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
@@ -30,6 +27,7 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     void setSize(sf::Vector2f size);
     void setPosition(sf::Vector2f position);
     void setVelocity(sf::Vector2f velocity);
+    
 
 
     sf::Color    getColor() const;
@@ -45,4 +43,8 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     sf::RectangleShape m_rectangle;
     sf::Vector2f m_velocity;
     std::string m_name;
+
+    // sf::Text does not have a default constructor (SFML 3)
+    // To get around this, will create a pointer to text as a class attribute
+    std::unique_ptr<sf::Text> m_text;
 };

@@ -34,8 +34,11 @@ class Game
     private:
 
     bool initFont(const std::string& fontFileName);
-    void initRectangles(const std::vector<RectangleConfig>& rConfig);
-    void initCircles(const std::vector<CircleConfig>& cConfig);
+
+    void initRectangles(const std::vector<RectangleConfig>& rConfig, 
+                        );
+
+    void initCircles( const std::vector<CircleConfig>& cConfig)
 
 };
 

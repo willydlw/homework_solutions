@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <memory>
 
 class Circle : public sf::Drawable, public sf::Transformable
 {
@@ -17,13 +18,10 @@ class Circle : public sf::Drawable, public sf::Transformable
 
     static constexpr std::string_view DEFAULT_NAME = {"Default"};
 
-    Circle( float radius = DEFAULT_RADIUS, 
-            sf::Color color = sf::Color::Green,
-            sf::Vector2f position = DEFAULT_POSITION,
-            sf::Vector2f velocity = DEFAULT_VELOCITY,
-            std::string name = std::string(DEFAULT_NAME)
-          );
+    Circle(const CircleConfig* circleConfig, const TextConfig* textConfig);
 
+    // Separate intialization function for text object due 
+    //void initText(const sf::Font &font, sf::Color fontColor, int fontSize);
 
     void update(const sf::Vector2u& boundary);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -34,6 +32,8 @@ class Circle : public sf::Drawable, public sf::Transformable
     void setColor(sf::Color color);
     void setName(std::string& name);
     void setVelocity(sf::Vector2f velocity);
+
+    
 
     // Getter Member Functions
     sf::Vector2f getPosition()const;
@@ -46,8 +46,17 @@ class Circle : public sf::Drawable, public sf::Transformable
 
 
     private:
+
     // Data members
-    sf::CircleShape m_circle;   
-    sf::Vector2f m_velocity;
-    std::string  m_name;
+    sf::Font m_font;
+    sf::Text m_text;
+    sf::Vector2f      m_velocity;
+
+    sf::CircleShape   m_circle;   
+    std::string       m_name;
+
+   
+
+    void updateTextPosition(void);
+
 };

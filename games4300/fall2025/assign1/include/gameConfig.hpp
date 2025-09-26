@@ -50,6 +50,12 @@ struct GameConfig{
     std::vector<CircleConfig>circles;
 };
 
+struct TextConfig{
+    sf::Font font;
+    int fontSize;
+    sf::Color color;
+};
+
 
 std::filesystem::path getWorkingDirectory(void);
 

@@ -14,8 +14,10 @@ void Game::init(const GameConfig *gc)
         std::exit(-1);
     }
 
-    initRectangles(gc->rects);
-    initCircles(gc->circles);
+    TextConfig textConfig(m_font, gc->font.color, gc->font.fontSize);
+
+    initRectangles(gc->rects, textConfig);
+    initCircles(gc->circles, textConfig);
 }
 
 
@@ -50,21 +52,21 @@ bool Game::initFont(const std::string& fileName)
     return false;
 }
 
-void Game::initRectangles(const std::vector<RectangleConfig>& rConfig)
+void Game::initRectangles(  const std::vector<RectangleConfig>& rConfig,
+                            const TextConfig* textConfig)
 {
     for(const auto& rc : rConfig)
     {
-        sf::Vector2f rectSize{rc.width, rc.height};
-        Rectangle rect(rectSize, rc.position, rc.velocity, rc.color, rc.shapeName);
+        Rectangle rect(rc, textConfig);
         m_rectangles.push_back(rect);
     }
 }
 
-void Game::initCircles(const std::vector<CircleConfig>& cConfig)
+void Game::initCircles( const std::vector<CircleConfig>& circleConfig, const TextConfig* textConfig)
 {
     for(const auto& c : cConfig)
     {
-        Circle circle(c.radius, c.color, c.position, c.velocity, c.shapeName);
+        Circle circle(c, textConfig);
         m_circles.push_back(circle);
     }
 }

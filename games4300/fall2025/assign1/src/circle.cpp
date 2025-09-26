@@ -3,13 +3,18 @@
 
 #include <SFML/Graphics.hpp>
 
-Circle::Circle( float radius,
-                sf::Color color,
+Circle::Circle( const Fo
+                float radius,
+                sf::Color fillColor,
                 sf::Vector2f position,
                 sf::Vector2f velocity,
                 std::string name
-                )
+                ) :
+                m_font(font),
+                m_text(font),
+                m_color(color)
 {
+
     setRadius(radius);
     setPosition(position);
     setVelocity(velocity);
@@ -47,29 +52,74 @@ void Circle::setName(std::string& name){
 }
 
 
+#if 0
+void Circle::initText(const sf::Font &font, sf::Color fontColor, int fontSize)
+{
+    m_text = std::move(std::make_unique<sf::Text>(font, m_name, fontSize));
+    m_text->setFillColor(fontColor);
+}
+#endif
+
+
 void Circle::update(const sf::Vector2u& boundary)
 {
+    // position is top left corner of circle bounding box
     sf::Vector2f position = m_circle.getPosition();
+    float diameter = 2.0f * m_circle.getRadius();
+
     position.x += m_velocity.x;
     position.y += m_velocity.y;
-    setPosition(position);
-
-    float radius = getRadius();
-    if(position.y + radius > boundary.y || position.y - radius < 0)
+    
+    if( (position.y + diameter) >= boundary.y || position.y <= 0)
     {
         m_velocity.y = -m_velocity.y;
     }
 
-    if(position.x + radius > boundary.x || position.x - radius < 0)
+    if((position.x + diameter) >= boundary.x || position.x <= 0)
     {
         m_velocity.x = -m_velocity.x;
     }
+
+    m_circle.setPosition(position);
+    updateTextPosition();
+}
+
+// Centers text within the circle shape
+void Circle::updateTextPosition(void)
+{
+    sf::Vector2f textPosition;
+
+    // Global Bounds is minimal rectangle that fully encloses shape 
+    // taking into account all transformations 
+    // Provides an axis-aligned bounding box 
+    // in terms of global coordinate system
+    sf::FloatRect gboundsCircle = m_circle.getGlobalBounds();
+    float circleBoxWidth = gboundsCircle.size.x;
+    float circleBoxHeight = gboundsCircle.size.y;
+    float circleBoxLeft = gboundsCircle.position.x;
+    float circleBoxTop = gboundsCircle.position.y;
+
+    // Local bounds 
+    sf::FloatRect lboundsText = m_text->getLocalBounds();
+    float localTextWidth = lboundsText.size.x;
+    float localTextHeight = lboundsText.size.y;
+
+   
+    // Find offsets for text placement 
+    float offsetX = (circleBoxWidth  / 2.0f) - (localTextWidth / 2.0f);
+    float offsetY = (circleBoxHeight / 2.0f) - (localTextHeight / 2.0f);
+
+    // center text within shape 
+    textPosition.x = circleBoxLeft + offsetX;
+    textPosition.y = circleBoxTop + offsetY;
+    m_text->setPosition(textPosition);
 }
 
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(m_circle, states);
+    target.draw(*m_text, states);
 }
 
 

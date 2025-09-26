@@ -68,6 +68,13 @@ void Rectangle::setVelocity(sf::Vector2f velocity)
     m_velocity = velocity;
 }
 
+void Rectangle::initText(const sf::Font &font, sf::Color fontColor, int fontSize)
+{
+    m_text = std::move(std::make_unique<sf::Text>(font, m_name, fontSize));
+    m_text->setFillColor(fontColor);
+}
+
+
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 {

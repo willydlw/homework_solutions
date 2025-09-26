@@ -46,6 +46,8 @@ target_link_libraries(demo
 
 target_link_libraries(assign1
     PRIVATE SFML::Graphics
+    PRIVATE SFML::Window 
+    PRIVATE SFML::System
     PRIVATE ImGui-SFML::ImGui-SFML
 )
 
