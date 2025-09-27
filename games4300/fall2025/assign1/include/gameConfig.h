@@ -20,7 +20,7 @@ struct WindowConfig{
 
 struct FontConfig{
     std::string fileName;
-    int fontSize;
+    unsigned int fontSize;
     sf::Color color;
     FontConfig() : fileName("fonts/arial.ttf"), fontSize(32) {}
 };
@@ -51,20 +51,21 @@ struct GameConfig{
     std::vector<CircleConfig>circles;
 };
 
-struct TextConfig{
-    sf::Font font;
-    int fontSize;
-    sf::Color color;
 
-    TextConfig(sf::Font textFont, int fSize, sf::Color fontColor) :
-        font(textFont), fontSize(fSize), color(fontColor){ }
+struct TextConfig{
+    unsigned int characterSize;
+    sf::Color fillColor;
 };
 
 
+
+// Returns working directory path
 std::filesystem::path getWorkingDirectory(void);
 
+// 
 std::vector<std::filesystem::path> findFileRecursive(
     const std::filesystem::path& startPath, const std::string& filenameToFind);
+
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
 

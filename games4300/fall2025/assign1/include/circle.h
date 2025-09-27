@@ -21,7 +21,9 @@ class Circle : public sf::Drawable, public sf::Transformable
     static constexpr std::string_view DEFAULT_NAME = {"Default"};
 
     // Constructor
-    Circle(const CircleConfig* circleConfig, const TextConfig* textConfig);
+    Circle( const CircleConfig* circleConfig, 
+            const sf::Font& font,
+            const TextConfig* textConfig);
 
     // 
     void update(const sf::Vector2u& boundary);
@@ -49,14 +51,10 @@ class Circle : public sf::Drawable, public sf::Transformable
     private:
 
     // Data members
-    sf::Font m_font;
     sf::Text m_text;
-    
     sf::CircleShape   m_circle;  
     sf::Vector2f      m_velocity; 
     std::string       m_name;
-
-   
 
     void updateTextPosition(void);
 

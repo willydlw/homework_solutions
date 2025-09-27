@@ -7,7 +7,6 @@
 std::filesystem::path getWorkingDirectory(void){
     try {
         std::filesystem::path currentPath = std::filesystem::current_path();
-        std::cout << "Current working directory: " << currentPath << std::endl;
         return currentPath;
     } catch (const std::filesystem::filesystem_error& e) {
         std::cerr << "Error getting current path: " << e.what() << std::endl;
@@ -19,9 +18,6 @@ std::filesystem::path getWorkingDirectory(void){
 // Function to recursively search for a file
 std::vector<std::filesystem::path> findFileRecursive(const std::filesystem::path& startPath, const std::string& filenameToFind) {
     std::vector<std::filesystem::path> foundFiles;
-
-    std::cerr << "Entered " << __func__ << ", startPath: " << startPath << "\n";
-    std::cerr << "Searching for file: " << filenameToFind << "\n\n";
 
     // Check if the starting path is a directory
     if (!std::filesystem::is_directory(startPath)) {

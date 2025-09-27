@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
+#include <memory>
 
 class Rectangle : public sf::Drawable, public sf::Transformable
 {
@@ -16,7 +17,9 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     static constexpr sf::Color DEFAULT_COLOR = {255, 255, 255};
     
 
-    Rectangle(const RectangleConfig* rectConfig, const TextConfig* textConfig);
+    Rectangle(  const RectangleConfig* rectConfig, 
+                const sf::Font& font, 
+                const TextConfig* textConfig);
 
     void initText(const sf::Font &font, sf::Color fontColor, int fontSize);
 
@@ -38,19 +41,14 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     sf::Vector2f getPosition() const;
     sf::Vector2f getVelocity() const;
 
-
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);
 
     private:
-    sf::Font m_font;
+   
     sf::Text m_text;
-
     sf::Vector2f m_velocity;
+    sf::RectangleShape m_rectangle;
     std::string m_name;
 
-    sf::RectangleShape m_rectangle;
-
-    // sf::Text does not have a default constructor (SFML 3)
-    // To get around this, will create a pointer to text as a class attribute
-    //std::unique_ptr<sf::Text> m_text;
+    void updateTextPosition(void);
 };

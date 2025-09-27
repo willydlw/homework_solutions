@@ -3,13 +3,12 @@
 #include <iomanip>
 
 Rectangle::Rectangle(   const RectangleConfig* rectConfig, 
-                        const TextConfig* textConfig
-                    ) 
-                    :   m_font(textConfig->font), 
-                        m_text(m_font)
+                        const sf::Font& font, 
+                        const TextConfig* textConfig) 
+                        : m_text(font, rectConfig->shapeName, textConfig->characterSize)
 {
-    m_text.setCharacterSize(textConfig->fontSize);
-    m_text.setFillColor(textConfig->color);
+    m_text.setFillColor(textConfig->fillColor);   
+    m_text.setPosition(rectConfig->position);
 
     // rectangle shape attributes
     setSize({rectConfig->width, rectConfig->height});
@@ -25,7 +24,7 @@ void Rectangle::update(const sf::Vector2u& boundary)
     sf::Vector2f position = m_rectangle.getPosition();
     position.x += m_velocity.x;
     position.y += m_velocity.y;
-    setPosition(position);
+    m_rectangle.setPosition(position);
 
     
     sf::Vector2f size = getSize();
@@ -40,12 +39,47 @@ void Rectangle::update(const sf::Vector2u& boundary)
     {
         m_velocity.x = -m_velocity.x;
     }
+    
+    updateTextPosition();
+}
+
+
+// Centers text within the circle shape
+void Rectangle::updateTextPosition(void)
+{
+    sf::Vector2f textPosition;
+
+    // Global Bounds is minimal rectangle that fully encloses shape 
+    // taking into account all transformations 
+    // Provides an axis-aligned bounding box 
+    // in terms of global coordinate system
+    sf::FloatRect gboundsRect = m_rectangle.getGlobalBounds();
+    float rectBoxWidth = gboundsRect.size.x;
+    float rectBoxHeight = gboundsRect.size.y;
+    float rectBoxLeft = gboundsRect.position.x;
+    float rectBoxTop = gboundsRect.position.y;
+
+  
+    // Local bounds 
+    sf::FloatRect lboundsText = m_text.getLocalBounds();
+    float localTextWidth = lboundsText.size.x;
+    float localTextHeight = lboundsText.size.y;
+   
+    // Find offsets for text placement 
+    float offsetX = (rectBoxWidth  / 2.0f) - (localTextWidth / 2.0f);
+    float offsetY = (rectBoxHeight / 2.0f) - (localTextHeight / 2.0f);
+
+    // center text within shape 
+    textPosition.x = rectBoxLeft + offsetX;
+    textPosition.y = rectBoxTop + offsetY;
+    m_text.setPosition(textPosition);
 }
 
 void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(m_rectangle, states);
+    target.draw(m_text, states);
 }
 
 void Rectangle::setColor(sf::Color color){
@@ -99,6 +133,12 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
                             << "  g: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.g) 
                             << "  b: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.b)
                             << "\n";
+
+    std::string textString = obj.m_text.getString();
+
+    os << "Text Data\n";
+    os << "\tsize: " << obj.m_text.getCharacterSize() << "\n"
+        << "\tstring: " << textString << "\n";
 
     os.flags(oldFlags);
     return os;

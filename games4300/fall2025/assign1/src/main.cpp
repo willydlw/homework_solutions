@@ -30,6 +30,7 @@ int main(void)
 
     std::cerr << "\n" << game << "\n";
 
+
     #if 0
     // initialize imgui and create a clock used for its internal timing
     if(!ImGui::SFML::Init(window))
@@ -42,8 +43,6 @@ int main(void)
     // scale the imgui ui and text by a given factor
     ImGui::GetStyle().ScaleAllSizes(2.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
-
-
     #endif
 
  
@@ -62,7 +61,7 @@ int main(void)
 
         game.update(window.getSize());
 
-        window.clear(sf::Color::Blue);
+        window.clear(sf::Color::White);
         game.draw(window);
         window.display();
     }

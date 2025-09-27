@@ -4,12 +4,14 @@
 #include <SFML/Graphics.hpp>
 
 Circle::Circle( const CircleConfig* circleConfig, 
-                const TextConfig* textConfig) :
-                m_font(textConfig->font),
-                m_text(textConfig->font)
+                const sf::Font& font,
+                const TextConfig* textConfig) 
+                : m_text(font, circleConfig->shapeName, textConfig->characterSize)
 {
-    m_text.setCharacterSize(textConfig->fontSize);
-    m_text.setFillColor(textConfig->color);
+
+    
+    m_text.setFillColor(textConfig->fillColor);
+    m_text.setPosition(circleConfig->position);
 
     // circleShape attributes
     setRadius(circleConfig->radius);

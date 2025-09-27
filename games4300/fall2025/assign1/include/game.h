@@ -33,7 +33,14 @@ class Game
     // private member functions
     private:
 
-    bool initFont(const std::string& fontFileName);
+    /*  Operation:
+            Searches project directories for paths to fontFilename.
+            Iterates though found paths until successfully opening font file.
+        Return:
+            Success - returns path to file opened 
+            Failure - returns empty string
+    */
+    std::string initFont(const std::string& fontFileName);
 
     void initRectangles(const std::vector<RectangleConfig>& rConfig, const TextConfig* textConfig);
 

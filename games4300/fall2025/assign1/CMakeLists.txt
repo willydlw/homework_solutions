@@ -36,6 +36,12 @@ target_sources(findFile PRIVATE
     src/findFile.cpp
 )
 
+add_executable(displayText)
+target_sources(displayText PRIVATE 
+    src/displayText.cpp
+)
+
+
 
 # Link to other libraries (if needed)
 # PUBLIC m links math library
@@ -51,6 +57,9 @@ target_link_libraries(assign1
     PRIVATE ImGui-SFML::ImGui-SFML
 )
 
+target_link_libraries(displayText
+    PRIVATE SFML::Graphics 
+)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall -Wextra -pedantic")
 

@@ -7,21 +7,23 @@ Game::Game(){/* intentionally blank */}
 
 void Game::init(const GameConfig *gc)
 {
-    if(!initFont(gc->font.fileName))
+    std::string fontFilePath;
+    fontFilePath = initFont(gc->font.fileName);
+    if(fontFilePath.empty())
     {
         std::cerr << "ERROR, failed to open font: " << gc->font.fileName
                 << "\n";
         std::exit(-1);
     }
 
-    TextConfig textConfig(m_font, gc->font.fontSize, gc->font.color);
+    TextConfig textConfig{gc->font.fontSize, gc->font.color};
 
     initRectangles(gc->rects, &textConfig);
     initCircles(gc->circles, &textConfig);
 }
 
 
-bool Game::initFont(const std::string& fileName)
+std::string Game::initFont(const std::string& fileName)
 {
     // Get the current working directory
     std::filesystem::path workingDirPath = getWorkingDirectory();
@@ -34,39 +36,38 @@ bool Game::initFont(const std::string& fileName)
         std::cerr << "ERROR, failed to find file: " << fileName 
             << " in working directory: " << workingDirPath 
             << "\n";
-        return false;
+        return "";
     }
 
     for(const auto &found : foundFontFiles){
     
         if(m_font.openFromFile(found)){
-            return true;
+            return found;
         }
         else{
-            std::cerr << "ERROR  function: " << __func__ 
+            std::cerr << "WARNING function: " << __func__ 
                 << " failed to open font file: " 
                 << found << "\n";
-            return false;
         }
     }
-    return false;
+    return "";
 }
 
 void Game::initRectangles(  const std::vector<RectangleConfig>& rConfig,
                             const TextConfig* textConfig)
 {
-    for(const auto& rc : rConfig)
+    for(auto rc : rConfig)
     {
-        Rectangle rect(&rc, textConfig);
+        Rectangle rect(&rc, m_font, textConfig);
         m_rectangles.push_back(rect);
     }
 }
 
 void Game::initCircles( const std::vector<CircleConfig>& circleConfig, const TextConfig* textConfig)
 {
-    for(const auto& c : circleConfig)
+    for(auto cc : circleConfig)
     {
-        Circle circle(&c, textConfig);
+        Circle circle(&cc, m_font, textConfig);
         m_circles.push_back(circle);
     }
 }
