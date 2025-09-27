@@ -1,5 +1,7 @@
 #pragma once 
 
+#include "gameConfig.h"
+
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include <string>
@@ -14,7 +16,7 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     static constexpr sf::Color DEFAULT_COLOR = {255, 255, 255};
     
 
-    Rectangle(const RectConfig* rectConfigt, const TextConfig* textConfig);
+    Rectangle(const RectangleConfig* rectConfig, const TextConfig* textConfig);
 
     void initText(const sf::Font &font, sf::Color fontColor, int fontSize);
 
@@ -40,11 +42,15 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);
 
     private:
-    sf::RectangleShape m_rectangle;
+    sf::Font m_font;
+    sf::Text m_text;
+
     sf::Vector2f m_velocity;
     std::string m_name;
 
+    sf::RectangleShape m_rectangle;
+
     // sf::Text does not have a default constructor (SFML 3)
     // To get around this, will create a pointer to text as a class attribute
-    std::unique_ptr<sf::Text> m_text;
+    //std::unique_ptr<sf::Text> m_text;
 };

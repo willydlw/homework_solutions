@@ -1,4 +1,4 @@
-#include "game.hpp"
+#include "game.h"
 
 #include <iomanip>
 
@@ -14,10 +14,10 @@ void Game::init(const GameConfig *gc)
         std::exit(-1);
     }
 
-    TextConfig textConfig(m_font, gc->font.color, gc->font.fontSize);
+    TextConfig textConfig(m_font, gc->font.fontSize, gc->font.color);
 
-    initRectangles(gc->rects, textConfig);
-    initCircles(gc->circles, textConfig);
+    initRectangles(gc->rects, &textConfig);
+    initCircles(gc->circles, &textConfig);
 }
 
 
@@ -57,16 +57,16 @@ void Game::initRectangles(  const std::vector<RectangleConfig>& rConfig,
 {
     for(const auto& rc : rConfig)
     {
-        Rectangle rect(rc, textConfig);
+        Rectangle rect(&rc, textConfig);
         m_rectangles.push_back(rect);
     }
 }
 
 void Game::initCircles( const std::vector<CircleConfig>& circleConfig, const TextConfig* textConfig)
 {
-    for(const auto& c : cConfig)
+    for(const auto& c : circleConfig)
     {
-        Circle circle(c, textConfig);
+        Circle circle(&c, textConfig);
         m_circles.push_back(circle);
     }
 }

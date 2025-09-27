@@ -4,9 +4,9 @@
 
 #include <SFML/Graphics.hpp>
 
-#include "gameConfig.hpp"
-#include "rectangle.hpp"
-#include "circle.hpp"
+#include "gameConfig.h"
+#include "rectangle.h"
+#include "circle.h"
 
 
 class Game
@@ -35,10 +35,9 @@ class Game
 
     bool initFont(const std::string& fontFileName);
 
-    void initRectangles(const std::vector<RectangleConfig>& rConfig, 
-                        );
+    void initRectangles(const std::vector<RectangleConfig>& rConfig, const TextConfig* textConfig);
 
-    void initCircles( const std::vector<CircleConfig>& cConfig)
+    void initCircles( const std::vector<CircleConfig>& cConfig, const TextConfig* textConfig);
 
 };
 

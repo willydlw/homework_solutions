@@ -1,19 +1,23 @@
-#include "rectangle.hpp"
+#include "rectangle.h"
 
 #include <iomanip>
 
-Rectangle::Rectangle(   sf::Vector2f size,
-                        sf::Vector2f position,
-                        sf::Vector2f velocity, 
-                        sf::Color color,
-                        std::string name
-                    )
+Rectangle::Rectangle(   const RectangleConfig* rectConfig, 
+                        const TextConfig* textConfig
+                    ) 
+                    :   m_font(textConfig->font), 
+                        m_text(m_font)
 {
-    setSize(size);
-    setPosition(position);
-    setVelocity(velocity);
-    setColor(color);
-    setName(name);
+    m_text.setCharacterSize(textConfig->fontSize);
+    m_text.setFillColor(textConfig->color);
+
+    // rectangle shape attributes
+    setSize({rectConfig->width, rectConfig->height});
+    setPosition(rectConfig->position);
+    setColor(rectConfig->color);
+
+    setVelocity(rectConfig->velocity);
+    m_name = rectConfig->shapeName;
 }
 
 void Rectangle::update(const sf::Vector2u& boundary)
@@ -67,13 +71,6 @@ void Rectangle::setVelocity(sf::Vector2f velocity)
 {
     m_velocity = velocity;
 }
-
-void Rectangle::initText(const sf::Font &font, sf::Color fontColor, int fontSize)
-{
-    m_text = std::move(std::make_unique<sf::Text>(font, m_name, fontSize));
-    m_text->setFillColor(fontColor);
-}
-
 
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)

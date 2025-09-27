@@ -1,25 +1,24 @@
-#include "circle.hpp"
+#include "circle.h"
 #include <iomanip>
 
 #include <SFML/Graphics.hpp>
 
-Circle::Circle( const Fo
-                float radius,
-                sf::Color fillColor,
-                sf::Vector2f position,
-                sf::Vector2f velocity,
-                std::string name
-                ) :
-                m_font(font),
-                m_text(font),
-                m_color(color)
+Circle::Circle( const CircleConfig* circleConfig, 
+                const TextConfig* textConfig) :
+                m_font(textConfig->font),
+                m_text(textConfig->font)
 {
+    m_text.setCharacterSize(textConfig->fontSize);
+    m_text.setFillColor(textConfig->color);
 
-    setRadius(radius);
-    setPosition(position);
-    setVelocity(velocity);
-    setColor(color);
-    setName(name);
+    // circleShape attributes
+    setRadius(circleConfig->radius);
+    setPosition(circleConfig->position);
+    setPosition(circleConfig->position);
+    setColor(circleConfig->color);
+
+    setVelocity(circleConfig->velocity);
+    m_name = circleConfig->shapeName;
 }
 
 void Circle::setPosition(sf::Vector2f position)
@@ -50,15 +49,6 @@ void Circle::setVelocity(sf::Vector2f velocity)
 void Circle::setName(std::string& name){
     m_name = name;
 }
-
-
-#if 0
-void Circle::initText(const sf::Font &font, sf::Color fontColor, int fontSize)
-{
-    m_text = std::move(std::make_unique<sf::Text>(font, m_name, fontSize));
-    m_text->setFillColor(fontColor);
-}
-#endif
 
 
 void Circle::update(const sf::Vector2u& boundary)
@@ -100,7 +90,7 @@ void Circle::updateTextPosition(void)
     float circleBoxTop = gboundsCircle.position.y;
 
     // Local bounds 
-    sf::FloatRect lboundsText = m_text->getLocalBounds();
+    sf::FloatRect lboundsText = m_text.getLocalBounds();
     float localTextWidth = lboundsText.size.x;
     float localTextHeight = lboundsText.size.y;
 
@@ -112,14 +102,14 @@ void Circle::updateTextPosition(void)
     // center text within shape 
     textPosition.x = circleBoxLeft + offsetX;
     textPosition.y = circleBoxTop + offsetY;
-    m_text->setPosition(textPosition);
+    m_text.setPosition(textPosition);
 }
 
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(m_circle, states);
-    target.draw(*m_text, states);
+    target.draw(m_text, states);
 }
 
 

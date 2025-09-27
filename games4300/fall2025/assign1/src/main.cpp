@@ -11,11 +11,8 @@
 #include <imgui.h>
 
 
-#include "game.hpp"
-#include "gameConfig.hpp"
-#include "circle.hpp"
-#include "rectangle.hpp"
-
+#include "game.h"
+#include "gameConfig.h"
 
 
 int main(void)

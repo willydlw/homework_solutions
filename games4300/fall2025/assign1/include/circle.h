@@ -6,6 +6,8 @@
 #include <string_view>
 #include <memory>
 
+#include "gameConfig.h"
+
 class Circle : public sf::Drawable, public sf::Transformable
 {
     public:
@@ -18,11 +20,10 @@ class Circle : public sf::Drawable, public sf::Transformable
 
     static constexpr std::string_view DEFAULT_NAME = {"Default"};
 
+    // Constructor
     Circle(const CircleConfig* circleConfig, const TextConfig* textConfig);
 
-    // Separate intialization function for text object due 
-    //void initText(const sf::Font &font, sf::Color fontColor, int fontSize);
-
+    // 
     void update(const sf::Vector2u& boundary);
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
     
@@ -50,9 +51,9 @@ class Circle : public sf::Drawable, public sf::Transformable
     // Data members
     sf::Font m_font;
     sf::Text m_text;
-    sf::Vector2f      m_velocity;
-
-    sf::CircleShape   m_circle;   
+    
+    sf::CircleShape   m_circle;  
+    sf::Vector2f      m_velocity; 
     std::string       m_name;
 
    

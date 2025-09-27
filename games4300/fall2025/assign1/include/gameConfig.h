@@ -8,6 +8,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
+#include <SFML/Graphics/Font.hpp>
 
 
 struct WindowConfig{
@@ -54,6 +55,9 @@ struct TextConfig{
     sf::Font font;
     int fontSize;
     sf::Color color;
+
+    TextConfig(sf::Font textFont, int fSize, sf::Color fontColor) :
+        font(textFont), fontSize(fSize), color(fontColor){ }
 };
 
 
