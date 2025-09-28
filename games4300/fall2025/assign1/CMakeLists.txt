@@ -1,5 +1,5 @@
 # Project name (can be different from directory name)
-project(GWARS)
+project(ASSIGN1)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

@@ -3,3 +3,4 @@ project(Games4300 LANGUAGES CXX)
 
 add_subdirectory(dependencies)
 add_subdirectory(assign1)
+add_subdirectory(assign2)
