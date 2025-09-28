@@ -12,7 +12,7 @@ class Circle : public sf::Drawable, public sf::Transformable
 {
     public:
     static constexpr float MIN_RADIUS = 5.0f;
-    static constexpr float MAX_RADIUS = 50.0f;
+    static constexpr float MAX_RADIUS = 200.0f;
     static constexpr float DEFAULT_RADIUS = 10.0f;
 
     static constexpr sf::Vector2f DEFAULT_POSITION = {0.0f, 0.0f};

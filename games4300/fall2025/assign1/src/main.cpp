@@ -28,7 +28,7 @@ int main(void)
     sf::RenderWindow window(sf::VideoMode({gameConfig.window.width, gameConfig.window.height}), "Assign 1");
     window.setFramerateLimit(60);
 
-    std::cerr << "\n" << game << "\n";
+    //std::cerr << "\n" << game << "\n";
 
 
     #if 0

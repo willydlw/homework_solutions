@@ -34,6 +34,10 @@ void Circle::setRadius(float radius)
         m_circle.setRadius(radius);
     }
     else{
+        std::cerr << "WARNING radius: " << radius 
+            << " not within bounds {" << MIN_RADIUS << ", "
+            << MAX_RADIUS << "}, setting to default: " 
+            << DEFAULT_RADIUS << "\n";  
         m_circle.setRadius(DEFAULT_RADIUS);
     }
 }

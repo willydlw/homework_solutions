@@ -93,7 +93,7 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
                     << line << "\n";
                 continue;
             }
-            
+           
             gameConfig->circles.push_back(cc);
         }
         else if(firstWord == "Rectangle"){
