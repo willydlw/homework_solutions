@@ -1,5 +1,8 @@
 #pragma once 
+
 #include <iostream>
+
+typedef Vec2f Vec2<float>;
 
 template <typeName T>
 class Vec2

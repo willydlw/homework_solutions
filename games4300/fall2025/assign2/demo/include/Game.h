@@ -1,27 +1,69 @@
 #pragma once
 
-#include "entityManager.h"
 
-class GameEngine{
-    public:
-    GameEngine();
+#include "EntityManager.hpp"
 
-    void mainLoop();
+#include <memory>
+#include <string>
+#include <vector>
 
-    void init();
-    void update();
+#include <SFML/Graphics.hpp>
+#include <imgui.h>
+#include <imgui-SFML.h>
 
+struct PlayerConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S;};
+struct EnemyConfig  { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX;};
+struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S;};
+
+class Game{
+
+public:
+    static constexpr unsigned int DEFAULT_WINDOW_WIDTH = 1280U;
+    static constexpr unsigned int DEFAULT_WINDOW_HEIGHT = 720U;
+    static constexpr unsigned int DEFAULT_FRAME_RATE = 60U;
+
+public:
+    Game() = default;
+
+    
+    Game(const std::string & config);
+
+    void run();
+    
     // systems 
     void sMovement();
+    void sLifespan();
+    void sCollision();
+    void sGUI();
     void sUserInput();
     void sEnemySpawner();
     void sRender();
 
 
-    private:
-    sf::Window      m_window;
-    bool            m_paused;
-    bool            m_running;
+private:
+    sf::Window      m_window;           // window to which we draw
+    EntityManager   m_entities;         // vector of entities to maintain
+    sf::Font        m_font;
+    sf::Text        m_text;
+    PlayerConfig    m_playerConfig;
+    EnemyConfig     m_enemyConfig;
+    BulletConfig    m_bulletConfig;
+    sf::Clock       m_deltaClock;
+    unsigned int    m_score = 0;
+    unsigned int    m_currentFrame = 0;
+    unsigned int    m_lastEnemySpawnTime = 0;
+    bool            m_paused = false;           // whether we update game logic
+    bool            m_running = true;
 
-    EntityManager m_entityManager;
+    // private member functions 
+    void init(const std::string& config);
+    std::shared_ptr<Entity> player();
+
+
+    void spawnPlayer();
+    void spawnEnemy();
+    void spawnSmallEnemies(std::shared_ptr<Enity> e);
+    void spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target);
+    void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
+
 };
