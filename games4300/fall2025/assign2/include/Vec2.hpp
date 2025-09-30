@@ -45,59 +45,69 @@ public:
 
     Vec2 operator / (const T val) const 
     {
-        // TODO
+        return Vec2<T>( x / val, y / val);
     }
     Vec2 operator * (const T val) const
     {
-        // TODO
+        return Vec2<T> ( x * val, y * val);
     }
 
 
     Vec2& operator += (const Vec2& rhs)
     {
-        // TODO
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
     }
     
    
     Vec2& operator -= (const Vec2& rhs)
     {
-        // TODO
+        x -= rhs.x;
+        y -= rhs.y;
+        return *this;
     }
    
 
     Vec2& operator *= (const T val)
     {
-        // TODO
+        x *= val;
+        y *= val;
+        return *this;
     }
 
      Vec2& operator /= (const T val)
     {
-        // TODO
+        x /= val;
+        y /= val;
+        return *this;
     }
 
     bool operator == (const Vec2& rhs) const 
     {
-        // TODO
+        return(x == rhs.x && y == rhs.y);
     }
 
     bool operator != (const Vec2& rhs) const 
     {
-        // ToDO
+        return (x != rhs.x || y != rhs.y);
     }
 
-    float dist(const Vec2& rhs)const 
+    float distance(const Vec2& rhs)const 
     {
-        // TODO
+        return sqrt((x-rhs.x)*(x-rhs.x) + (y-rhs.y)*(y-rhs.y));
     }
 
     float length() const 
     {
-        // TODO
+        return sqrt(x*x + y*y);
     }
 
     void normalize() 
     {
-        // TODO
+        float magnitude = length();
+        x /= magnitude;
+        y /= magnitude;
     }
 
 };

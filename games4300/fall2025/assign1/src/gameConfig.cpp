@@ -38,15 +38,33 @@ std::vector<std::filesystem::path> findFileRecursive(const std::filesystem::path
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
 {
-    std::ifstream inFile(fileName);
-    if(!inFile.is_open()){
-        std::cerr << "WARNING: " << __func__ 
-            << ", failed to open file: " << fileName
-            << "\n";
-        std::cerr << "current path: " << std::filesystem::current_path() << "\n";
+    std::ifstream inFile;
+    std::filesystem::path workDir = getWorkingDirectory();
+    std::cerr << "workDir: " << workDir << "\n";
+
+    std::vector<std::filesystem::path> foundFiles = findFileRecursive(workDir, fileName);
+
+    if(foundFiles.empty())
+    {
+        std::cerr << "ERROR, function: " << __PRETTY_FUNCTION__ 
+            << ", file: " << fileName << "not found\n";
         return false;
     }
 
+    for(auto f : foundFiles)
+    {
+        std::cerr << f << "\n";
+        inFile.open(f);
+        if(inFile.is_open())
+        {
+            break;
+        }
+        else{
+            std::cerr << "Could not open " << f << "\n";
+        }
+    }
+
+ 
     std::string line;
     while(std::getline(inFile, line)){
         std::istringstream iss(line);

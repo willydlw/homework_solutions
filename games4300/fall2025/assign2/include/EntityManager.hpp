@@ -52,7 +52,7 @@ class EntityManager
         return m_entities;
     }
 
-    const EntityVec& getEntities(std::string& tag)
+    const EntityVec& getEntities(const std::string& tag)
     {
         return m_entityMap[tag];
     }

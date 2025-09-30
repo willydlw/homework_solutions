@@ -12,8 +12,6 @@
 #include <imgui.h>
 
 
-
-//int main(int argc, char* argv[])
 int main(void)
 {
     // Create a new window of size w*h pixels

@@ -5,11 +5,8 @@
 
 #include <memory>
 #include <string>
-#include <vector>
 
-#include <SFML/Graphics.hpp>
-#include <imgui.h>
-#include <imgui-SFML.h>
+
 
 struct PlayerConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V; float S;};
 struct EnemyConfig  { int SR, CR, OR, OG, OB, OT, VMIN, VMAX, L, SI; float SMIN, SMAX;};
@@ -35,7 +32,7 @@ public:
 
 
 private:
-    sf::Window      m_window;           // window to which we draw
+    sf::RenderWindow      m_window;           // window to which we draw
     EntityManager   m_entities;         // vector of entities to maintain
     sf::Font        m_font;
     sf::Text        m_text;

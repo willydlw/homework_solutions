@@ -1,6 +1,14 @@
 #include "Game.h"
 
 #include <iostream>
+#include <vector>
+
+#include <SFML/Graphics.hpp>
+#include <SFML/System/Clock.hpp>
+#include <SFML/Window/Event.hpp>
+
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 Game::Game(const std::string& config) 
     : m_text(m_font, "Default", 24)
@@ -40,7 +48,7 @@ void Game::init(const std::string& path)
 }
 
 std::shared_ptr<Entity> Game::player()
-{
+{   
     return m_entities.getEntities("player").back();   
 }
 
@@ -101,7 +109,7 @@ void Game::spawnPlayer()
 
 
 // spawn an enemy at a random position
-void Game::spawnPlayer()
+void Game::spawnEnemy()
 {
     // Enemy must be spawned within bounds of the window
     std::cerr << __PRETTY_FUNCTION__ << "TODO: " 
@@ -212,7 +220,7 @@ void Game::sRender()
 
     // set the rotation of the shape based on the entity's transform->angle 
     player()->get<CTransform>().angle += 1.0;
-    player()->get<Cshape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
+    player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
 
     // draw the entity's sf::CircleShape
     m_window.draw(player()->get<CShape>().circle);
@@ -281,4 +289,9 @@ void Game::sUserInput()
             }
         }
     }
+}
+
+void Game::sEnemySpawner()
+{
+    std::cerr << "TODO implement function: " << __PRETTY_FUNCTION__ << "\n";
 }

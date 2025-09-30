@@ -20,7 +20,7 @@ int main(void)
     Game game;
     GameConfig gameConfig;
    
-    std::string configFileName("assign1/config/config.txt");
+    std::string configFileName("config.txt");
     readConfigFile(configFileName, &gameConfig);
 
     game.init(&gameConfig);
@@ -31,7 +31,7 @@ int main(void)
     //std::cerr << "\n" << game << "\n";
 
 
-    #if 0
+    #if 1
     // initialize imgui and create a clock used for its internal timing
     if(!ImGui::SFML::Init(window))
     {
@@ -49,7 +49,7 @@ int main(void)
     while(window.isOpen()){
         while(const std::optional event = window.pollEvent()){
             
-            #if 0
+            #if 1
             // pass the event to imgui to be parsed 
             ImGui::SFML::ProcessEvent(window, *event);
             #endif 
