@@ -1,10 +1,9 @@
 #pragma once 
 
-#include <iostream>
+#include <SFML/Graphics.hpp>
+#include <cmath>
 
-typedef Vec2f Vec2<float>;
-
-template <typeName T>
+template <typename T>
 class Vec2
 {
 public:
@@ -17,12 +16,12 @@ public:
         : x(xin), y(yin) 
     { }
 
-    // constructor to convert from sf::Vector2f 
+    // constructor to convert from sf::Vector2 
     Vec2(const sf::Vector2<T>& vec)
         : x(vec.x), y(vec.y) 
     { }
 
-    // 
+    // constructor to convert from sf::Vector2i 
     Vec2(const sf::Vector2i& vec)
         : x(T(vec.x)), y(T(vec.y))
     { }
@@ -36,13 +35,12 @@ public:
 
     Vec2 operator + (const Vec2& rhs) const
     {
-        // TODO 
-        return Vec2();
+        return Vec2<T>(x + rhs.x, y + rhs.y);
     }
-    Vec2 operator - (const Vec2& v) const 
+    Vec2 operator - (const Vec2& rhs) const 
     {
         // TODO
-        return Vec2();
+        return Vec2<T>(x - rhs.x, y - rhs.y);
     }
 
     Vec2 operator / (const T val) const 
@@ -53,7 +51,6 @@ public:
     {
         // TODO
     }
-
 
 
     Vec2& operator += (const Vec2& rhs)
@@ -103,8 +100,7 @@ public:
         // TODO
     }
 
-
-    friend std::ostream& operator << (std::ostream& os, const Vec2& obj);
-
-
 };
+
+
+using Vec2f = Vec2<float>;

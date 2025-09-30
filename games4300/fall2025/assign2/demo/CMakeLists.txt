@@ -1,5 +1,5 @@
 # Project name (can be different from directory name)
-project(DEMO)
+project(ASSIGN2)
 
 # specify output directory for binary executable files
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -14,14 +14,17 @@ set(CMAKE_CXX_EXTENSIONS OFF)   # optional: Set to OFF for more portable code
 include_directories("include")
 
 
-add_executable(demo)
-target_sources(demo PRIVATE 
+add_executable(assign2)
+target_sources(assign2 PRIVATE 
     src/main.cpp
-    src/entity.cpp
-    src/entityManager.cpp
+    src/Game.cpp
+    include/Vec2.hpp
+    include/Entity.hpp
+    include/EntityManager.hpp
+    include/Components.hpp
 )
 
-target_link_libraries(demo
+target_link_libraries(assign2
     PRIVATE SFML::Graphics
     PRIVATE SFML::Window 
     PRIVATE SFML::System

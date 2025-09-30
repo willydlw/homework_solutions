@@ -18,14 +18,8 @@ struct BulletConfig { int SR, CR, FR, FG, FB, OR, OG, OB, OT, V, L; float S;};
 class Game{
 
 public:
-    static constexpr unsigned int DEFAULT_WINDOW_WIDTH = 1280U;
-    static constexpr unsigned int DEFAULT_WINDOW_HEIGHT = 720U;
-    static constexpr unsigned int DEFAULT_FRAME_RATE = 60U;
+    Game() = delete;
 
-public:
-    Game() = default;
-
-    
     Game(const std::string & config);
 
     void run();
@@ -62,7 +56,7 @@ private:
 
     void spawnPlayer();
     void spawnEnemy();
-    void spawnSmallEnemies(std::shared_ptr<Enity> e);
+    void spawnSmallEnemies(std::shared_ptr<Entity> e);
     void spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target);
     void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
 

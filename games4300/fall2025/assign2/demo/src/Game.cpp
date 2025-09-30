@@ -16,12 +16,12 @@ void Game::init(const std::string& path)
 
     // set up default window parameters 
     std::cerr << __PRETTY_FUNCTION__ << "TODO: replace hard coded window width and height with config variables\n";
-    m_window.create(sf::VideoMode{ DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT}, "Assignment 2");
+    m_window.create(sf::VideoMode({1280, 720}), "Assignment 2");
     m_window.setKeyRepeatEnabled(false);
 
     std::cerr << __PRETTY_FUNCTION__ << "TODO: "
         << "replace hard coded FRAME RATE with config variables\n";
-    m_window.setFrameRateLimit(DEFAULT_FRAME_RATEF);
+    m_window.setFramerateLimit(60);
 
     if(!ImGui::SFML::Init(m_window))
     {

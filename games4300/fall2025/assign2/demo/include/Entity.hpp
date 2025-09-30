@@ -20,16 +20,54 @@ class Entity
     friend class EntityManager;
 
 public:
-    Entity();
+    Entity() = default;
+    Entity(std::size_t id, const std::string& tag)
+        : m_tag(tag), m_id(id)
+    {
 
-    void                add<T>(args);
-    T&                  get<T>();
-    bool                has<T>();
+    }
+
+    template <typename T, typename... TArgs>
+    T& add(TArgs&&... margs)
+    {
+        auto & component = get<T>();    // default construct sets exists to false 
+        component = T(std::forward<TArgs>(margs)...);
+        component.exists = true;
+        return component;
+    }
+
+    template <typename T>
+    T & get()
+    {
+        return std::get<T>(m_components);
+    }
+
+    // const version to keep const correctness
+    template <typename T>
+    const T & get() const 
+    {
+        return std::get<T>(m_components);
+    }
+
+    template <typename T>
+    bool has() const
+    {
+        return get<T>().exists;
+    }
+
+
+    template <typename T>
+    void remove()
+    {
+        // default construct it so exists is false
+        // then when has checks exists, it will be false
+        get<T>() = T();
+    }
     
-    std::size_t         id() const; 
-    bool                isAlive() const;
-    void                destroy();          // set alive to false
-    const std::string&  tag() const;
+    std::size_t         id() const { return m_id; }
+    bool                isAlive() const { return m_alive;};
+    void                destroy() { m_alive = false; };   
+    const std::string&  tag() const { return m_tag; }
 
 private:
     ComponentTuple      m_components;

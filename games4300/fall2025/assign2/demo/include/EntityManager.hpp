@@ -59,7 +59,7 @@ class EntityManager
 
     const EntityMap& getEntityMap()
     {
-        reture m_entityMap;
+        return m_entityMap;
     }
 
 private:
