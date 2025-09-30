@@ -1,19 +1,23 @@
-# Project name (can be different from directory name)
-project(ASSIGN1)
+# SubProject assign1/CMakeLists.txt 
+project(assign1)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+# specify binary output directory
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -Wextra -pedantic")
+# set compiler flags
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall -Wextra -pedantic")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)   # optional: Set to OFF for more portable code
 
-# Include Directories 
+
+# specify directory where compiler should look for header files
 include_directories("include")
 
-# create executable or library 
-add_executable(demo)
-target_sources(demo PRIVATE 
+
+# create executables
+add_executable(a1demo)
+target_sources(a1demo PRIVATE 
     src/demo.cpp
 )
 
@@ -42,10 +46,9 @@ target_sources(displayText PRIVATE
 )
 
 
-
 # Link to other libraries (if needed)
 # PUBLIC m links math library
-target_link_libraries(demo 
+target_link_libraries(a1demo
     PRIVATE SFML::Graphics 
     PRIVATE ImGui-SFML::ImGui-SFML
     PUBLIC m)
@@ -61,10 +64,10 @@ target_link_libraries(displayText
     PRIVATE SFML::Graphics 
 )
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall -Wextra -pedantic")
 
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/fonts")
-file(COPY fonts/ DESTINATION "${CMAKE_BINARY_DIR}/bin/fonts")
+# copy resource filed to binary directory
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
+file(COPY fonts/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
 
-file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/bin/config")
-file(COPY config/ DESTINATION "${CMAKE_BINARY_DIR}/bin/config")
+file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/config")
+file(COPY config/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/config")
