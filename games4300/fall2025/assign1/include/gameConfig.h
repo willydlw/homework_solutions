@@ -25,22 +25,23 @@ struct FontConfig{
     FontConfig() : fileName("fonts/arial.ttf"), fontSize(32) {}
 };
 
+struct ShapeConfig{
+    std::string  name = "Default";
+    sf::Vector2f velocity = {0.0f, 0.0f};
+    sf::Vector2f position = {0.0f, 0.0f};
+    sf::Color color       = {255,255,255};
+};
+
 struct RectangleConfig{
-    std::string shapeName;
-    sf::Vector2f position;
-    sf::Vector2f velocity;
-    sf::Color color;
-    float width;
-    float height;
+    ShapeConfig  shapeConfig;
+    float width           = 0.0f;
+    float height          = 0.0f;
 };
 
 
 struct CircleConfig{
-    std::string shapeName;
-    sf::Vector2f position;
-    sf::Vector2f velocity;
-    sf::Color color;
-    float radius;
+    ShapeConfig shapeConfig;
+    float radius = 0.0f;
 };
 
 
@@ -64,7 +65,8 @@ std::filesystem::path getWorkingDirectory(void);
 
 // 
 std::vector<std::filesystem::path> findFileRecursive(
-    const std::filesystem::path& startPath, const std::string& filenameToFind);
+    const std::filesystem::path& startPath, 
+    const std::string& filenameToFind);
 
 
 bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);

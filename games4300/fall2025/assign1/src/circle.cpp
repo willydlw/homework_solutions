@@ -3,24 +3,18 @@
 
 #include <SFML/Graphics.hpp>
 
-Circle::Circle( const CircleConfig* circleConfig, 
+Circle::Circle( const CircleConfig& circleConfig, 
+                const ShapeConfig& shapeConfig,
                 const sf::Font& font,
-                const TextConfig* textConfig) 
-                : m_text(font, circleConfig->shapeName, textConfig->characterSize)
+                const TextConfig& textConfig) 
+                : Shape(shapeConfig , font, textConfig)
 {
 
-    
-    m_text.setFillColor(textConfig->fillColor);
-    m_text.setPosition(circleConfig->position);
-
     // circleShape attributes
-    setRadius(circleConfig->radius);
-    setPosition(circleConfig->position);
-    setPosition(circleConfig->position);
-    setColor(circleConfig->color);
+    setRadius(circleConfig.radius);
+    setPosition(shapeConfig.position);
+    setColor(shapeConfig.color);
 
-    setVelocity(circleConfig->velocity);
-    m_name = circleConfig->shapeName;
 }
 
 void Circle::setPosition(sf::Vector2f position)
@@ -45,15 +39,6 @@ void Circle::setRadius(float radius)
 void Circle::setColor(sf::Color color)
 {
     m_circle.setFillColor(color);
-}
-
-void Circle::setVelocity(sf::Vector2f velocity)
-{
-    m_velocity = velocity;
-}
-
-void Circle::setName(std::string& name){
-    m_name = name;
 }
 
 
@@ -164,7 +149,3 @@ sf::Color Circle::getColor()const
     return m_circle.getFillColor();
 }
 
-std::string Circle::getName()const 
-{
-    return m_name;
-}

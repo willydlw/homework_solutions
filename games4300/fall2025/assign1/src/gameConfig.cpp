@@ -99,10 +99,10 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
         }
         else if(firstWord == "Circle"){
             CircleConfig cc;
-            if( !(iss >> cc.shapeName)            || 
-                !(readVector2f(iss, cc.position)) ||
-                !(readVector2f(iss, cc.velocity)) ||
-                !(readColor(iss, cc.color))       ||
+            if( !(iss >> cc.shapeConfig.name)            || 
+                !(readVector2f(iss, cc.shapeConfig.position)) ||
+                !(readVector2f(iss, cc.shapeConfig.velocity)) ||
+                !(readColor(iss, cc.shapeConfig.color))       ||
                 !(iss >> cc.radius)
             )
             {
@@ -116,10 +116,10 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
         }
         else if(firstWord == "Rectangle"){
             RectangleConfig rc;
-            if( !(iss >> rc.shapeName)              || 
-                !(readVector2f(iss, rc.position))   ||
-                !(readVector2f(iss, rc.velocity))   ||
-                !(readColor(iss, rc.color))         ||
+            if( !(iss >> rc.shapeConfig.name)              || 
+                !(readVector2f(iss, rc.shapeConfig.position))   ||
+                !(readVector2f(iss, rc.shapeConfig.velocity))   ||
+                !(readColor(iss, rc.shapeConfig.color))         ||
                 !(iss >> rc.width)                  ||
                 !(iss >> rc.height)
             ){

@@ -2,22 +2,17 @@
 
 #include <iomanip>
 
-Rectangle::Rectangle(   const RectangleConfig* rectConfig, 
+Rectangle::Rectangle(   const RectangleConfig& rectConfig,
+                        const ShapeConfig& shapeConfig,
                         const sf::Font& font, 
-                        const TextConfig* textConfig) 
-                        : m_text(font, rectConfig->shapeName, textConfig->characterSize)
+                        const TextConfig& textConfig) : Shape(shapeConfig , font, textConfig)
 {
-    m_text.setFillColor(textConfig->fillColor);   
-    m_text.setPosition(rectConfig->position);
-
     // rectangle shape attributes
-    setSize({rectConfig->width, rectConfig->height});
-    setPosition(rectConfig->position);
-    setColor(rectConfig->color);
-
-    setVelocity(rectConfig->velocity);
-    m_name = rectConfig->shapeName;
+    setSize({rectConfig.width, rectConfig.height});
+    setPosition(shapeConfig.position);
+    setColor(shapeConfig.color);
 }
+    
 
 void Rectangle::update(const sf::Vector2u& boundary)
 {
@@ -86,10 +81,7 @@ void Rectangle::setColor(sf::Color color){
     m_rectangle.setFillColor(color);
 }
 
-void Rectangle::setName(std::string& name)
-{
-    m_name = name;
-}
+
 
 void Rectangle::setSize(sf::Vector2f size)
 {
@@ -101,10 +93,7 @@ void Rectangle::setPosition(sf::Vector2f position)
     m_rectangle.setPosition(position);
 }
 
-void Rectangle::setVelocity(sf::Vector2f velocity)
-{
-    m_velocity = velocity;
-}
+
 
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)
@@ -150,10 +139,7 @@ sf::Color Rectangle::getColor()const
     return m_rectangle.getFillColor();
 }
 
-std::string Rectangle::getName()const 
-{ 
-    return m_name;
-}
+
 
 sf::Vector2f Rectangle::getSize()const
 {
@@ -165,7 +151,3 @@ sf::Vector2f Rectangle::getPosition()const
     return m_rectangle.getPosition();
 }
 
-sf::Vector2f Rectangle::getVelocity()const 
-{
-    return m_velocity;
-}
