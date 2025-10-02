@@ -39,7 +39,7 @@ class Game
     
     std::vector<Rectangle>  m_rectangles;
     std::vector<Circle>     m_circles;
-    //std::vector<Shape*>     m_guiShapeList;
+    std::vector<Shape*>     m_guiShapeList;
     GameConfig              m_gameConfig;
     
     
@@ -61,7 +61,7 @@ class Game
     void initGui(void);
     void initRectangles(void);
    
-    //void initShapeNameList(void);
+    void initShapeList(void);
     void initWindow(void);
 
     void update(void);

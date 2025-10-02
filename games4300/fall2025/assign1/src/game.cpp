@@ -1,8 +1,6 @@
 #include "game.h"
 
 #include <iomanip>
-#include <optional>
-
 
 Game::Game(){/* intentionally blank */}
 
@@ -30,8 +28,9 @@ void Game::init(const std::string& configFileName)
    
     initRectangles();
     initCircles();
+    initGui();
+    initShapeList();
     std::cerr << "[INFO] exiting function: " << __PRETTY_FUNCTION__ << "\n";
-    //initShapeNameList();
 }
 
 void Game::initWindow(void)
@@ -56,15 +55,21 @@ void Game::initGui(void)
     ImGui::GetIO().FontGlobalScale = 2.0f;
 }
 
-#if 0
-void Game::initShapeNameList(void)
+
+void Game::initShapeList(void)
 {
-    for(auto& shape : m_circles)
+    for(size_t i = 0; i < m_circles.size(); i++)
     {
-        shapeNames.push_back(shape.getName());
+        Shape* shapePtr = (Shape*)&(m_circles[i]);
+        m_guiShapeList.push_back(shapePtr);
+    }
+
+    for(size_t i = 0; i < m_rectangles.size(); i++)
+    {
+        Shape* shapePtr = (Shape*)&(m_rectangles[i]);
+        m_guiShapeList.push_back(shapePtr);
     }
 }
-#endif
 
 
 std::string Game::initFont(const std::string& fileName)
@@ -126,11 +131,11 @@ void Game::run(void)
     std::cerr << "[INFO] entering function: " << __PRETTY_FUNCTION__ << "\n";
 
     while(m_window.isOpen()){
-        while(const std::optional event = m_window.pollEvent()){
+        while(auto event = m_window.pollEvent()){
             
-            #if 0
+            #if 1
             // pass the event to imgui to be parsed 
-            ImGui::SFML::ProcessEvent(window, *event);
+            ImGui::SFML::ProcessEvent(m_window, *event);
             #endif 
 
             if(event->is<sf::Event::Closed>()){
@@ -138,19 +143,23 @@ void Game::run(void)
             }
         }
 
-        #if 0
+        #if 1
         // update imgui for this frame with the time that the last frame took
-        ImGui::SFML::Update(window, deltaClock.restart());
+        ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
         // Update from UI elements
         ImGui::Begin("Shapes List");
+
+        int selectedItem = -1;
         
-        for(int i = 0; i < (int)game.shapeNames.size(); i++)
+        for(int i = 0; i < (int)m_guiShapeList.size(); i++)
         {
-            if(ImGui::Selectable(game.shapeNames[i].c_str(), selectedItem == i))
+            if(count == 0)
+                std::cerr << "i: " << i << ", shape name: " << m_guiShapeList[i]->getName().c_str() << "\n";
+            if(ImGui::Selectable(m_guiShapeList[i]->getName().c_str(), selectedItem == i))
             {
                 selectedItem = i;
-                std::cerr << "selected shape: " << game.shapeNames[i] << "\n";
+                std::cerr << "selected shape name: " << m_guiShapeList[i]->getName() << ", selected item: " << i << "\n";
             }
         }
        
@@ -167,8 +176,8 @@ void Game::run(void)
         
         draw();
 
-        #if 0
-        ImGui::SFML::Render(window); // draw the UI last so its on top
+        #if 1
+        ImGui::SFML::Render(m_window); // draw the UI last so its on top
         #endif 
 
         if(count == 0)
