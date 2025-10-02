@@ -5,6 +5,8 @@
 #include <vector>
 
 #include <SFML/Graphics.hpp>
+#include <imgui-SFML.h>
+#include <imgui.h>
 
 #include "gameConfig.h"
 #include "rectangle.h"
@@ -15,24 +17,31 @@ class Game
 {
     public:
 
+    static constexpr int FRAME_RATE = 60;
+
     Game();
     
-    void init(const GameConfig *gc);
+    void init(const std::string& configFileName);
 
+    void run(void);
 
-    void update(const sf::Vector2u& boundary);
-    void draw(sf::RenderWindow& window);
 
     friend std::ostream& operator << (std::ostream& os, const Game& obj);
 
-    // make this public to give ui access 
-    std::vector<std::string> shapeNames;
+    
 
     private:
 
-    sf::Font m_font;
-    std::vector<Rectangle> m_rectangles;
-    std::vector<Circle> m_circles;
+    sf::RenderWindow        m_window;
+    sf::Font                m_font;
+    sf::Clock               m_deltaClock;   // for ImGui's internal timing
+
+    
+    std::vector<Rectangle>  m_rectangles;
+    std::vector<Circle>     m_circles;
+    //std::vector<Shape*>     m_guiShapeList;
+    GameConfig              m_gameConfig;
+    
     
 
     // private member functions
@@ -47,12 +56,16 @@ class Game
     */
     std::string initFont(const std::string& fontFileName);
 
-    void initRectangles(const std::vector<RectangleConfig>& rConfig, const TextConfig& textConfig);
 
-    void initCircles(const std::vector<CircleConfig>& cConfig, const TextConfig& textConfig);
-    
-    void initShapeNameList();
+    void initCircles(void);
+    void initGui(void);
+    void initRectangles(void);
+   
+    //void initShapeNameList(void);
+    void initWindow(void);
 
+    void update(void);
+    void draw(void);
 };
 
 

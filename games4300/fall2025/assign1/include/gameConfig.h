@@ -11,25 +11,23 @@
 #include <SFML/Graphics/Font.hpp>
 
 
+// Configuration Structures
 struct WindowConfig{
-    unsigned int width;
-    unsigned int height;
-    WindowConfig() : width(640U), height(480U) {}
-    WindowConfig(int w, int h) : width(w), height(h) {}
+    unsigned int width =  640U;
+    unsigned int height = 480U;
 };
 
 struct FontConfig{
-    std::string fileName;
-    unsigned int fontSize;
-    sf::Color color;
-    FontConfig() : fileName("fonts/arial.ttf"), fontSize(32) {}
+    std::string fileName = "arial.ttf";
+    unsigned int fontSize = 24U;
+    sf::Color color = {sf::Color::Blue};
 };
 
 struct ShapeConfig{
     std::string  name = "Default";
     sf::Vector2f velocity = {0.0f, 0.0f};
     sf::Vector2f position = {0.0f, 0.0f};
-    sf::Color color       = {255,255,255};
+    sf::Color color       = {sf::Color::White};
 };
 
 struct RectangleConfig{
@@ -45,12 +43,14 @@ struct CircleConfig{
 };
 
 
+/*
 struct GameConfig{
     WindowConfig window;
     FontConfig font;
     std::vector<RectangleConfig> rects;
     std::vector<CircleConfig>circles;
 };
+*/
 
 
 struct TextConfig{
@@ -60,18 +60,40 @@ struct TextConfig{
 
 
 
-// Returns working directory path
-std::filesystem::path getWorkingDirectory(void);
+// Forward declare class Game as it's used before its full 
+// defintion, so it can be made friend of GameConfig
+class Game;
 
-// 
-std::vector<std::filesystem::path> findFileRecursive(
-    const std::filesystem::path& startPath, 
-    const std::string& filenameToFind);
+class GameConfig {
+
+public:
+    // Declare Game class as friend of class GameConfig
+    friend class Game;
+
+    GameConfig() = default;
+
+    bool readConfigFile(const std::string& fileName);
 
 
-bool readConfigFile(const std::string& fileName, GameConfig *gameConfig);
+private:
 
-bool readVector2f(std::istringstream& iss, sf::Vector2f& v2);
-bool readColor(std::istringstream& iss, sf::Color& color);
+    // Data members 
+    WindowConfig                    m_windowConfig;
+    FontConfig                      m_fontConfig;
+    std::vector<RectangleConfig>    m_rectConfig;
+    std::vector<CircleConfig>       m_circleConfig;
+    
+
+    // Helper functions
+
+    std::filesystem::path getWorkingDirectory(void);
+
+    std::vector<std::filesystem::path> findFileRecursive(
+        const std::filesystem::path& startPath, 
+        const std::string& filenameToFind);
 
 
+    bool readVector2f(std::istringstream& iss, sf::Vector2f& v2);
+    bool readColor(std::istringstream& iss, sf::Color& color);
+
+};

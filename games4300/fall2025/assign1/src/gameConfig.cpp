@@ -4,7 +4,7 @@
 #include <iostream>
 #include <sstream>
 
-std::filesystem::path getWorkingDirectory(void){
+std::filesystem::path GameConfig::getWorkingDirectory(void){
     try {
         std::filesystem::path currentPath = std::filesystem::current_path();
         return currentPath;
@@ -16,7 +16,10 @@ std::filesystem::path getWorkingDirectory(void){
 
 
 // Function to recursively search for a file
-std::vector<std::filesystem::path> findFileRecursive(const std::filesystem::path& startPath, const std::string& filenameToFind) {
+std::vector<std::filesystem::path> GameConfig::findFileRecursive(
+        const std::filesystem::path& startPath, 
+        const std::string& filenameToFind) 
+{
     std::vector<std::filesystem::path> foundFiles;
 
     // Check if the starting path is a directory
@@ -36,11 +39,16 @@ std::vector<std::filesystem::path> findFileRecursive(const std::filesystem::path
 }
 
 
-bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
+bool GameConfig::readConfigFile(const std::string& fileName)
 {
     std::ifstream inFile;
     std::filesystem::path workDir = getWorkingDirectory();
-    std::cerr << "workDir: " << workDir << "\n";
+
+    std::cerr << "[INFO] function: " << __PRETTY_FUNCTION__ 
+                << ", working directory path: " << workDir << "\n";
+    
+    std::cerr << "[INFO] searching working directory for file name: "
+                << fileName << "\n";
 
     std::vector<std::filesystem::path> foundFiles = findFileRecursive(workDir, fileName);
 
@@ -51,49 +59,64 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
         return false;
     }
 
+    std::cerr << "[INFO] files found\n";
     for(auto f : foundFiles)
     {
-        std::cerr << f << "\n";
+        std::cerr << "\t" << f << "\n";
+    }
+
+    for(auto f : foundFiles)
+    {
         inFile.open(f);
         if(inFile.is_open())
         {
+            std::cerr << "[INFO] opened file: " << f << "\n";
             break;
         }
         else{
-            std::cerr << "Could not open " << f << "\n";
+            std::cerr   << "[WARNING] function: " << __PRETTY_FUNCTION__ 
+                        << " could not open file: " << f << "\n";
         }
     }
 
- 
+    if(!inFile.is_open())
+    {
+        // possible that no files were opened 
+        std::cerr   << "[ERROR] function: " << __PRETTY_FUNCTION__ 
+                    << ", failed to open any of the found configuration files\n";
+        return false;
+    }
+
+
     std::string line;
     while(std::getline(inFile, line)){
         std::istringstream iss(line);
         std::string firstWord;
         iss >> firstWord;           // extract the first word 
         if(firstWord == "Window"){
-            if( !(iss >> gameConfig->window.width)){
-                std::cerr << "Warning, failed to read window width configuration. " 
-                    << " input: " << line << "\n";
+            if( !(iss >> m_windowConfig.width)){
+                std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__ 
+                        << ", failed to read window width.\n"; 
                 // continue processing next line of file input 
                 continue;   
             }
 
-            if( !(iss >> gameConfig->window.height)){
-                std::cerr << "Warning, failed to read window height configuration. " 
-                << " input: " << line << "\n";
+            if( !(iss >> m_windowConfig.height)){
+                std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__ 
+                        << ", failed to read window height\n"; 
+                
                 continue;
             }
         }
         else if(firstWord == "Font"){
             // 
-            if( !(iss >> gameConfig->font.fileName) || 
-                !(iss >> gameConfig->font.fontSize) || 
-                !(iss >> gameConfig->font.color.r) ||
-                !(iss >> gameConfig->font.color.g) || 
-                !(iss >> gameConfig->font.color.b) ){
-                    std::cerr << "Warning: " << __func__ 
-                    << ", error extracting font data from input: "
-                    << line << "\n";
+            if( !(iss >> m_fontConfig.fileName) || 
+                !(iss >> m_fontConfig.fontSize) || 
+                !(iss >> m_fontConfig.color.r) ||
+                !(iss >> m_fontConfig.color.g) || 
+                !(iss >> m_fontConfig.color.b) ){
+                    std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__  
+                        << ", failure reading font data\n";
                     continue;
                 }
         }
@@ -106,13 +129,12 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
                 !(iss >> cc.radius)
             )
             {
-                std::cerr << "Warning: " << __func__ 
-                    << ", error extracting circle data from input: " 
-                    << line << "\n";
+                std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__  
+                    << ", error extracting circle data\n"; 
                 continue;
             }
            
-            gameConfig->circles.push_back(cc);
+            m_circleConfig.push_back(cc);
         }
         else if(firstWord == "Rectangle"){
             RectangleConfig rc;
@@ -122,17 +144,19 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
                 !(readColor(iss, rc.shapeConfig.color))         ||
                 !(iss >> rc.width)                  ||
                 !(iss >> rc.height)
-            ){
-                std::cerr << "Warning: " << __func__ 
-                    << ", error extracting rectangle data from input: " 
-                    << line << "\n";
+            )
+            {
+                std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__  
+                    << ", error extracting rectangle data\n"; 
                 continue;
             }
 
-            gameConfig->rects.push_back(rc);
+            m_rectConfig.push_back(rc);
         }
-        else{
-            std::cerr << "<Warning> " << __func__ << ", file: " << fileName 
+        else
+        {
+            std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__   
+                << ", file: " << fileName 
                 << " contains unrecognized first word: " << firstWord 
                 << "\n";
         }
@@ -143,11 +167,12 @@ bool readConfigFile(const std::string& fileName, GameConfig *gameConfig)
 }
 
 
-bool readVector2f(std::istringstream& iss, sf::Vector2f& v2)
+bool GameConfig::readVector2f(std::istringstream& iss, sf::Vector2f& v2)
 {
     if(!(iss >> v2.x) || !(iss >> v2.y))
     {
-        std::cerr << "ERROR function " << __func__ << "\n";
+        std::cerr << "[ERROR] function " << __PRETTY_FUNCTION__ 
+            << ", failed to read x or y values\n";
         return false;
     }
 
@@ -166,13 +191,15 @@ bool readVector2f(std::istringstream& iss, sf::Vector2f& v2)
 
 */ 
             
-bool readColor(std::istringstream& iss, sf::Color& color)
+bool GameConfig::readColor(std::istringstream& iss, sf::Color& color)
 {
     unsigned red, green, blue;
     if( !(iss >> red)   ||
         !(iss >> green) ||
         !(iss >> blue))
     {
+        std::cerr << "[ERROR] function " << __PRETTY_FUNCTION__ 
+            << ", failed to read r,g, or b values\n";
         return false;
     }
     
