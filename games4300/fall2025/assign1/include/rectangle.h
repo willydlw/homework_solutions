@@ -8,12 +8,12 @@
 
 
 
-class Rectangle : public Shape 
+class Rectangle : public Shape, public sf::Drawable, public sf::Transformable
 {
     public:    
 
     Rectangle(  const RectangleConfig& rectConfig, 
-                const ShapeConfig& shapeConfig,
+                //const ShapeConfig& shapeConfig,
                 const sf::Font& font, 
                 const TextConfig& textConfig);
 

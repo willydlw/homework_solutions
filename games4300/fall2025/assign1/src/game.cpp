@@ -104,7 +104,8 @@ void Game::initRectangles(void)
 
     for(auto rc : m_gameConfig.m_rectConfig)
     {
-        Rectangle rect(rc, rc.shapeConfig, m_font, textConfig);
+        Rectangle rect(rc, m_font, textConfig);
+        //Rectangle rect(rc, rc.shapeConfig, m_font, textConfig);
         m_rectangles.push_back(rect);
     }
 }
@@ -161,11 +162,11 @@ void Game::run(void)
         { std::cerr << "Calling window.clear()\n";
         }
 
-        //update();
+        update();
 
         m_window.clear(sf::Color::White);
         
-        //draw();
+        draw();
 
         #if 0
         ImGui::SFML::Render(window); // draw the UI last so its on top
@@ -199,9 +200,19 @@ void Game::update(void)
 
 void Game::draw(void)
 {
+    static int count = 0;
+
     for(const auto& r : m_rectangles)
     {
+        if(count == 0)
+        {
+            std::cerr << "Preparing to draw rectangle:\n";
+        }
         m_window.draw(r);
+    }
+
+    if(count == 0){
+        count++;
     }
 
     for(const auto& c : m_circles)

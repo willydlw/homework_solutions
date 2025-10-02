@@ -6,12 +6,12 @@
 
 #include "gameConfig.h"
 
-class Shape : public sf::Drawable, public sf::Transformable
+class Shape
 {
     public:
     // cannot have a default constructor because sf::Text (SFML 3) has no default constructor
     Shape() = delete;   
-    Shape(const ShapeConfig& shapeConfig, const sf::Font& font, const TextConfig& textConfig);    
+    Shape(const ShapeConfig& shapeConfig, const sf::Font& font, const TextConfig& textConfig); 
 
     
     void setName(const std::string& name);

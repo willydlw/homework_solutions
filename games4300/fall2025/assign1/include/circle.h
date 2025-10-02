@@ -6,7 +6,7 @@
 #include "gameConfig.h"
 #include "shape.h"
 
-class Circle : public Shape
+class Circle : public Shape, public sf::Drawable, public sf::Transformable
 {
     public:
     static constexpr float MIN_RADIUS = 5.0f;

@@ -3,14 +3,14 @@
 #include <iomanip>
 
 Rectangle::Rectangle(   const RectangleConfig& rectConfig,
-                        const ShapeConfig& shapeConfig,
+                        //const ShapeConfig& shapeConfig,
                         const sf::Font& font, 
-                        const TextConfig& textConfig) : Shape(shapeConfig , font, textConfig)
+                        const TextConfig& textConfig) : Shape(rectConfig.shapeConfig , font, textConfig)
 {
     // rectangle shape attributes
     setSize({rectConfig.width, rectConfig.height});
-    setPosition(shapeConfig.position);
-    setColor(shapeConfig.color);
+    setPosition(rectConfig.shapeConfig.position);
+    setColor(rectConfig.shapeConfig.color);
 }
     
 
