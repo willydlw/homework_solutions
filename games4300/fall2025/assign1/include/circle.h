@@ -16,7 +16,6 @@ class Circle : public Shape, public sf::Drawable, public sf::Transformable
    
     // Constructor
     Circle( const CircleConfig& circleConfig, 
-            const ShapeConfig&  shapeConfig,
             const sf::Font& font,
             const TextConfig& textConfig);
 

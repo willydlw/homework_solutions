@@ -105,7 +105,6 @@ void Game::initRectangles(void)
     for(auto rc : m_gameConfig.m_rectConfig)
     {
         Rectangle rect(rc, m_font, textConfig);
-        //Rectangle rect(rc, rc.shapeConfig, m_font, textConfig);
         m_rectangles.push_back(rect);
     }
 }
@@ -115,7 +114,7 @@ void Game::initCircles(void)
     TextConfig textConfig = {m_gameConfig.m_fontConfig.fontSize, m_gameConfig.m_fontConfig.color};
     for(auto cc : m_gameConfig.m_circleConfig)
     {
-        Circle circle(cc, cc.shapeConfig, m_font, textConfig);
+        Circle circle(cc, m_font, textConfig);
         m_circles.push_back(circle);
     }
 }
