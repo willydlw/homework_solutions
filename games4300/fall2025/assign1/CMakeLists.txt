@@ -59,6 +59,7 @@ target_link_libraries(assign1
     PRIVATE SFML::Window 
     PRIVATE SFML::System
     PRIVATE ImGui-SFML::ImGui-SFML
+    PUBLIC  m
 )
 
 target_link_libraries(displayText

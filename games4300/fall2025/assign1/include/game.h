@@ -1,6 +1,7 @@
 #pragma once 
 
 #include <iostream>
+#include <map>
 #include <string>
 #include <vector>
 
@@ -39,7 +40,7 @@ class Game
     
     std::vector<Rectangle>   m_rectangles;
     std::vector<Circle>      m_circles;
-    std::vector<Shape*>      m_guiShapeList;
+    std::map<std::string, Shape*>      m_shapeMap;
     std::vector<const char*> m_shapeNames;      // gui requires const char*
     GameConfig               m_gameConfig;
     
@@ -62,9 +63,12 @@ class Game
     void initGui(void);
     void initRectangles(void);
    
-    void initShapeList(void);
+    void initShapeMap(void);
     void initShapeNames(void);
     void initWindow(void);
+
+
+    sf::Color floatColorToUint(float fcolors[4]);
 
     void update(void);
     void draw(void);

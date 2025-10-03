@@ -1,5 +1,6 @@
 #include "game.h"
 
+#include <cmath>        // floor
 #include <iomanip>
 
 Game::Game(){/* intentionally blank */}
@@ -29,7 +30,7 @@ void Game::init(const std::string& configFileName)
     initRectangles();
     initCircles();
     initGui();
-    initShapeList();
+    initShapeMap();
     initShapeNames();
     std::cerr << "[INFO] exiting function: " << __PRETTY_FUNCTION__ << "\n";
 }
@@ -57,18 +58,18 @@ void Game::initGui(void)
 }
 
 
-void Game::initShapeList(void)
+void Game::initShapeMap(void)
 {
     for(size_t i = 0; i < m_circles.size(); i++)
     {
         Shape* shapePtr = (Shape*)&(m_circles[i]);
-        m_guiShapeList.push_back(shapePtr);
+        m_shapeMap.insert({shapePtr->name, shapePtr});
     }
 
     for(size_t i = 0; i < m_rectangles.size(); i++)
     {
         Shape* shapePtr = (Shape*)&(m_rectangles[i]);
-        m_guiShapeList.push_back(shapePtr);
+        m_shapeMap.insert({shapePtr->name, shapePtr});
     }
 }
 
@@ -196,6 +197,33 @@ void Game::run(void)
             ImGui::EndCombo();
         }
 
+
+        if(selected_item_index != -1)
+        {
+            const char* name = m_shapeNames[selected_item_index];
+            Shape* temp = m_shapeMap[name];
+            ImGui::Text("Properties for %s", temp->name.c_str());
+            //uint8_t sfmlColors[4] = {temp->color.r, temp->color.g, temp->color.b, temp->color.a};
+            //float guiColors[4] = {temp->color.r/255.0f, temp->color.g/255.0f, temp->color.b/255.0f, temp->color.a/255.0f};
+            
+            static int printCount = 0;
+            if(printCount == 0)
+            {
+                std::cerr << "SFML Colors for Shape " << name << "\n";
+                for(int i = 0; i < 4; i++)
+                {
+                    std::cerr << sfmlColors[i] << " ";
+                }
+                std::cerr << "\n";
+                printCount++;
+            }
+            ImGui::ColorEdit4("Color", guiColors);
+            sf::Color updatedColor = floatColorToUint(guiColors);
+            temp->color = updatedColor;
+            //ImGui::Checkbox("Draw", &temp->drawable);
+            //ImGui::SliderFloat("Velocity x", &temp->velocity.x, 0.0f, 10.0f);
+        }
+
         ImGui::PopItemWidth();
 
         ImGui::End();
@@ -208,6 +236,18 @@ void Game::run(void)
         ImGui::SFML::Render(m_window); // draw the UI last so its on top
         m_window.display();
     }
+}
+
+sf::Color Game::floatColorToUint(float fcolors[4])
+{
+    uint8_t converted[4];
+
+    for(int i = 0; i < 4; i++)
+    {
+        converted[i] = (uint8_t)floor(fcolors[i] * 255.0f);
+    }
+
+    return sf::Color{converted[0], converted[1], converted[2], converted[3]};
 }
 
 
