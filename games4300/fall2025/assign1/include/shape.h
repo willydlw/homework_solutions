@@ -1,9 +1,7 @@
 #pragma once 
 
 #include <string>
-
 #include <SFML/Graphics.hpp>
-
 #include "gameConfig.h"
 
 class Shape
@@ -14,17 +12,11 @@ class Shape
     Shape(const ShapeConfig& shapeConfig, const sf::Font& font, const TextConfig& textConfig); 
 
     
-    void setName(const std::string& name);
-    void setVelocity(const sf::Vector2f& velocity);
+    public:
 
-    std::string  getName() const;
-    sf::Vector2f getVelocity() const;
-
-    protected:
-
-    // data members 
-    sf::Text m_text;
+    sf::Text            text;   
     bool                drawable = true;
-    sf::Vector2f        m_velocity = {0.0f, 0.0f};
-    std::string         m_name = "Default";
+    sf::Color           color = sf::Color::Green;
+    sf::Vector2f        velocity = {0.0f, 0.0f};
+    std::string         name = "Default";
 };

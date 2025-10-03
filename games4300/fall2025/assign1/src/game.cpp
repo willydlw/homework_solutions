@@ -30,6 +30,7 @@ void Game::init(const std::string& configFileName)
     initCircles();
     initGui();
     initShapeList();
+    initShapeNames();
     std::cerr << "[INFO] exiting function: " << __PRETTY_FUNCTION__ << "\n";
 }
 
@@ -68,6 +69,19 @@ void Game::initShapeList(void)
     {
         Shape* shapePtr = (Shape*)&(m_rectangles[i]);
         m_guiShapeList.push_back(shapePtr);
+    }
+}
+
+void Game::initShapeNames(void)
+{
+    for(const auto& shape : m_circles)
+    {
+        m_shapeNames.push_back(shape.name.c_str());
+    }
+
+    for(const auto& shape : m_rectangles)
+    {
+        m_shapeNames.push_back(shape.name.c_str());
     }
 }
 
@@ -127,7 +141,6 @@ void Game::initCircles(void)
 
 void Game::run(void)
 {
-    static int count = 0;
     std::cerr << "[INFO] entering function: " << __PRETTY_FUNCTION__ << "\n";
 
     while(m_window.isOpen()){
@@ -147,45 +160,52 @@ void Game::run(void)
         // update imgui for this frame with the time that the last frame took
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
-        // Update from UI elements
-        ImGui::Begin("Shapes List");
+    
+        static const char* current_item_preview = "Select an item";
+        static int selected_item_index = -1;
+        static int combo_item_width = (int)(strlen(current_item_preview) + 5) * m_gameConfig.m_fontConfig.fontSize;
 
-        int selectedItem = -1;
-        
-        for(int i = 0; i < (int)m_guiShapeList.size(); i++)
+        static int printCount = 0;
+        if(printCount == 0)
         {
-            if(count == 0)
-                std::cerr << "i: " << i << ", shape name: " << m_guiShapeList[i]->getName().c_str() << "\n";
-            if(ImGui::Selectable(m_guiShapeList[i]->getName().c_str(), selectedItem == i))
-            {
-                selectedItem = i;
-                std::cerr << "selected shape name: " << m_guiShapeList[i]->getName() << ", selected item: " << i << "\n";
-            }
+            std::cerr << "\ncombo box item width: " << combo_item_width << "\n";
+            printCount++;
         }
-       
+        
+
+        ImGui::Begin("Shapes");
+        ImGui::PushItemWidth(combo_item_width);
+        // ## causes the widget label to be hidden and have a unique id
+        if(ImGui::BeginCombo("##ShapesList", current_item_preview))
+        {
+            for(int i = 0; i < (int)m_shapeNames.size(); i++)
+            {
+                bool is_selected = (selected_item_index == i);
+                if(ImGui::Selectable(m_shapeNames[i], is_selected))
+                {
+                    selected_item_index = i;
+                    current_item_preview = m_shapeNames[i];
+                }
+
+                // Set the initial focus for keyboard navigation 
+                if(is_selected)
+                {
+                    ImGui::SetItemDefaultFocus();
+                }
+            }
+            ImGui::EndCombo();
+        }
+
+        ImGui::PopItemWidth();
+
         ImGui::End();
         #endif
-
-        if(count == 0)
-        { std::cerr << "Calling window.clear()\n";
-        }
 
         update();
 
         m_window.clear(sf::Color::White);
-        
-        draw();
-
-        #if 1
+        draw(); 
         ImGui::SFML::Render(m_window); // draw the UI last so its on top
-        #endif 
-
-        if(count == 0)
-        {
-            std::cerr << "calling window.display()\n";
-            count += 1;
-        }
-
         m_window.display();
     }
 }
@@ -208,19 +228,9 @@ void Game::update(void)
 
 void Game::draw(void)
 {
-    static int count = 0;
-
     for(const auto& r : m_rectangles)
     {
-        if(count == 0)
-        {
-            std::cerr << "Preparing to draw rectangle:\n";
-        }
         m_window.draw(r);
-    }
-
-    if(count == 0){
-        count++;
     }
 
     for(const auto& c : m_circles)

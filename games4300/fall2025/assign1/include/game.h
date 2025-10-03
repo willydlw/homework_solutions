@@ -37,10 +37,11 @@ class Game
     sf::Clock               m_deltaClock;   // for ImGui's internal timing
 
     
-    std::vector<Rectangle>  m_rectangles;
-    std::vector<Circle>     m_circles;
-    std::vector<Shape*>     m_guiShapeList;
-    GameConfig              m_gameConfig;
+    std::vector<Rectangle>   m_rectangles;
+    std::vector<Circle>      m_circles;
+    std::vector<Shape*>      m_guiShapeList;
+    std::vector<const char*> m_shapeNames;      // gui requires const char*
+    GameConfig               m_gameConfig;
     
     
 
@@ -62,6 +63,7 @@ class Game
     void initRectangles(void);
    
     void initShapeList(void);
+    void initShapeNames(void);
     void initWindow(void);
 
     void update(void);

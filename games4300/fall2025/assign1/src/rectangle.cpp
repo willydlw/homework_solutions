@@ -17,8 +17,8 @@ Rectangle::Rectangle(   const RectangleConfig& rectConfig,
 void Rectangle::update(const sf::Vector2u& boundary)
 {
     sf::Vector2f position = m_rectangle.getPosition();
-    position.x += m_velocity.x;
-    position.y += m_velocity.y;
+    position.x += velocity.x;
+    position.y += velocity.y;
     m_rectangle.setPosition(position);
 
     
@@ -26,13 +26,13 @@ void Rectangle::update(const sf::Vector2u& boundary)
     // position.y is rectangle top
     if(position.y + size.y > boundary.y || position.y < 0)
     {
-        m_velocity.y = -m_velocity.y;
+        velocity.y = -velocity.y;
     }
 
     // position.x is rectangle top left 
     if(position.x + size.x > boundary.x || position.x < 0)
     {
-        m_velocity.x = -m_velocity.x;
+        velocity.x = -velocity.x;
     }
     
     updateTextPosition();
@@ -56,7 +56,7 @@ void Rectangle::updateTextPosition(void)
 
   
     // Local bounds 
-    sf::FloatRect lboundsText = m_text.getLocalBounds();
+    sf::FloatRect lboundsText = text.getLocalBounds();
     float localTextWidth = lboundsText.size.x;
     float localTextHeight = lboundsText.size.y;
    
@@ -67,14 +67,14 @@ void Rectangle::updateTextPosition(void)
     // center text within shape 
     textPosition.x = rectBoxLeft + offsetX;
     textPosition.y = rectBoxTop + offsetY;
-    m_text.setPosition(textPosition);
+    text.setPosition(textPosition);
 }
 
 void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(m_rectangle, states);
-    target.draw(m_text, states);
+    target.draw(text, states);
 }
 
 void Rectangle::setColor(sf::Color color){
@@ -107,15 +107,15 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 
     os << std::fixed << std::setprecision(2);
 
-    os << "name:         "  << obj.m_name << "\n";
+    os << "name:         "  << obj.name << "\n";
     
     os << "width:        "  << std::setw(PRINT_WIDTH) << size.x 
                             << ", height: " << std::setw(PRINT_WIDTH) << size.y << "\n";
 
     os << "position   x: "  << std::setw(PRINT_WIDTH) << position.x 
                             << ", y: " << std::setw(PRINT_WIDTH) << position.y << "\n";
-    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.m_velocity.x 
-                            << ", y: " << std::setw(PRINT_WIDTH) << obj.m_velocity.y << "\n";
+    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.velocity.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << obj.velocity.y << "\n";
    
 
     os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
@@ -123,10 +123,10 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
                             << "  b: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.b)
                             << "\n";
 
-    std::string textString = obj.m_text.getString();
+    std::string textString = obj.text.getString();
 
     os << "Text Data\n";
-    os << "\tsize: " << obj.m_text.getCharacterSize() << "\n"
+    os << "\tsize: " << obj.text.getCharacterSize() << "\n"
         << "\tstring: " << textString << "\n";
 
     os.flags(oldFlags);
