@@ -6,14 +6,13 @@
 Circle::Circle( const CircleConfig& circleConfig, 
                 const sf::Font& font,
                 const TextConfig& textConfig) 
-                : Shape(circleConfig.shapeConfig , font, textConfig)
+                : m_text(font, circleConfig.shapeConfig.name, textConfig.characterSize)
 {
-
+    m_text.setFillColor(textConfig.fillColor);
     // circleShape attributes
     setRadius(circleConfig.radius);
     setPosition(circleConfig.shapeConfig.position);
     setColor(circleConfig.shapeConfig.color);
-
 }
 
 void Circle::setPosition(sf::Vector2f position)
@@ -47,17 +46,17 @@ void Circle::update(const sf::Vector2u& boundary)
     sf::Vector2f position = m_circle.getPosition();
     float diameter = 2.0f * m_circle.getRadius();
 
-    position.x += velocity.x;
-    position.y += velocity.y;
+    position.x += m_velocity.x;
+    position.y += m_velocity.y;
     
     if( (position.y + diameter) >= boundary.y || position.y <= 0)
     {
-        velocity.y = -velocity.y;
+        m_velocity.y = -m_velocity.y;
     }
 
     if((position.x + diameter) >= boundary.x || position.x <= 0)
     {
-        velocity.x = -velocity.x;
+        m_velocity.x = -m_velocity.x;
     }
 
     m_circle.setPosition(position);
@@ -80,7 +79,7 @@ void Circle::updateTextPosition(void)
     float circleBoxTop = gboundsCircle.position.y;
 
     // Local bounds 
-    sf::FloatRect lboundsText = text.getLocalBounds();
+    sf::FloatRect lboundsText = m_text.getLocalBounds();
     float localTextWidth = lboundsText.size.x;
     float localTextHeight = lboundsText.size.y;
 
@@ -92,14 +91,14 @@ void Circle::updateTextPosition(void)
     // center text within shape 
     textPosition.x = circleBoxLeft + offsetX;
     textPosition.y = circleBoxTop + offsetY;
-    text.setPosition(textPosition);
+    m_text.setPosition(textPosition);
 }
 
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     states.transform *= getTransform();
     target.draw(m_circle, states);
-    target.draw(text, states);
+    target.draw(m_text, states);
 }
 
 
@@ -113,12 +112,12 @@ std::ostream& operator <<(std::ostream& os, const Circle& obj)
 
     os << std::fixed << std::setprecision(2);
 
-    os << "name:         "  << obj.name << "\n";
+    os << "name:         "  << obj.m_name << "\n";
     os << "radius:       "  << std::setw(PRINT_WIDTH) << obj.getRadius() << "\n"; 
     os << "position   x: "  << std::setw(PRINT_WIDTH) << position.x 
                             << ", y: " << std::setw(PRINT_WIDTH) << position.y << "\n";
-    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.velocity.x 
-                            << ", y: " << std::setw(PRINT_WIDTH) << obj.velocity.y << "\n";
+    os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.m_velocity.x 
+                            << ", y: " << std::setw(PRINT_WIDTH) << obj.m_velocity.y << "\n";
     
      os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
                             << "  g: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.g) 

@@ -1,19 +1,18 @@
 #pragma once 
 
 #include "gameConfig.h"
-#include "shape.h"
-
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
+class Game;
 
-
-class Rectangle : public Shape, public sf::Drawable, public sf::Transformable
+class Rectangle : public sf::Drawable, public sf::Transformable
 {
-    public:    
+    public:  
+    
+    friend class Game;
 
     Rectangle(  const RectangleConfig& rectConfig, 
-                //const ShapeConfig& shapeConfig,
                 const sf::Font& font, 
                 const TextConfig& textConfig);
 
@@ -28,10 +27,7 @@ class Rectangle : public Shape, public sf::Drawable, public sf::Transformable
     void setPosition(sf::Vector2f position);
 
     
-
-
     sf::Color    getColor() const;
-    
     sf::Vector2f getSize() const;
     sf::Vector2f getPosition() const;
     
@@ -39,8 +35,11 @@ class Rectangle : public Shape, public sf::Drawable, public sf::Transformable
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);
 
     private:
-   
-    sf::RectangleShape m_rectangle;
+    sf::Text            m_text;
+    sf::RectangleShape  m_rectangle;  
+    sf::Vector2f        m_velocity = {0.0f, 0.0f};
+    std::string         m_name = "Default";
+    bool                m_drawable = true;
     
 
     void updateTextPosition(void);

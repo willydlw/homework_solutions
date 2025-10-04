@@ -25,7 +25,6 @@ add_executable(assign1)
 target_sources(assign1 PRIVATE 
     src/main.cpp
     src/gameConfig.cpp
-    src/shape.cpp
     src/circle.cpp
     src/rectangle.cpp
     src/game.cpp

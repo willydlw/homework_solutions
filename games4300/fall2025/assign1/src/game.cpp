@@ -62,14 +62,14 @@ void Game::initShapeMap(void)
 {
     for(size_t i = 0; i < m_circles.size(); i++)
     {
-        Shape* shapePtr = (Shape*)&(m_circles[i]);
-        m_shapeMap.insert({shapePtr->name, shapePtr});
+        m_shapeMap[m_circles[i].m_name] = (sf::Shape*) &m_circles[i];
+        //m_shapeMap.insert({m_circles[i].m_name, m_circles[i]});
     }
 
     for(size_t i = 0; i < m_rectangles.size(); i++)
     {
-        Shape* shapePtr = (Shape*)&(m_rectangles[i]);
-        m_shapeMap.insert({shapePtr->name, shapePtr});
+        m_shapeMap[m_rectangles[i].m_name] = (sf::Shape*) &m_rectangles[i];
+        //m_shapeMap.insert({m_rectangles[i].m_name, m_rectangles[i]});
     }
 }
 
@@ -77,12 +77,12 @@ void Game::initShapeNames(void)
 {
     for(const auto& shape : m_circles)
     {
-        m_shapeNames.push_back(shape.name.c_str());
+        m_shapeNames.push_back(shape.m_name.c_str());
     }
 
     for(const auto& shape : m_rectangles)
     {
-        m_shapeNames.push_back(shape.name.c_str());
+        m_shapeNames.push_back(shape.m_name.c_str());
     }
 }
 
@@ -201,10 +201,11 @@ void Game::run(void)
         if(selected_item_index != -1)
         {
             const char* name = m_shapeNames[selected_item_index];
-            Shape* temp = m_shapeMap[name];
-            ImGui::Text("Properties for %s", temp->name.c_str());
-            //uint8_t sfmlColors[4] = {temp->color.r, temp->color.g, temp->color.b, temp->color.a};
-            //float guiColors[4] = {temp->color.r/255.0f, temp->color.g/255.0f, temp->color.b/255.0f, temp->color.a/255.0f};
+            sf::Shape* temp = m_shapeMap[name];
+
+            ImGui::Text("Properties for %s", temp->m_name.c_str());
+            uint8_t sfmlColors[4] = {temp->color.r, temp->color.g, temp->color.b, temp->color.a};
+            float guiColors[4] = {temp->color.r/255.0f, temp->color.g/255.0f, temp->color.b/255.0f, temp->color.a/255.0f};
             
             static int printCount = 0;
             if(printCount == 0)
@@ -212,7 +213,7 @@ void Game::run(void)
                 std::cerr << "SFML Colors for Shape " << name << "\n";
                 for(int i = 0; i < 4; i++)
                 {
-                    std::cerr << sfmlColors[i] << " ";
+                    std::cerr << (int) sfmlColors[i] << " ";
                 }
                 std::cerr << "\n";
                 printCount++;
