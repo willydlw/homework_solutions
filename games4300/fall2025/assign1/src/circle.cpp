@@ -6,10 +6,12 @@
 Circle::Circle( const CircleConfig& circleConfig, 
                 const sf::Font& font,
                 const TextConfig& textConfig) 
-                : m_text(font, circleConfig.shapeConfig.name, textConfig.characterSize)
+                : m_text(font, circleConfig.shapeConfig.name, textConfig.characterSize),
+                  m_drawable(true), 
+                  m_velocity(circleConfig.shapeConfig.velocity),
+                  m_name(circleConfig.shapeConfig.name)
 {
     m_text.setFillColor(textConfig.fillColor);
-    // circleShape attributes
     setRadius(circleConfig.radius);
     setPosition(circleConfig.shapeConfig.position);
     setColor(circleConfig.shapeConfig.color);

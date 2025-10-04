@@ -36,10 +36,11 @@ class Rectangle : public sf::Drawable, public sf::Transformable
 
     private:
     sf::Text            m_text;
-    sf::RectangleShape  m_rectangle;  
+    bool                m_drawable = true;
     sf::Vector2f        m_velocity = {0.0f, 0.0f};
     std::string         m_name = "Default";
-    bool                m_drawable = true;
+    
+    sf::RectangleShape  m_rectangle;  
     
 
     void updateTextPosition(void);

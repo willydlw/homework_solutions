@@ -13,6 +13,13 @@
 #include "rectangle.h"
 #include "circle.h"
 
+union ShapeObject
+{
+    Circle*    circptr;
+    Rectangle* rectptr;
+};
+
+
 
 class Game
 {
@@ -40,7 +47,7 @@ class Game
     
     std::vector<Rectangle>   m_rectangles;
     std::vector<Circle>      m_circles;
-    std::map<std::string, sf::Shape * >      m_shapeMap;
+    std::map<std::string, ShapeObject>      m_shapeMap;
     std::vector<const char*> m_shapeNames;      // gui requires const char*
     GameConfig               m_gameConfig;
     

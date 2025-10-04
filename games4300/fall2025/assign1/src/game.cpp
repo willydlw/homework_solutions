@@ -62,14 +62,18 @@ void Game::initShapeMap(void)
 {
     for(size_t i = 0; i < m_circles.size(); i++)
     {
-        m_shapeMap[m_circles[i].m_name] = (sf::Shape*) &m_circles[i];
-        //m_shapeMap.insert({m_circles[i].m_name, m_circles[i]});
+        std::string key = m_circles[i].m_name; 
+        ShapeObject val;
+        val.circptr = &m_circles[i];
+        m_shapeMap[key] = val;
     }
 
     for(size_t i = 0; i < m_rectangles.size(); i++)
     {
-        m_shapeMap[m_rectangles[i].m_name] = (sf::Shape*) &m_rectangles[i];
-        //m_shapeMap.insert({m_rectangles[i].m_name, m_rectangles[i]});
+        std::string key = m_rectangles[i].m_name; 
+        ShapeObject val;
+        val.rectptr = &m_rectangles[i];
+        m_shapeMap[key] = val;
     }
 }
 
@@ -162,9 +166,11 @@ void Game::run(void)
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
     
-        static const char* current_item_preview = "Select an item";
-        static int selected_item_index = -1;
-        static int combo_item_width = (int)(strlen(current_item_preview) + 5) * m_gameConfig.m_fontConfig.fontSize;
+        //static const char* current_item_preview = "Select an item";
+        //static int selected_item_index = -1;
+
+        #if 0
+        //static int combo_item_width = (int)(strlen(current_item_preview) + 5) * m_gameConfig.m_fontConfig.fontSize;
 
         static int printCount = 0;
         if(printCount == 0)
@@ -172,9 +178,22 @@ void Game::run(void)
             std::cerr << "\ncombo box item width: " << combo_item_width << "\n";
             printCount++;
         }
+        #endif
         
 
-        ImGui::Begin("Shapes");
+        static int selectedItem = -1;
+
+        ImGui::Begin("Shape Properties");
+        for(int i = 0; i < (int)m_shapeNames.size(); ++i)
+        {
+            bool isSelected = (selectedItem == i);
+            if(ImGui::Selectable(m_shapeNames[i], &isSelected))
+            {
+                selectedItem= i;
+            }
+        }
+
+        #if 0
         ImGui::PushItemWidth(combo_item_width);
         // ## causes the widget label to be hidden and have a unique id
         if(ImGui::BeginCombo("##ShapesList", current_item_preview))
@@ -196,14 +215,15 @@ void Game::run(void)
             }
             ImGui::EndCombo();
         }
+        #endif 
 
-
+        #if 0
         if(selected_item_index != -1)
         {
             const char* name = m_shapeNames[selected_item_index];
-            sf::Shape* temp = m_shapeMap[name];
+            ShapeObject so = m_shapeMap[name];
 
-            ImGui::Text("Properties for %s", temp->m_name.c_str());
+            ImGui::Text("Properties for %s", so.circptr->m_name);
             uint8_t sfmlColors[4] = {temp->color.r, temp->color.g, temp->color.b, temp->color.a};
             float guiColors[4] = {temp->color.r/255.0f, temp->color.g/255.0f, temp->color.b/255.0f, temp->color.a/255.0f};
             
@@ -225,7 +245,9 @@ void Game::run(void)
             //ImGui::SliderFloat("Velocity x", &temp->velocity.x, 0.0f, 10.0f);
         }
 
-        ImGui::PopItemWidth();
+        #endif
+
+        //ImGui::PopItemWidth();
 
         ImGui::End();
         #endif

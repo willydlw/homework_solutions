@@ -44,10 +44,10 @@ class Circle : public sf::Drawable, public sf::Transformable
 
     // Data members 
     sf::Text            m_text;
-    sf::CircleShape     m_circle;   
     bool                m_drawable = true;
     sf::Vector2f        m_velocity = {0.0f, 0.0f};
     std::string         m_name = "Default";
+    sf::CircleShape     m_circle;   
    
     // private helper functions
     void updateTextPosition(void);

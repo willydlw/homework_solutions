@@ -4,7 +4,10 @@
 Rectangle::Rectangle(   const RectangleConfig& rectConfig,
                         const sf::Font& font, 
                         const TextConfig& textConfig) 
-                        : m_text(font, rectConfig.shapeConfig.name, textConfig.characterSize)
+                        : m_text(font, rectConfig.shapeConfig.name, textConfig.characterSize),
+                          m_drawable(true),
+                          m_velocity(rectConfig.shapeConfig.velocity),
+                          m_name(rectConfig.shapeConfig.name)
 {
     m_text.setFillColor(textConfig.fillColor);
 
