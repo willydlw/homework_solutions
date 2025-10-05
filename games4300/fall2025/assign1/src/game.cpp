@@ -180,6 +180,8 @@ void Game::run(void)
         if(ImGui::Begin("Shape Properties"))
         {
             static int selectedItem= 0;
+            static bool selectedDrawShape = true;
+            
             static std::string selectedName = m_shapeNames[selectedItem];
             static ShapeObject selectedObject = m_shapeMap[selectedName];
             static sf::Color selectedColor = selectedObject.circptr->getColor();
@@ -187,18 +189,27 @@ void Game::run(void)
                 (float)selectedColor.r/255.0f, 
                 (float)selectedColor.g/255.0f, 
                 (float)selectedColor.b/255.0f};
+            static sf::Vector2f selectedVelocity = selectedObject.circptr->m_velocity;
+            sf::Vector2f selectedScale = selectedObject.circptr->getScale();
+
 
             // Combo box provides drop down list of selectable shape names
             // Shape names argument must be of type: const char* items[] 
             // get a pointer to underlying array 
             const char* const* c_style_shape_names_ptr = m_shapeNames.data();
+
+            // Because object velocities can change when they reach the window 
+            // boundaries, we need to update the selected object velocity 
+            selectedVelocity = selectedObject.circptr->m_velocity;
         
-            if(ImGui::Combo("Shapes", &selectedItem, c_style_shape_names_ptr, (int)m_shapeNames.size()))
+            if(ImGui::Combo("Shape", &selectedItem, c_style_shape_names_ptr, (int)m_shapeNames.size()))
             {
                 // executes when an item is selected
                 selectedName = m_shapeNames[selectedItem];
                 selectedObject = m_shapeMap[selectedName];
                 selectedColor = selectedObject.circptr->getColor();
+                selectedDrawShape = selectedObject.circptr->m_drawable;
+                selectedVelocity = selectedObject.circptr->m_velocity;
                 sfColorToFloat(selectedColor, guiColors);
                 std::cerr << "Combo selected item number: " << selectedItem
                     << ", name: " << selectedName << "\n";
@@ -214,10 +225,27 @@ void Game::run(void)
                 selectedObject.circptr->setColor(updatedColor);
             }
 
-        
+            if(ImGui::Checkbox("Draw Shape", &selectedDrawShape))
+            {
+                if(selectedDrawShape)
+                {
+                    selectedObject.circptr->m_drawable = true;
+                }
+                else{
+                    selectedObject.circptr->m_drawable = false;
+                }
+            }
 
-            //ImGui::Checkbox("Draw", &so.circptr->m_drawable);
-            //ImGui::SliderFloat("Velocity x", &so.circptr->m_velocity.x, 0.0f, 10.0f);
+            // SliderFloat2 creates two sliders for two dimensions (x,y)
+            if(ImGui::SliderFloat2("Velocity", &selectedVelocity.x, MIN_VELOCITY, MAX_VELOCITY, "%.2f"))
+            {
+                selectedObject.circptr->m_velocity = selectedVelocity;
+            }
+
+            if(ImGui::SliderFloat("Scale", &selectedScale.x, MIN_SCALE, MAX_SCALE, "%.2f"))
+            {
+                selectedObject.circptr->setScale({selectedScale.x, selectedScale.x});
+            }        
 
             ImGui::End();
 

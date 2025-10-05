@@ -25,11 +25,13 @@ class Rectangle : public sf::Drawable, public sf::Transformable
     void setColor(sf::Color color);
     void setSize(sf::Vector2f size);
     void setPosition(sf::Vector2f position);
+    void setScale(sf::Vector2f scale);
 
     
     sf::Color    getColor() const;
     sf::Vector2f getSize() const;
     sf::Vector2f getPosition() const;
+    sf::Vector2f getScale()const;
     
 
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);

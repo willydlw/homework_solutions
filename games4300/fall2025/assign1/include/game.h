@@ -26,6 +26,10 @@ class Game
     public:
 
     static constexpr int FRAME_RATE = 60;
+    static constexpr float MIN_VELOCITY = -5.0f;
+    static constexpr float MAX_VELOCITY = 5.0f;
+    static constexpr float MIN_SCALE = 0.25f;
+    static constexpr float MAX_SCALE = 5.0f;
 
     Game();
     

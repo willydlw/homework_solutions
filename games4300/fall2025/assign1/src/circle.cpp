@@ -36,6 +36,11 @@ void Circle::setRadius(float radius)
     }
 }
 
+void Circle::setScale(sf::Vector2f scale)
+{
+    m_circle.setScale(scale);
+}
+
 void Circle::setColor(sf::Color color)
 {
     std::cerr << "[INFO] function: " << __PRETTY_FUNCTION__ 
@@ -61,7 +66,7 @@ void Circle::update(const sf::Vector2u& boundary)
 {
     // position is top left corner of circle bounding box
     sf::Vector2f position = m_circle.getPosition();
-    float diameter = 2.0f * m_circle.getRadius();
+    float diameter = 2.0f * m_circle.getRadius() * m_circle.getScale().x;
 
     position.x += m_velocity.x;
     position.y += m_velocity.y;
@@ -113,9 +118,12 @@ void Circle::updateTextPosition(void)
 
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
-    target.draw(m_circle, states);
-    target.draw(m_text, states);
+    if(m_drawable)
+    {
+        states.transform *= getTransform();
+        target.draw(m_circle, states);
+        target.draw(m_text, states);
+    }
 }
 
 
@@ -164,3 +172,8 @@ sf::Color Circle::getColor()const
     return m_circle.getFillColor();
 }
 
+
+sf::Vector2f Circle::getScale()const 
+{
+    return m_circle.getScale();
+}

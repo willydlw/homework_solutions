@@ -29,12 +29,14 @@ class Circle : public sf::Drawable, public sf::Transformable
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);
     void setColor(sf::Color color);
+    void setScale(sf::Vector2f scale);
     
 
     // Getter Member Functions
     sf::Vector2f getPosition()const;
     float getRadius()const;
     sf::Color getColor()const;
+    sf::Vector2f getScale()const;
     
 
     // Friend functions

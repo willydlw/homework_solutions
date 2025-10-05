@@ -27,6 +27,10 @@ void Rectangle::update(const sf::Vector2u& boundary)
 
     
     sf::Vector2f size = getSize();
+    sf::Vector2f scale = getScale();
+    size.x *= scale.x;
+    size.y *= scale.y;
+    
     // position.y is rectangle top
     if(position.y + size.y > boundary.y || position.y < 0)
     {
@@ -76,9 +80,12 @@ void Rectangle::updateTextPosition(void)
 
 void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    states.transform *= getTransform();
-    target.draw(m_rectangle, states);
-    target.draw(m_text, states);
+    if(m_drawable)
+    {
+        states.transform *= getTransform();
+        target.draw(m_rectangle, states);
+        target.draw(m_text, states);
+    }
 }
 
 void Rectangle::setColor(sf::Color color){
@@ -96,7 +103,10 @@ void Rectangle::setPosition(sf::Vector2f position)
     m_rectangle.setPosition(position);
 }
 
-
+void Rectangle::setScale(sf::Vector2f scale)
+{
+    m_rectangle.setScale(scale);
+}
 
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)
@@ -152,3 +162,7 @@ sf::Vector2f Rectangle::getPosition()const
     return m_rectangle.getPosition();
 }
 
+sf::Vector2f Rectangle::getScale()const 
+{
+    return m_rectangle.getScale();
+}
