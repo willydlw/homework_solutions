@@ -161,14 +161,10 @@ void Game::run(void)
             }
         }
 
-        #if 1
         // update imgui for this frame with the time that the last frame took
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
     
-        //static const char* current_item_preview = "Select an item";
-        //static int selected_item_index = -1;
-
         #if 0
         //static int combo_item_width = (int)(strlen(current_item_preview) + 5) * m_gameConfig.m_fontConfig.fontSize;
 
@@ -181,9 +177,55 @@ void Game::run(void)
         #endif
         
 
-        static int selectedItem = -1;
+        if(ImGui::Begin("Shape Properties"))
+        {
+            static int selectedItem= 0;
+            static std::string selectedName = m_shapeNames[selectedItem];
+            static ShapeObject selectedObject = m_shapeMap[selectedName];
+            static sf::Color selectedColor = selectedObject.circptr->getColor();
+            static float guiColors[3] = { 
+                (float)selectedColor.r/255.0f, 
+                (float)selectedColor.g/255.0f, 
+                (float)selectedColor.b/255.0f};
 
-        ImGui::Begin("Shape Properties");
+            // Combo box provides drop down list of selectable shape names
+            // Shape names argument must be of type: const char* items[] 
+            // get a pointer to underlying array 
+            const char* const* c_style_shape_names_ptr = m_shapeNames.data();
+        
+            if(ImGui::Combo("Shapes", &selectedItem, c_style_shape_names_ptr, (int)m_shapeNames.size()))
+            {
+                // executes when an item is selected
+                selectedName = m_shapeNames[selectedItem];
+                selectedObject = m_shapeMap[selectedName];
+                selectedColor = selectedObject.circptr->getColor();
+                sfColorToFloat(selectedColor, guiColors);
+                std::cerr << "Combo selected item number: " << selectedItem
+                    << ", name: " << selectedName << "\n";
+            }
+
+
+            // returns true only when user has interacted with color editor
+            if(ImGui::ColorEdit3("Color", guiColors))
+            {
+                sf::Color updatedColor = floatColorToUint(guiColors);
+                printColor(guiColors, 3);
+                printColor(updatedColor);
+                selectedObject.circptr->setColor(updatedColor);
+            }
+
+        
+
+            //ImGui::Checkbox("Draw", &so.circptr->m_drawable);
+            //ImGui::SliderFloat("Velocity x", &so.circptr->m_velocity.x, 0.0f, 10.0f);
+
+            ImGui::End();
+
+        }
+
+
+
+        #if 0
         for(int i = 0; i < (int)m_shapeNames.size(); ++i)
         {
             bool isSelected = (selectedItem == i);
@@ -192,6 +234,7 @@ void Game::run(void)
                 selectedItem= i;
             }
         }
+        #endif
 
         #if 0
         ImGui::PushItemWidth(combo_item_width);
@@ -248,9 +291,7 @@ void Game::run(void)
         #endif
 
         //ImGui::PopItemWidth();
-
-        ImGui::End();
-        #endif
+        //ImGui::End();
 
         update();
 
@@ -261,16 +302,23 @@ void Game::run(void)
     }
 }
 
-sf::Color Game::floatColorToUint(float fcolors[4])
+sf::Color Game::floatColorToUint(float fcolors[3])
 {
-    uint8_t converted[4];
+    uint8_t converted[3];
 
-    for(int i = 0; i < 4; i++)
+    for(int i = 0; i < 3; i++)
     {
         converted[i] = (uint8_t)floor(fcolors[i] * 255.0f);
     }
 
-    return sf::Color{converted[0], converted[1], converted[2], converted[3]};
+    return sf::Color{converted[0], converted[1], converted[2]};
+}
+
+void Game::sfColorToFloat(sf::Color color, float fcolors[3])
+{
+    fcolors[0] = (float)color.r/255.0f;
+    fcolors[1] = (float)color.g/255.0f;
+    fcolors[2] = (float)color.b/255.0f;
 }
 
 
@@ -321,4 +369,28 @@ std::ostream& operator << (std::ostream& os, const Game& obj)
 
     os.flags(oldFlags);
     return os;
+}
+
+
+void Game::printColor(const sf::Color& color)
+{
+    std::cerr << "r: " << (int)color.r 
+            << ", g: " << (int)color.g
+            << ", b: " << (int)color.b
+            << ", a: " << (int)color.a
+            << "\n";
+}
+
+void Game::printColor(const float* color, int n)
+{
+    std::ios_base::fmtflags oldFlags = std::cerr.flags();
+    std::cerr << std::fixed << std::setprecision(4);
+
+    std::cerr << "Floating point colors\n";
+    for(int i = 0; i < n; i++)
+    {
+        std::cerr << "\ti: " << color[i] << "\n";
+    }
+
+    std::cerr.flags(oldFlags);
 }

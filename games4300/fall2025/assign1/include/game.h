@@ -75,10 +75,14 @@ class Game
     void initWindow(void);
 
 
-    sf::Color floatColorToUint(float fcolors[4]);
+    sf::Color floatColorToUint(float fcolors[3]);
+    void sfColorToFloat(sf::Color color, float fcolors[3]);
 
     void update(void);
     void draw(void);
+
+    void printColor(const sf::Color& color);
+    void printColor(const float* color, int n);
 };
 
 
