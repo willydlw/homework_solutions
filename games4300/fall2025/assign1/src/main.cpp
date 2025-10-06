@@ -1,22 +1,24 @@
 #include <iostream>
 #include <string>
 
-#include <optional>
-
-
 #include "game.h"
-
-
 
 int main(int argc, char* argv[])
 {
-    if(argc != 2)
+    std::string configFileName;
+
+    if(argc == 2)
     {
-        std::cerr << "Usage: ./assign1 configFileName\n";
+        configFileName = argv[1];
+    }
+    else
+    {
+        std::cerr << "\n[INFO] Specify configuration file\n";
+        std::cerr << "usage 1: " << argv[0] << " configFileName\n";
         return 1;
     }
 
-    std::string configFileName(argv[1]);
+   
     Game game;
 
     game.init(configFileName);

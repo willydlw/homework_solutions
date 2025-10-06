@@ -9,14 +9,23 @@ namespace fs = std::filesystem;
 
 // Function Prototypes
 fs::path getWorkingDirectory(void);
+
 void fileOnlySearch(const std::string& targetFile);
-void directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile);
+
+void directoryAndFileSearch(
+        const std::string& searchDirectory, 
+        const std::string& targetFile);
+
 void printPaths(const std::vector<fs::path>& paths);
+
+std::vector<fs::path> findFileRecursive(
+        const fs::path& targetPath, 
+        const std::string& targetFile );
 
 
 // Function Definitions
 
-// Returns executable directory path
+// Returns the executable directory path
 fs::path getWorkingDirectory(void){
     try {
         fs::path currentPath = fs::current_path();

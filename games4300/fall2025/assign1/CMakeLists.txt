@@ -4,6 +4,7 @@ project(assign1)
 # specify binary output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${PROJECT_NAME})
 
+
 # set compiler flags
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++17 -Wall -Wextra -pedantic")
 set(CMAKE_CXX_STANDARD 17)
@@ -38,11 +39,6 @@ target_sources(workDir PRIVATE
 add_executable(findFile)
 target_sources(findFile PRIVATE 
     src/findFile.cpp
-)
-
-add_executable(findDirAndFile)
-target_sources(findDirAndFile PRIVATE 
-    src/findDirAndFile.cpp
 )
 
 add_executable(displayText)

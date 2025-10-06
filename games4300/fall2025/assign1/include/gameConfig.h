@@ -10,6 +10,8 @@
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/Font.hpp>
 
+// use namespace alias to reduce typing and enhance readability
+namespace fs = std::filesystem;
 
 // Configuration Structures
 struct WindowConfig{
@@ -56,7 +58,11 @@ class Game;
 
 class GameConfig {
 public:
+
     friend class Game;
+
+    static constexpr const char* CONFIG_DIR_NAME = "assign1/config";
+    static constexpr const char* FONTS_DIR_NAME = "assign1/fonts";
 
     GameConfig() = default;
 
@@ -73,13 +79,17 @@ private:
     
 
     // Helper functions
-
-    std::filesystem::path getWorkingDirectory(void);
+    fs::path getWorkingDirectory(void);
+    void fileOnlySearch(const std::string& targetFile);
+    void directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile);
+    void printPaths(const std::vector<fs::path>& paths);
+    
 
     std::vector<std::filesystem::path> findFileRecursive(
         const std::filesystem::path& startPath, 
         const std::string& filenameToFind);
 
+    
 
     bool readVector2f(std::istringstream& iss, sf::Vector2f& v2);
     bool readColor(std::istringstream& iss, sf::Color& color);
