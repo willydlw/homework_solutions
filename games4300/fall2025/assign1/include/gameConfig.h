@@ -43,19 +43,9 @@ struct CircleConfig{
 };
 
 
-/*
-struct GameConfig{
-    WindowConfig window;
-    FontConfig font;
-    std::vector<RectangleConfig> rects;
-    std::vector<CircleConfig>circles;
-};
-*/
-
-
 struct TextConfig{
-    unsigned int characterSize;
-    sf::Color fillColor;
+    unsigned int characterSize = 24;
+    sf::Color fillColor = sf::Color::Black;
 };
 
 
@@ -65,9 +55,7 @@ struct TextConfig{
 class Game;
 
 class GameConfig {
-
 public:
-    // Declare Game class as friend of class GameConfig
     friend class Game;
 
     GameConfig() = default;

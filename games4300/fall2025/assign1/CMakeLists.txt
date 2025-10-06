@@ -40,6 +40,11 @@ target_sources(findFile PRIVATE
     src/findFile.cpp
 )
 
+add_executable(findDirAndFile)
+target_sources(findDirAndFile PRIVATE 
+    src/findDirAndFile.cpp
+)
+
 add_executable(displayText)
 target_sources(displayText PRIVATE 
     src/displayText.cpp
