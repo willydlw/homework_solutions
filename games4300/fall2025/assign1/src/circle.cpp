@@ -43,22 +43,7 @@ void Circle::setScale(sf::Vector2f scale)
 
 void Circle::setColor(sf::Color color)
 {
-    std::cerr << "[INFO] function: " << __PRETTY_FUNCTION__ 
-        << "color values r: " << (int)color.r 
-        << ", g: " << (int)color.g 
-        << ", b: " << (int)color.b 
-        << ", a: " << (int)color.a
-        << "\n";
     m_circle.setFillColor(color);
-
-    sf::Color updatedColor = m_circle.getFillColor();
-
-    std::cerr << "After calling setFillColor, getFillColor returns r: "
-        << (int)updatedColor.r 
-        << ", g: " << (int)updatedColor.g 
-        << ", b: " << (int)updatedColor.b 
-        << ", a: " << (int)updatedColor.a 
-        << "\n";
 }
 
 

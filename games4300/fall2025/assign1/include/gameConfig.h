@@ -1,10 +1,9 @@
 #pragma once 
 
 #include <cstdint>
+#include <filesystem>
 #include <string>
 #include <vector>
-#include <filesystem>
-
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
@@ -81,7 +80,7 @@ private:
     // Helper functions
     fs::path getWorkingDirectory(void);
     void fileOnlySearch(const std::string& targetFile);
-    void directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile);
+    std::vector<fs::path> directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile);
     void printPaths(const std::vector<fs::path>& paths);
     
 

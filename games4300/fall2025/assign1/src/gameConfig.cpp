@@ -68,50 +68,37 @@ void GameConfig::fileOnlySearch(const std::string& targetFile)
 }
 
 
-void GameConfig::directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile)
+std::vector<fs::path> GameConfig::directoryAndFileSearch(const std::string& searchDirectory, const std::string& targetFile)
 {
-    std::vector<fs::path> foundFiles;
-   
+    std::vector<fs::path> foundFiles = findFileRecursive(searchDirectory, targetFile);
 
-    std::cout << "\n[INFO] Executing function " << __PRETTY_FUNCTION__ << "\n";
-    std::cout << "[INFO] Search Directory: " << searchDirectory << "\n";
-    std::cout << "[INFO] Target File:      " << targetFile << "\n";
-    
-    foundFiles = findFileRecursive(searchDirectory, targetFile);
-
-    if(!foundFiles.empty())
-    {
-        std::cout << "\n[RESULTS] Found " << targetFile 
-            << " in search directory: " << searchDirectory 
-            << " at following locations: \n";
-
-        printPaths(foundFiles);
-    }
-    else 
+    if(foundFiles.empty())
     {
         fs::path workingDirectory = getWorkingDirectory();
-        workingDirectory += "/" + searchDirectory;
-
-        std::cout << "\n[RESULTS] targetFile: " << targetFile 
+    
+        std::cout << "\n[WARNING] function: " << __func__ 
+                << " << targetFile: " << targetFile  
                 << " not found in directory: " << searchDirectory << "\n";
-        std::cout << "[SECOND ATTEMPT] adding search directory to working directory\n"
-                << "Searching directory path: " << workingDirectory << "\n";
+        std::cout << "[RECOVERY ATTEMPT] Searching directory path: " << workingDirectory << "\n";
+        
         foundFiles = findFileRecursive(workingDirectory, targetFile);
-        if(foundFiles.size() == 0)
+
+        if(foundFiles.empty())
         {
-            std::cout << "\n[RESULTS] targetFile: " << targetFile 
+            std::cout << "\n[WARNING] targetFile: " << targetFile 
                 << " not found in directory: " << workingDirectory << "\n";
         }
         else
         {
-            std::cout << "\n[RESULTS] Found " << targetFile 
+            std::cout << "\n[RECOVERY RESULTS] Found " << targetFile 
             << " in search directory: " << workingDirectory 
             << " at following locations: \n";
             
             printPaths(foundFiles);
         }
     }
-    
+
+    return foundFiles;
 }
 
 
@@ -128,30 +115,17 @@ void GameConfig::printPaths(const std::vector<fs::path>& paths)
 bool GameConfig::readConfigFile(const std::string& fileName)
 {
     std::ifstream inFile;
-    std::filesystem::path workDir = getWorkingDirectory();
-
-    std::cerr << "[INFO] function: " << __PRETTY_FUNCTION__ 
-                << ", working directory path: " << workDir << "\n";
+    std::vector<fs::path> foundFiles = directoryAndFileSearch(CONFIG_DIR_NAME, fileName);
     
-    std::cerr << "[INFO] searching working directory for file name: "
-                << fileName << "\n";
-
-    std::vector<std::filesystem::path> foundFiles = findFileRecursive(workDir, fileName);
-
     if(foundFiles.empty())
     {
-        std::cerr << "ERROR, function: " << __PRETTY_FUNCTION__ 
-            << ", file: " << fileName << "not found\n";
+        std::cerr << "[ERROR] function: " << __PRETTY_FUNCTION__ 
+            << ", file: " << fileName << "not found in directory: "
+            << CONFIG_DIR_NAME << "\n";
         return false;
     }
 
-    std::cerr << "[INFO] files found\n";
-    for(auto f : foundFiles)
-    {
-        std::cerr << "\t" << f << "\n";
-    }
-
-    for(auto f : foundFiles)
+    for(const auto& f : foundFiles)
     {
         inFile.open(f);
         if(inFile.is_open())

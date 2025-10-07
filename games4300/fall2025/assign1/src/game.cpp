@@ -32,7 +32,6 @@ void Game::init(const std::string& configFileName)
     initGui();
     initShapeMap();
     initShapeNames();
-    std::cerr << "[INFO] exiting function: " << __PRETTY_FUNCTION__ << "\n";
 }
 
 void Game::initWindow(void)
