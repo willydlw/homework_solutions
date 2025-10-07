@@ -51,19 +51,37 @@ void Circle::update(const sf::Vector2u& boundary)
 {
     // position is top left corner of circle bounding box
     sf::Vector2f position = m_circle.getPosition();
-    float diameter = 2.0f * m_circle.getRadius() * m_circle.getScale().x;
 
     position.x += m_velocity.x;
     position.y += m_velocity.y;
+  
+    // when gui sets circle scale, both x,y are same
+    float diameter = 2.0f * m_circle.getRadius() * m_circle.getScale().x;
     
-    if( (position.y + diameter) >= boundary.y || position.y <= 0)
+    // gui scaling can cause the object to go beyond 
+    // the window boundaries and remain beyond the boundary
+    // resulting in oscillating velocity if position is
+    // not also corrected.
+    if( (position.y + diameter) >= boundary.y)
     {
         m_velocity.y = -m_velocity.y;
+        position.y = boundary.y - diameter;
+    }
+    else if(position.y < 0)
+    {
+        m_velocity.y = -m_velocity.y;
+        position.y = 0;
     }
 
-    if((position.x + diameter) >= boundary.x || position.x <= 0)
+    if((position.x + diameter) > boundary.x)
     {
         m_velocity.x = -m_velocity.x;
+        position.x = boundary.x - diameter;
+    }
+    else if(position.x < 0)
+    {
+        m_velocity.x = -m_velocity.x;
+        position.x = 0;
     }
 
     m_circle.setPosition(position);

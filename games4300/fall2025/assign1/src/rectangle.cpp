@@ -20,29 +20,46 @@ Rectangle::Rectangle(   const RectangleConfig& rectConfig,
 
 void Rectangle::update(const sf::Vector2u& boundary)
 {
+    // position is top left corner
     sf::Vector2f position = m_rectangle.getPosition();
+
     position.x += m_velocity.x;
     position.y += m_velocity.y;
-    m_rectangle.setPosition(position);
-
     
+
+    // width is size.x, height is size.y
     sf::Vector2f size = getSize();
     sf::Vector2f scale = getScale();
     size.x *= scale.x;
     size.y *= scale.y;
-    
-    // position.y is rectangle top
-    if(position.y + size.y > boundary.y || position.y < 0)
+
+    // gui scaling can cause the object to go beyond 
+    // the window boundaries and remain beyond the boundary
+    // resulting in oscillating velocity if position is
+    // not also corrected.
+    if(position.y + size.y > boundary.y) 
     {
         m_velocity.y = -m_velocity.y;
+        position.y = boundary.y - size.y;
+    }
+    else if(position.y < 0)
+    {
+        m_velocity.y = -m_velocity.y;
+        position.y = 0;
     }
 
-    // position.x is rectangle top left 
-    if(position.x + size.x > boundary.x || position.x < 0)
+    if(position.x + size.x > boundary.x)
     {
         m_velocity.x = -m_velocity.x;
+        position.x = boundary.x - size.x;
+    }
+    else if(position.x < 0)
+    {
+        m_velocity.x = -m_velocity.x;
+        position.x = 0;
     }
     
+    m_rectangle.setPosition(position);
     updateTextPosition();
 }
 
