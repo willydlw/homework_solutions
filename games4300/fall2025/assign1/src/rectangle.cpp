@@ -105,26 +105,6 @@ void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
     }
 }
 
-void Rectangle::setColor(sf::Color color){
-    m_rectangle.setFillColor(color);
-}
-
-
-void Rectangle::setSize(sf::Vector2f size)
-{
-    m_rectangle.setSize(size);
-}
-
-void Rectangle::setPosition(sf::Vector2f position)
-{
-    m_rectangle.setPosition(position);
-}
-
-void Rectangle::setScale(sf::Vector2f scale)
-{
-    m_rectangle.setScale(scale);
-}
-
 
 std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 {
@@ -134,10 +114,13 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
     sf::Color color = obj.getColor();
     sf::Vector2f size = obj.getSize();
     sf::Vector2f position = obj.getPosition();
+    sf::Vector2f scale = obj.getScale();
 
     os << std::fixed << std::setprecision(2);
 
     os << "name:         "  << obj.m_name << "\n";
+    os << "scale      x: "  << std::setw(PRINT_WIDTH) << scale.x  
+                            << ", y: " << std::setw(PRINT_WIDTH) << scale.y << "\n"; 
     
     os << "width:        "  << std::setw(PRINT_WIDTH) << size.x 
                             << ", height: " << std::setw(PRINT_WIDTH) << size.y << "\n";
@@ -164,6 +147,9 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 }
 
 
+
+/* Getter Functions */
+
 sf::Color Rectangle::getColor()const 
 {
     return m_rectangle.getFillColor();
@@ -182,4 +168,28 @@ sf::Vector2f Rectangle::getPosition()const
 sf::Vector2f Rectangle::getScale()const 
 {
     return m_rectangle.getScale();
+}
+
+
+
+/*  Setter Functions */
+
+void Rectangle::setColor(sf::Color color){
+    m_rectangle.setFillColor(color);
+}
+
+
+void Rectangle::setSize(sf::Vector2f size)
+{
+    m_rectangle.setSize(size);
+}
+
+void Rectangle::setPosition(sf::Vector2f position)
+{
+    m_rectangle.setPosition(position);
+}
+
+void Rectangle::setScale(sf::Vector2f scale)
+{
+    m_rectangle.setScale(scale);
 }

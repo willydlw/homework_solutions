@@ -69,22 +69,23 @@ class Game
     */
     std::string initFont(const std::string& fontFileName);
 
-
-    void initCircles(void);
-    void initGui(void);
-    void initRectangles(void);
+    void initCircles();
+    void initGui();
+    void initRectangles();
    
-    void initShapeMap(void);
-    void initShapeNames(void);
-    void initWindow(void);
+    void initShapeMap();
+    void initShapeNames();
+    void initWindow();
 
-
+    // ImGui 
+    void updateGui();
     sf::Color floatColorToUint(float fcolors[3]);
     void sfColorToFloat(sf::Color color, float fcolors[3]);
 
-    void update(void);
-    void draw(void);
+    void updateShapes();
+    void draw();
 
+    // Debugging functions
     void printColor(const sf::Color& color);
     void printColor(const float* color, int n);
 };

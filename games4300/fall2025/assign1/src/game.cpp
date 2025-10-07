@@ -163,18 +163,20 @@ void Game::run(void)
         // update imgui for this frame with the time that the last frame took
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
-    
-        #if 0
-        //static int combo_item_width = (int)(strlen(current_item_preview) + 5) * m_gameConfig.m_fontConfig.fontSize;
+        updateGui();
+        updateShapes();
 
-        static int printCount = 0;
-        if(printCount == 0)
-        {
-            std::cerr << "\ncombo box item width: " << combo_item_width << "\n";
-            printCount++;
-        }
-        #endif
-        
+        m_window.clear(sf::Color::White);
+        draw(); 
+        ImGui::SFML::Render(m_window); // draw the UI last so its on top
+        m_window.display();
+    }
+}
+
+
+void Game::updateGui()
+{
+        static constexpr size_t NAME_BUFFER_SIZE = 255;
 
         if(ImGui::Begin("Shape Properties"))
         {
@@ -189,7 +191,9 @@ void Game::run(void)
                 (float)selectedColor.g/255.0f, 
                 (float)selectedColor.b/255.0f};
             static sf::Vector2f selectedVelocity = selectedObject.circptr->m_velocity;
-            sf::Vector2f selectedScale = selectedObject.circptr->getScale();
+            static sf::Vector2f selectedScale = selectedObject.circptr->getScale();
+            static char objectName[NAME_BUFFER_SIZE+1];
+            strcpy(objectName, selectedObject.circptr->m_name.c_str());
 
 
             // Combo box provides drop down list of selectable shape names
@@ -209,6 +213,10 @@ void Game::run(void)
                 selectedColor = selectedObject.circptr->getColor();
                 selectedDrawShape = selectedObject.circptr->m_drawable;
                 selectedVelocity = selectedObject.circptr->m_velocity;
+                selectedScale = selectedObject.circptr->getScale();
+                selectedName = selectedObject.circptr->getName().c_str();
+                strcpy(objectName, selectedObject.circptr->m_name.c_str());
+
                 sfColorToFloat(selectedColor, guiColors);
                 std::cerr << "Combo selected item number: " << selectedItem
                     << ", name: " << selectedName << "\n";
@@ -222,6 +230,9 @@ void Game::run(void)
                 printColor(guiColors, 3);
                 printColor(updatedColor);
                 selectedObject.circptr->setColor(updatedColor);
+                selectedColor.r = guiColors[0];
+                selectedColor.g = guiColors[1];
+                selectedColor.b = guiColors[2];
             }
 
             if(ImGui::Checkbox("Draw Shape", &selectedDrawShape))
@@ -244,89 +255,15 @@ void Game::run(void)
             if(ImGui::SliderFloat("Scale", &selectedScale.x, MIN_SCALE, MAX_SCALE, "%.2f"))
             {
                 selectedObject.circptr->setScale({selectedScale.x, selectedScale.x});
+            }
+
+            if(ImGui::InputText("Text", objectName, NAME_BUFFER_SIZE))
+            {
+                selectedObject.circptr->setName(objectName);
             }        
 
             ImGui::End();
-
         }
-
-
-
-        #if 0
-        for(int i = 0; i < (int)m_shapeNames.size(); ++i)
-        {
-            bool isSelected = (selectedItem == i);
-            if(ImGui::Selectable(m_shapeNames[i], &isSelected))
-            {
-                selectedItem= i;
-            }
-        }
-        #endif
-
-        #if 0
-        ImGui::PushItemWidth(combo_item_width);
-        // ## causes the widget label to be hidden and have a unique id
-        if(ImGui::BeginCombo("##ShapesList", current_item_preview))
-        {
-            for(int i = 0; i < (int)m_shapeNames.size(); i++)
-            {
-                bool is_selected = (selected_item_index == i);
-                if(ImGui::Selectable(m_shapeNames[i], is_selected))
-                {
-                    selected_item_index = i;
-                    current_item_preview = m_shapeNames[i];
-                }
-
-                // Set the initial focus for keyboard navigation 
-                if(is_selected)
-                {
-                    ImGui::SetItemDefaultFocus();
-                }
-            }
-            ImGui::EndCombo();
-        }
-        #endif 
-
-        #if 0
-        if(selected_item_index != -1)
-        {
-            const char* name = m_shapeNames[selected_item_index];
-            ShapeObject so = m_shapeMap[name];
-
-            ImGui::Text("Properties for %s", so.circptr->m_name);
-            uint8_t sfmlColors[4] = {temp->color.r, temp->color.g, temp->color.b, temp->color.a};
-            float guiColors[4] = {temp->color.r/255.0f, temp->color.g/255.0f, temp->color.b/255.0f, temp->color.a/255.0f};
-            
-            static int printCount = 0;
-            if(printCount == 0)
-            {
-                std::cerr << "SFML Colors for Shape " << name << "\n";
-                for(int i = 0; i < 4; i++)
-                {
-                    std::cerr << (int) sfmlColors[i] << " ";
-                }
-                std::cerr << "\n";
-                printCount++;
-            }
-            ImGui::ColorEdit4("Color", guiColors);
-            sf::Color updatedColor = floatColorToUint(guiColors);
-            temp->color = updatedColor;
-            //ImGui::Checkbox("Draw", &temp->drawable);
-            //ImGui::SliderFloat("Velocity x", &temp->velocity.x, 0.0f, 10.0f);
-        }
-
-        #endif
-
-        //ImGui::PopItemWidth();
-        //ImGui::End();
-
-        update();
-
-        m_window.clear(sf::Color::White);
-        draw(); 
-        ImGui::SFML::Render(m_window); // draw the UI last so its on top
-        m_window.display();
-    }
 }
 
 sf::Color Game::floatColorToUint(float fcolors[3])
@@ -349,7 +286,7 @@ void Game::sfColorToFloat(sf::Color color, float fcolors[3])
 }
 
 
-void Game::update(void)
+void Game::updateShapes()
 {
     sf::Vector2u boundary = m_window.getSize();
 
@@ -364,7 +301,7 @@ void Game::update(void)
     }
 }
 
-void Game::draw(void)
+void Game::draw()
 {
     for(const auto& r : m_rectangles)
     {

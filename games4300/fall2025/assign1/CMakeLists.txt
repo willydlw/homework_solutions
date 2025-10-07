@@ -31,11 +31,6 @@ target_sources(assign1 PRIVATE
     src/game.cpp
 )
 
-add_executable(workDir)
-target_sources(workDir PRIVATE 
-    src/printWorkingDirectory.cpp
-)
-
 add_executable(findFile)
 target_sources(findFile PRIVATE 
     src/findFile.cpp

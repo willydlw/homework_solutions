@@ -17,35 +17,6 @@ Circle::Circle( const CircleConfig& circleConfig,
     setColor(circleConfig.shapeConfig.color);
 }
 
-void Circle::setPosition(sf::Vector2f position)
-{
-    m_circle.setPosition(position);
-}
-    
-void Circle::setRadius(float radius)
-{
-    if(radius >= MIN_RADIUS && radius <= MAX_RADIUS){
-        m_circle.setRadius(radius);
-    }
-    else{
-        std::cerr << "WARNING radius: " << radius 
-            << " not within bounds {" << MIN_RADIUS << ", "
-            << MAX_RADIUS << "}, setting to default: " 
-            << DEFAULT_RADIUS << "\n";  
-        m_circle.setRadius(DEFAULT_RADIUS);
-    }
-}
-
-void Circle::setScale(sf::Vector2f scale)
-{
-    m_circle.setScale(scale);
-}
-
-void Circle::setColor(sf::Color color)
-{
-    m_circle.setFillColor(color);
-}
-
 
 void Circle::update(const sf::Vector2u& boundary)
 {
@@ -88,6 +59,7 @@ void Circle::update(const sf::Vector2u& boundary)
     updateTextPosition();
 }
 
+
 // Centers text within the circle shape
 void Circle::updateTextPosition(void)
 {
@@ -119,6 +91,7 @@ void Circle::updateTextPosition(void)
     m_text.setPosition(textPosition);
 }
 
+
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
     if(m_drawable)
@@ -130,6 +103,8 @@ void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 }
 
 
+// *** Friend Functions ****
+
 std::ostream& operator <<(std::ostream& os, const Circle& obj)
 {
     static constexpr int PRINT_WIDTH = 8;
@@ -137,21 +112,29 @@ std::ostream& operator <<(std::ostream& os, const Circle& obj)
 
     sf::Color color = obj.getColor();
     sf::Vector2f position = obj.getPosition();
+    sf::Vector2f scale = obj.getScale();
 
     os << std::fixed << std::setprecision(2);
 
     os << "name:         "  << obj.m_name << "\n";
     os << "radius:       "  << std::setw(PRINT_WIDTH) << obj.getRadius() << "\n"; 
+    os << "scale      x: "  << std::setw(PRINT_WIDTH) << scale.x  
+                            << ", y: " << std::setw(PRINT_WIDTH) << scale.y << "\n"; 
     os << "position   x: "  << std::setw(PRINT_WIDTH) << position.x 
                             << ", y: " << std::setw(PRINT_WIDTH) << position.y << "\n";
     os << "velocity   x: "  << std::setw(PRINT_WIDTH) << obj.m_velocity.x 
                             << ", y: " << std::setw(PRINT_WIDTH) << obj.m_velocity.y << "\n";
     
-     os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
+    os << "fill color r: "  << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.r) 
                             << "  g: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.g) 
                             << "  b: " << std::setw(PRINT_WIDTH) << static_cast<unsigned> (color.b)
                             << "\n";
 
+    std::string textString = obj.m_text.getString();
+    os << "Text Data\n";
+    os << "\tsize: " << obj.m_text.getCharacterSize() << "\n"
+        << "\tstring: " << textString << "\n";
+    
     os.flags(oldFlags);
     return os;
 }
@@ -159,6 +142,16 @@ std::ostream& operator <<(std::ostream& os, const Circle& obj)
 
 
 /**** Getter Functions  *****/
+
+sf::Color Circle::getColor()const 
+{
+    return m_circle.getFillColor();
+}
+
+std::string Circle::getName() const 
+{
+    return m_name;
+}
 
 sf::Vector2f Circle::getPosition()const 
 {
@@ -170,13 +163,45 @@ float Circle::getRadius()const
     return m_circle.getRadius();
 }
 
-sf::Color Circle::getColor()const 
-{
-    return m_circle.getFillColor();
-}
-
-
 sf::Vector2f Circle::getScale()const 
 {
     return m_circle.getScale();
+}
+
+
+// *** Setter Functions ***
+
+void Circle::setColor(sf::Color color)
+{
+    m_circle.setFillColor(color);
+}
+
+void Circle::setName(const std::string& name)
+{
+    m_name = name;
+}
+
+void Circle::setPosition(sf::Vector2f position)
+{
+    m_circle.setPosition(position);
+}
+    
+void Circle::setRadius(float radius)
+{
+    if(radius >= MIN_RADIUS && radius <= MAX_RADIUS){
+        m_circle.setRadius(radius);
+    }
+    else{
+        std::cerr << "[WARNING] function: " << __PRETTY_FUNCTION__ 
+            << ", radius: " << radius << " not within bounds {" 
+            << MIN_RADIUS << ", "
+            << MAX_RADIUS << "}, setting to default: " 
+            << DEFAULT_RADIUS << "\n";  
+        m_circle.setRadius(DEFAULT_RADIUS);
+    }
+}
+
+void Circle::setScale(sf::Vector2f scale)
+{
+    m_circle.setScale(scale);
 }
