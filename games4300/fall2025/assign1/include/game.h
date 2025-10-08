@@ -26,10 +26,10 @@ class Game
     public:
 
     static constexpr int FRAME_RATE = 60;
-    static constexpr float MIN_VELOCITY = -5.0f;
-    static constexpr float MAX_VELOCITY = 5.0f;
-    static constexpr float MIN_SCALE = 0.25f;
-    static constexpr float MAX_SCALE = 5.0f;
+    static constexpr float MIN_VELOCITY = -8.0f;
+    static constexpr float MAX_VELOCITY = 8.0f;
+    static constexpr float MIN_SCALE = 0.0f;
+    static constexpr float MAX_SCALE = 4.0f;
 
     Game();
     
@@ -44,16 +44,16 @@ class Game
 
     private:
 
-    sf::RenderWindow        m_window;
-    sf::Font                m_font;
-    sf::Clock               m_deltaClock;   // for ImGui's internal timing
+    sf::RenderWindow                        m_window;
+    sf::Font                                m_font;
+    sf::Clock                               m_deltaClock;   // for ImGui's internal timing
 
     
-    std::vector<Rectangle>   m_rectangles;
-    std::vector<Circle>      m_circles;
+    std::vector<Rectangle>                  m_rectangles;
+    std::vector<Circle>                     m_circles;
     std::map<std::string, ShapeObject>      m_shapeMap;
-    std::vector<const char*> m_shapeNames;      // gui requires const char*
-    GameConfig               m_gameConfig;
+    std::vector<const char*>                m_shapeIds;      // gui requires const char*
+    GameConfig                              m_gameConfig;
     
     
 
@@ -74,7 +74,7 @@ class Game
     void initRectangles();
    
     void initShapeMap();
-    void initShapeNames();
+    void initShapeIds();
     void initWindow();
 
     // ImGui 

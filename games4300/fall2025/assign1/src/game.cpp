@@ -31,7 +31,7 @@ void Game::init(const std::string& configFileName)
     initCircles();
     initGui();
     initShapeMap();
-    initShapeNames();
+    initShapeIds();
 }
 
 void Game::initWindow(void)
@@ -61,7 +61,7 @@ void Game::initShapeMap(void)
 {
     for(size_t i = 0; i < m_circles.size(); i++)
     {
-        std::string key = m_circles[i].m_name; 
+        std::string key = m_circles[i].m_id; 
         ShapeObject val;
         val.circptr = &m_circles[i];
         m_shapeMap[key] = val;
@@ -69,23 +69,23 @@ void Game::initShapeMap(void)
 
     for(size_t i = 0; i < m_rectangles.size(); i++)
     {
-        std::string key = m_rectangles[i].m_name; 
+        std::string key = m_rectangles[i].m_id; 
         ShapeObject val;
         val.rectptr = &m_rectangles[i];
         m_shapeMap[key] = val;
     }
 }
 
-void Game::initShapeNames(void)
+void Game::initShapeIds(void)
 {
     for(const auto& shape : m_circles)
     {
-        m_shapeNames.push_back(shape.m_name.c_str());
+        m_shapeIds.push_back(shape.m_id.c_str());
     }
 
     for(const auto& shape : m_rectangles)
     {
-        m_shapeNames.push_back(shape.m_name.c_str());
+        m_shapeIds.push_back(shape.m_id.c_str());
     }
 }
 
@@ -183,8 +183,8 @@ void Game::updateGui()
             static int selectedItem= 0;
             static bool selectedDrawShape = true;
             
-            static std::string selectedName = m_shapeNames[selectedItem];
-            static ShapeObject selectedObject = m_shapeMap[selectedName];
+            static std::string selectedId = m_shapeIds[selectedItem];
+            static ShapeObject selectedObject = m_shapeMap[selectedId];
             static sf::Color selectedColor = selectedObject.circptr->getColor();
             static float guiColors[3] = { 
                 (float)selectedColor.r/255.0f, 
@@ -192,34 +192,38 @@ void Game::updateGui()
                 (float)selectedColor.b/255.0f};
             static sf::Vector2f selectedVelocity = selectedObject.circptr->m_velocity;
             static sf::Vector2f selectedScale = selectedObject.circptr->getScale();
+            static std::string selectedDisplayName = selectedObject.circptr->getDisplayName();
             static char objectName[NAME_BUFFER_SIZE+1];
-            strcpy(objectName, selectedObject.circptr->m_name.c_str());
+            strcpy(objectName, selectedDisplayName.c_str());
 
 
             // Combo box provides drop down list of selectable shape names
             // Shape names argument must be of type: const char* items[] 
             // get a pointer to underlying array 
-            const char* const* c_style_shape_names_ptr = m_shapeNames.data();
+            const char* const* c_style_shape_names_ptr = m_shapeIds.data();
 
             // Because object velocities can change when they reach the window 
             // boundaries, we need to update the selected object velocity 
             selectedVelocity = selectedObject.circptr->m_velocity;
         
-            if(ImGui::Combo("Shape", &selectedItem, c_style_shape_names_ptr, (int)m_shapeNames.size()))
+            if(ImGui::Combo("Shape", &selectedItem, c_style_shape_names_ptr, (int)m_shapeIds.size()))
             {
                 // executes when an item is selected
-                selectedName = m_shapeNames[selectedItem];
-                selectedObject = m_shapeMap[selectedName];
+                selectedId = m_shapeIds[selectedItem];
+                selectedObject = m_shapeMap[selectedId];
                 selectedColor = selectedObject.circptr->getColor();
-                selectedDrawShape = selectedObject.circptr->m_drawable;
+                selectedDrawShape = selectedObject.circptr->m_drawState;
                 selectedVelocity = selectedObject.circptr->m_velocity;
                 selectedScale = selectedObject.circptr->getScale();
-                selectedName = selectedObject.circptr->getName().c_str();
-                strcpy(objectName, selectedObject.circptr->m_name.c_str());
-
-                sfColorToFloat(selectedColor, guiColors);
-                std::cerr << "Combo selected item number: " << selectedItem
-                    << ", name: " << selectedName << "\n";
+                selectedDisplayName = selectedObject.circptr->m_displayName;
+                strcpy(objectName, selectedDisplayName.c_str());
+                
+                sfColorToFloat(selectedColor, guiColors);   // convert sfml uint to imgui float
+                
+                std::cerr << "Combo selected item number: " << selectedItem 
+                          << "\n\tshape id: " << selectedId 
+                          << "\n\tdisplay name: " << selectedDisplayName 
+                          << "\n";
             }
 
 
@@ -239,10 +243,10 @@ void Game::updateGui()
             {
                 if(selectedDrawShape)
                 {
-                    selectedObject.circptr->m_drawable = true;
+                    selectedObject.circptr->m_drawState = true;
                 }
                 else{
-                    selectedObject.circptr->m_drawable = false;
+                    selectedObject.circptr->m_drawState = false;
                 }
             }
 
@@ -259,7 +263,8 @@ void Game::updateGui()
 
             if(ImGui::InputText("Text", objectName, NAME_BUFFER_SIZE))
             {
-                selectedObject.circptr->setName(objectName);
+                selectedObject.circptr->setDisplayName(objectName);
+                selectedDisplayName = objectName;
             }        
 
             ImGui::End();

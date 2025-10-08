@@ -27,17 +27,23 @@ class Circle : public sf::Drawable, public sf::Transformable
     
     // Setter Member Functions
     void setColor(sf::Color color);
-    void setName(const std::string& name);
+    void setDrawState(bool state);
+    void setDisplayName(const std::string& name);
+    void setId(const std::string& id);
     void setPosition(sf::Vector2f position);
     void setRadius(float radius);  
     void setScale(sf::Vector2f scale);
+    void setVelocity(sf::Vector2f velocity);
     
     // Getter Member Functions
     sf::Color       getColor()const;
-    std::string     getName()const;
+    bool            getDrawState()const;
+    std::string     getId()const;
+    std::string     getDisplayName()const;
     sf::Vector2f    getPosition()const;
     float           getRadius()const; 
     sf::Vector2f    getScale()const;
+    sf::Vector2f    getVelocity()const;
     
 
     // Friend function
@@ -47,9 +53,10 @@ class Circle : public sf::Drawable, public sf::Transformable
 
     // Data members 
     sf::Text            m_text;
-    bool                m_drawable = true;
+    bool                m_drawState = true;
     sf::Vector2f        m_velocity = {0.0f, 0.0f};
-    std::string         m_name = "Default";
+    std::string         m_id = "Default";
+    std::string         m_displayName = "Default";
     sf::CircleShape     m_circle;   
    
     // private helper functions

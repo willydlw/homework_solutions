@@ -7,9 +7,10 @@ Circle::Circle( const CircleConfig& circleConfig,
                 const sf::Font& font,
                 const TextConfig& textConfig) 
                 : m_text(font, circleConfig.shapeConfig.name, textConfig.characterSize),
-                  m_drawable(true), 
+                  m_drawState(true), 
                   m_velocity(circleConfig.shapeConfig.velocity),
-                  m_name(circleConfig.shapeConfig.name)
+                  m_id(circleConfig.shapeConfig.name),
+                  m_displayName(circleConfig.shapeConfig.name)
 {
     m_text.setFillColor(textConfig.fillColor);
     setRadius(circleConfig.radius);
@@ -94,7 +95,7 @@ void Circle::updateTextPosition(void)
 
 void Circle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if(m_drawable)
+    if(m_drawState)
     {
         states.transform *= getTransform();
         target.draw(m_circle, states);
@@ -116,7 +117,9 @@ std::ostream& operator <<(std::ostream& os, const Circle& obj)
 
     os << std::fixed << std::setprecision(2);
 
-    os << "name:         "  << obj.m_name << "\n";
+    os << "id:           "  << obj.m_id << "\n";
+    os << "name:         "  << obj.m_displayName << "\n";
+    os << "draw state:   "  << obj.m_drawState << "\n";
     os << "radius:       "  << std::setw(PRINT_WIDTH) << obj.getRadius() << "\n"; 
     os << "scale      x: "  << std::setw(PRINT_WIDTH) << scale.x  
                             << ", y: " << std::setw(PRINT_WIDTH) << scale.y << "\n"; 
@@ -148,9 +151,19 @@ sf::Color Circle::getColor()const
     return m_circle.getFillColor();
 }
 
-std::string Circle::getName() const 
+std::string Circle::getDisplayName() const 
 {
-    return m_name;
+    return m_displayName;
+}
+
+bool Circle::getDrawState() const 
+{ 
+    return m_drawState;
+}
+
+std::string Circle::getId() const 
+{
+    return m_id;
 }
 
 sf::Vector2f Circle::getPosition()const 
@@ -168,6 +181,11 @@ sf::Vector2f Circle::getScale()const
     return m_circle.getScale();
 }
 
+sf::Vector2f Circle::getVelocity() const 
+{
+    return m_velocity;
+}
+
 
 // *** Setter Functions ***
 
@@ -176,9 +194,20 @@ void Circle::setColor(sf::Color color)
     m_circle.setFillColor(color);
 }
 
-void Circle::setName(const std::string& name)
+void Circle::setDisplayName(const std::string& name)
 {
-    m_name = name;
+    m_displayName = name;
+    m_text.setString(m_displayName);
+}
+
+void Circle::setDrawState(bool state)
+{
+    m_drawState = state;
+}
+
+void Circle::setId(const std::string& id)
+{
+    m_id = id;
 }
 
 void Circle::setPosition(sf::Vector2f position)
@@ -204,4 +233,9 @@ void Circle::setRadius(float radius)
 void Circle::setScale(sf::Vector2f scale)
 {
     m_circle.setScale(scale);
+}
+
+void Circle::setVelocity(sf::Vector2f velocity)
+{
+    m_velocity = velocity;
 }

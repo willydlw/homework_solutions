@@ -23,24 +23,33 @@ class Rectangle : public sf::Drawable, public sf::Transformable
 
 
     void setColor(sf::Color color);
+    void setDrawState(bool state);
+    void setId(const std::string& id);
+    void setDisplayName(const std::string& name);
     void setSize(sf::Vector2f size);
     void setPosition(sf::Vector2f position);
     void setScale(sf::Vector2f scale);
+    void setVelocity(sf::Vector2f velocity);
 
     
     sf::Color    getColor() const;
+    bool         getDrawState() const;
+    std::string  getId() const;
+    std::string  getDisplayName() const;
     sf::Vector2f getSize() const;
     sf::Vector2f getPosition() const;
     sf::Vector2f getScale()const;
+    sf::Vector2f getVelocity()const;
     
 
     friend std::ostream& operator << (std::ostream& os, const Rectangle& obj);
 
     private:
     sf::Text            m_text;
-    bool                m_drawable = true;
+    bool                m_drawState = true;
     sf::Vector2f        m_velocity = {0.0f, 0.0f};
-    std::string         m_name = "Default";
+    std::string         m_id = "Default";
+    std::string         m_displayName = "Default";
     
     sf::RectangleShape  m_rectangle;  
     

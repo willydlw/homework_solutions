@@ -5,9 +5,10 @@ Rectangle::Rectangle(   const RectangleConfig& rectConfig,
                         const sf::Font& font, 
                         const TextConfig& textConfig) 
                         : m_text(font, rectConfig.shapeConfig.name, textConfig.characterSize),
-                          m_drawable(true),
+                          m_drawState(true),
                           m_velocity(rectConfig.shapeConfig.velocity),
-                          m_name(rectConfig.shapeConfig.name)
+                          m_id(rectConfig.shapeConfig.name),
+                          m_displayName(rectConfig.shapeConfig.name)
 {
     m_text.setFillColor(textConfig.fillColor);
 
@@ -97,7 +98,7 @@ void Rectangle::updateTextPosition(void)
 
 void Rectangle::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-    if(m_drawable)
+    if(m_drawState)
     {
         states.transform *= getTransform();
         target.draw(m_rectangle, states);
@@ -118,7 +119,9 @@ std::ostream& operator << (std::ostream& os, const Rectangle& obj)
 
     os << std::fixed << std::setprecision(2);
 
-    os << "name:         "  << obj.m_name << "\n";
+    os << "id:           "  << obj.m_id << "\n";
+    os << "name:         "  << obj.m_displayName << "\n";
+    os << "draw state:   "  << obj.m_drawState << "\n";
     os << "scale      x: "  << std::setw(PRINT_WIDTH) << scale.x  
                             << ", y: " << std::setw(PRINT_WIDTH) << scale.y << "\n"; 
     
@@ -155,6 +158,21 @@ sf::Color Rectangle::getColor()const
     return m_rectangle.getFillColor();
 }
 
+bool Rectangle::getDrawState() const 
+{
+    return m_drawState;
+}
+
+std::string Rectangle::getId() const
+{
+    return m_id;
+}
+
+std::string  Rectangle::getDisplayName() const
+{
+    return m_displayName;
+}
+
 sf::Vector2f Rectangle::getSize()const
 {
     return m_rectangle.getSize();
@@ -170,18 +188,34 @@ sf::Vector2f Rectangle::getScale()const
     return m_rectangle.getScale();
 }
 
+sf::Vector2f Rectangle::getVelocity()const 
+{
+    return m_velocity;
+}
+
 
 
 /*  Setter Functions */
 
-void Rectangle::setColor(sf::Color color){
+void Rectangle::setColor(sf::Color color)
+{
     m_rectangle.setFillColor(color);
 }
 
-
-void Rectangle::setSize(sf::Vector2f size)
+void Rectangle::setDisplayName(const std::string& name)
 {
-    m_rectangle.setSize(size);
+    m_displayName = name;
+    m_text.setString(m_displayName);
+}
+
+void Rectangle::setDrawState(bool state)
+{
+    m_drawState = state;
+}
+
+void Rectangle::setId(const std::string& id)
+{
+    m_id = id;
 }
 
 void Rectangle::setPosition(sf::Vector2f position)
@@ -192,4 +226,14 @@ void Rectangle::setPosition(sf::Vector2f position)
 void Rectangle::setScale(sf::Vector2f scale)
 {
     m_rectangle.setScale(scale);
+}
+
+void Rectangle::setSize(sf::Vector2f size)
+{
+    m_rectangle.setSize(size);
+}
+
+void Rectangle::setVelocity(sf::Vector2f velocity)
+{
+    m_velocity = velocity;
 }
