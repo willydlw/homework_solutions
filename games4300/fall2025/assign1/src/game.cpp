@@ -50,7 +50,6 @@ void Game::initGui(void)
         std::exit(-1);
     }
     
-
     // scale the imgui ui and text by a given factor
     ImGui::GetStyle().ScaleAllSizes(2.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
@@ -145,8 +144,6 @@ void Game::initCircles(void)
 
 void Game::run(void)
 {
-    std::cerr << "[INFO] entering function: " << __PRETTY_FUNCTION__ << "\n";
-
     while(m_window.isOpen()){
         while(auto event = m_window.pollEvent()){
             
@@ -167,7 +164,7 @@ void Game::run(void)
         updateShapes();
 
         m_window.clear(sf::Color::White);
-        draw(); 
+        drawShapes(); 
         ImGui::SFML::Render(m_window); // draw the UI last so its on top
         m_window.display();
     }
@@ -206,7 +203,7 @@ void Game::updateGui()
             // boundaries, we need to update the selected object velocity 
             selectedVelocity = selectedObject.circptr->m_velocity;
         
-            if(ImGui::Combo("Shape", &selectedItem, c_style_shape_names_ptr, (int)m_shapeIds.size()))
+            if(ImGui::Combo("Id", &selectedItem, c_style_shape_names_ptr, (int)m_shapeIds.size()))
             {
                 // executes when an item is selected
                 selectedId = m_shapeIds[selectedItem];
@@ -219,24 +216,25 @@ void Game::updateGui()
                 strcpy(objectName, selectedDisplayName.c_str());
                 
                 sfColorToFloat(selectedColor, guiColors);   // convert sfml uint to imgui float
-                
-                std::cerr << "Combo selected item number: " << selectedItem 
-                          << "\n\tshape id: " << selectedId 
-                          << "\n\tdisplay name: " << selectedDisplayName 
-                          << "\n";
             }
 
 
             // returns true only when user has interacted with color editor
             if(ImGui::ColorEdit3("Color", guiColors))
             {
+                // Scale the color picker float values to SFML uint8_t color values
                 sf::Color updatedColor = floatColorToUint(guiColors);
-                printColor(guiColors, 3);
-                printColor(updatedColor);
+                
+                // Update the shape object's fill color
                 selectedObject.circptr->setColor(updatedColor);
+                
+                // update gui variable with color selected
                 selectedColor.r = guiColors[0];
                 selectedColor.g = guiColors[1];
                 selectedColor.b = guiColors[2];
+
+                //printColor(guiColors, 3);
+                //printColor(updatedColor);   
             }
 
             if(ImGui::Checkbox("Draw Shape", &selectedDrawShape))
@@ -306,7 +304,7 @@ void Game::updateShapes()
     }
 }
 
-void Game::draw()
+void Game::drawShapes()
 {
     for(const auto& r : m_rectangles)
     {

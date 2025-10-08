@@ -13,6 +13,9 @@
 #include "rectangle.h"
 #include "circle.h"
 
+/* Why the union? So that one ImGui::Combo box can list both 
+   Circle and Rectangle objects.
+*/
 union ShapeObject
 {
     Circle*    circptr;
@@ -23,42 +26,43 @@ union ShapeObject
 
 class Game
 {
-    public:
 
+public:
+
+    // Class Constant Expressions
     static constexpr int FRAME_RATE = 60;
     static constexpr float MIN_VELOCITY = -8.0f;
     static constexpr float MAX_VELOCITY = 8.0f;
     static constexpr float MIN_SCALE = 0.0f;
     static constexpr float MAX_SCALE = 4.0f;
 
+    // Constructor
     Game();
     
+    // Controls initialization of all game elements
     void init(const std::string& configFileName);
 
+    // Controls main game loop. Runs until window is closed.
     void run(void);
 
-
+    // Overloaded operator << for debugging
     friend std::ostream& operator << (std::ostream& os, const Game& obj);
 
-    
+private:
 
-    private:
-
+    // Data members
     sf::RenderWindow                        m_window;
     sf::Font                                m_font;
     sf::Clock                               m_deltaClock;   // for ImGui's internal timing
 
-    
     std::vector<Rectangle>                  m_rectangles;
     std::vector<Circle>                     m_circles;
-    std::map<std::string, ShapeObject>      m_shapeMap;
-    std::vector<const char*>                m_shapeIds;      // gui requires const char*
+    std::map<std::string, ShapeObject>      m_shapeMap;     
+    std::vector<const char*>                m_shapeIds;      // Imgui requires const char*
     GameConfig                              m_gameConfig;
     
     
-
-    // private member functions
-    private:
+    // Initialization Helper Functions
 
     /*  Operation:
             Searches project directories for paths to fontFilename.
@@ -77,13 +81,14 @@ class Game
     void initShapeIds();
     void initWindow();
 
-    // ImGui 
+    // ImGui helper functions
     void updateGui();
     sf::Color floatColorToUint(float fcolors[3]);
     void sfColorToFloat(sf::Color color, float fcolors[3]);
 
+    // Main Game Loop helper functions
     void updateShapes();
-    void draw();
+    void drawShapes();
 
     // Debugging functions
     void printColor(const sf::Color& color);
