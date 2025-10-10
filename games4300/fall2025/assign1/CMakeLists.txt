@@ -62,7 +62,7 @@ target_link_libraries(displayText
 )
 
 
-# copy resource filed to binary directory
+# copy resource files to binary directories
 file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
 file(COPY fonts/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
 
