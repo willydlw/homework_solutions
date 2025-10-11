@@ -55,7 +55,7 @@ int main(void)
     sf::Font myFont;
 
     // attempt to load the font from a file
-    if(!myFont.openFromFile("fonts/tech.ttf"))
+    if(!myFont.openFromFile("assets/tech.ttf"))
     {
         std::cerr << "Failed to load font\n";
         std::exit(-1);

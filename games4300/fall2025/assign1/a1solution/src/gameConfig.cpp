@@ -215,10 +215,11 @@ bool GameConfig::readConfigFile(const std::string& fileName)
         }
         else
         {
-            std::cerr << "[WARNING], function: " << __PRETTY_FUNCTION__   
+            std::cerr << "[FATAL], function: " << __PRETTY_FUNCTION__   
                 << ", file: " << fileName 
                 << " contains unrecognized first word: " << firstWord 
                 << "\n";
+            std::exit(-1);
         }
     }
 

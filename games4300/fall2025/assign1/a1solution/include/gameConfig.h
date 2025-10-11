@@ -60,8 +60,8 @@ public:
 
     friend class Game;
 
-    static constexpr const char* CONFIG_DIR_NAME = "assign1/config";
-    static constexpr const char* FONTS_DIR_NAME = "assign1/fonts";
+    static constexpr const char* CONFIG_DIR_NAME = "assets/config";
+    static constexpr const char* FONTS_DIR_NAME = "assets/fonts";
 
     GameConfig() = default;
 
