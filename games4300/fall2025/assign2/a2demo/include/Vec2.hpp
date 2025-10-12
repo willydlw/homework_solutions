@@ -35,79 +35,77 @@ public:
 
     Vec2 operator + (const Vec2& rhs) const
     {
-        return Vec2<T>(x + rhs.x, y + rhs.y);
+        return Vec2<T>();
     }
     Vec2 operator - (const Vec2& rhs) const 
     {
         // TODO
-        return Vec2<T>(x - rhs.x, y - rhs.y);
+        return Vec2<T>();
     }
 
     Vec2 operator / (const T val) const 
     {
-        return Vec2<T>( x / val, y / val);
+        return Vec2<T>();
     }
     Vec2 operator * (const T val) const
     {
-        return Vec2<T> ( x * val, y * val);
+        return Vec2<T> ();
     }
 
 
     Vec2& operator += (const Vec2& rhs)
     {
-        x += rhs.x;
-        y += rhs.y;
+        // TODO
         return *this;
     }
     
    
     Vec2& operator -= (const Vec2& rhs)
     {
-        x -= rhs.x;
-        y -= rhs.y;
+        // TODO
         return *this;
     }
    
 
     Vec2& operator *= (const T val)
     {
-        x *= val;
-        y *= val;
+       // TODO
         return *this;
     }
 
      Vec2& operator /= (const T val)
     {
-        x /= val;
-        y /= val;
+       // TODO
         return *this;
     }
 
     bool operator == (const Vec2& rhs) const 
     {
-        return(x == rhs.x && y == rhs.y);
+        // TODO
+        return false;
     }
 
     bool operator != (const Vec2& rhs) const 
     {
-        return (x != rhs.x || y != rhs.y);
+        // TODO
+        return false;
     }
 
     float distance(const Vec2& rhs)const 
     {
-        return sqrt((x-rhs.x)*(x-rhs.x) + (y-rhs.y)*(y-rhs.y));
+        // TODO
+        return 0.0f;
     }
 
     float length() const 
     {
-        return sqrt(x*x + y*y);
+        // TODO
+        return 0.0f;
     }
 
     void normalize() 
     {
-        float magnitude = length();
-        x /= magnitude;
-        y /= magnitude;
+        // TODO
     }
 
 };
