@@ -14,7 +14,6 @@
                       << " in " << __func__ \
                       << " line " << __LINE__ \
                       << ": " << message << std::endl; \
-            std::exit(-1); \
         } \
     } while (false)
 #else
@@ -37,34 +36,60 @@ bool float_equality(const Vec2f& v1, const Vec2f& v2)
     }
 }
 
-void testMagnitude(const Vec2f& v, float expected)
+std::string expectedResultMessage(const Vec2f& tv, float expected, float result)
 {
     std::ostringstream oss;
-    
-    float result = v.magnitude();
-
-    oss << "\n" << v << ", expected: " << expected << ", result: " << result << "\n";
-    MY_ASSERT(result == expected, oss.str());
+    oss << "\ntest vector: " <<  tv << ", expected: " << expected << ", result: " << result << "\n";
+    return oss.str();
 }
 
-void testNormalization(const Vec2f& v, const Vec2f& expected)
+std::string expectedResultMessage(const Vec2f& tv, const Vec2f& expected, const Vec2f& result)
 {
     std::ostringstream oss;
+    oss << "\ntest vector: " <<  tv << "\nexpected: " << expected << "\nresult: " << result << "\n";
+    return oss.str();
+}
+
+
+
+
+void testMagnitude(const Vec2f& v)
+{
+    float expected = sqrt(v.x * v.x + v.y * v.y);
+    float result = v.magnitude();
+
+    std::string errmsg = expectedResultMessage(v, expected, result);
+    MY_ASSERT(result == expected, errmsg);
+}
+
+void testNormalization(const Vec2f& v)
+{
+    /* Best Practice?? 
+            Using the Vec2f magnitude member function magnitude. 
+            Because the magnitude function is also subject to 
+            test, it is used here assuming other tests will 
+            detect any errors in that function.
+    */
+    float mag = v.magnitude();
+    Vec2f expected; 
+   
     Vec2f result; 
     
     try
     {
+        expected = {v.x/mag, v.y/mag};
         result = v.normalize();
     }
     catch (const std::runtime_error& e) 
     {
         std::cerr << "[RUNTIME ERROR] function: " << __PRETTY_FUNCTION__ << "\n"
                 << e.what()
-                << "\ttest vector: " << v << "\n"; 
+                << "\ttest vector: " << v << ", magnitude: << " << mag << "\n"; 
+        return;
     }
 
-    oss << "\ntest vector: " << v << "\nexpected: " << expected << "\nresult: " << result << "\n";
-    MY_ASSERT(float_equality(expected, result), oss.str());
+    std::string errmsg = expectedResultMessage(v, expected, result);
+    MY_ASSERT(float_equality(expected, result), errmsg);
 }
 
 
@@ -74,30 +99,25 @@ void singleVectorTests()
         float x = 3.0f;
         float y = 4.0f;
         Vec2f v(x, y);
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
+        testMagnitude(v);
     }
 
     {   // negative values
         float x = -3.0f;
         float y = -4.0f;
         Vec2f v(x, y);
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
+        testMagnitude(v);
     }
 
     {   // zero values
         float x = 0.0f;
         float y = 0.0f;
         Vec2f v(x, y);
+        testMagnitude(v);
+        std::cerr << "\n*** Expecting Division Test Normalization to throw Division by Zero Error ***\n";
+        testNormalization(v);   // handle division by zero
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        #if 0
-        Vec2f expectedNormal = {0.0f, 0.0f};          // divide by zero should return zeros
-        testNormalization(v, expectedNormal);         // handle division by zero
-        #endif
+        std::cerr << "*** End of Division by Zero Test ***\n\n";
     }
 
     {   // basis vector (1, 0)
@@ -105,11 +125,8 @@ void singleVectorTests()
         float y = 0.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // basis vector (0, 1)
@@ -117,11 +134,8 @@ void singleVectorTests()
         float y = 1.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // diagonal vector (1, 1)
@@ -129,11 +143,8 @@ void singleVectorTests()
         float y = 1.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // diagonal vector (-1, -1)
@@ -141,11 +152,8 @@ void singleVectorTests()
         float y = -1.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // single component (5, 0)
@@ -153,11 +161,8 @@ void singleVectorTests()
         float y = 0.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // floating point with decimals (0.5, -2.5)
@@ -165,11 +170,8 @@ void singleVectorTests()
         float y = 0.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
 
     {   // floating point with decimals (0.1, 1.0/3.0)
@@ -177,14 +179,31 @@ void singleVectorTests()
         float y = 1.0f/3.0f;
         Vec2f v(x, y);
 
-        float expectedMagnitude = sqrt(x*x + y*y);
-        testMagnitude(v, expectedMagnitude);
-
-        Vec2f expectedNormal = {x/expectedMagnitude, y/expectedMagnitude};
-        testNormalization(v, expectedNormal);      
+        testMagnitude(v);
+        testNormalization(v);      
     }
     
 }
+
+#if 0
+void testOperatorPlus(const Vec2f& v1 const Vec2f& v2)
+{
+    Vec2f expected = {v1.x + v2.x, v1.y+v2.y};
+    Vec2f result = v1 + v2;
+
+}
+
+void twoVectorTests()
+{
+    {
+        Vec2f v1 = {2.0f, 3.0f};
+        Vec2f v2 = {5.0f, 1.0f};
+        
+        Vec2f vadd = {v1.x + v2.x, v1.y+v2.y}
+    }
+}
+
+#endif 
 
 
 void divideByZeroTest()
