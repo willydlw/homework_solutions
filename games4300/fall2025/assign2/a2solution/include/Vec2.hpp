@@ -67,15 +67,19 @@ public:
     Vec2 operator / (const T val) const 
     {
         // throw runtime error for division by zero 
-        if(val == 0){
+        if(val != 0.0f){
+            return Vec2<T>( x / val, y / val);
+        }
+        else
+        {
             std::ostringstream oss; 
-            oss << "[RUNTIME ERROR] function: " << __PRETTY_FUNCTION__ << " --Attempted division by zero--";
+            oss << "[RUNTIME ERROR] function: " << __PRETTY_FUNCTION__ 
+                << "\n\t--Attempted division by zero--"
+                << "\n\tx: " << x << ", y: " << y 
+                << "\n\tscalar: " << val << "\n";
             throw std::runtime_error(oss.str());
             return Vec2();
-        }
-
-        // else complete the division operation
-        return Vec2<T>( x / val, y / val);
+        }        
     }
 
 
@@ -132,6 +136,21 @@ public:
         return os;
     }
 
+    float dotProduct(const Vec2& rhs)
+    {
+        return (x*rhs.x + y * rhs.y);
+    }
+
+    // calculates angle between the two vectors
+    float angle(const Vec2& rhs)
+    {
+        float dp = dotProduct(rhs);
+        float maga = magnitude();
+        float magb = rhs.magnitude();
+
+        return std::acos(dp / (maga * magb));
+    }
+
     float distance(const Vec2& rhs)const 
     {
         return sqrt((x-rhs.x)*(x-rhs.x) + (y-rhs.y)*(y-rhs.y));
@@ -155,8 +174,9 @@ public:
             // throw runtime error for division by zero 
             std::ostringstream oss; 
             oss << "[RUNTIME ERROR] function: " << __PRETTY_FUNCTION__ 
-                << "\n\t--Attempted division by zero--" 
-                << ", magnitude: " << mag << "\n";
+                << "\n\t--Attempted division by zero--"
+                << "\n\tx: " << x << ", y: " << y  
+                << "\n\tmagnitude: " << mag << "\n";
             throw std::runtime_error(oss.str());
             return Vec2();
         }
