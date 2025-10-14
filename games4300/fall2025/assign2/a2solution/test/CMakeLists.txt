@@ -17,6 +17,7 @@ include_directories("include")
 add_executable(vecTest)
 target_sources(vecTest PUBLIC 
     vecTest.cpp
+    randomNumberGenerator.hpp
 )
 
 # PUBLIC m links math library
