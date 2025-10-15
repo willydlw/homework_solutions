@@ -6,7 +6,7 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "../include/Vec2.hpp"
+#include "../include/vec2.hpp"
 #include "randomNumberGenerator.hpp"
 
 #ifndef NDEBUG // Only active in debug builds

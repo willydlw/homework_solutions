@@ -19,6 +19,7 @@ include_directories("include")
 add_executable(a2solution)
 target_sources(a2solution PUBLIC 
     src/main.cpp
+    src/gameConfig.cpp
 )
 
 
