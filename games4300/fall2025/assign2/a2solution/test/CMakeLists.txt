@@ -18,6 +18,7 @@ add_executable(vecTest)
 target_sources(vecTest PUBLIC 
     vecTest.cpp
     randomNumberGenerator.hpp
+    ../include/logError.hpp
 )
 
 # PUBLIC m links math library

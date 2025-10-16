@@ -100,6 +100,7 @@ class GameConfig
     FontConfig              m_fontConfig;
     PlayerConfig            m_playerConfig;
     EnemyConfig             m_enemyConfig;
+    BulletConfig            m_bulletConfig;
 
     // Helper functions 
     std::filesystem::path getWorkingDirectory();
@@ -114,4 +115,12 @@ class GameConfig
         const std::string& targetFile);
 
     void printPaths(const std::vector<std::filesystem::path>& paths);
+
+    bool readWindowConfig(std::istringstream& iss);
+    bool readFontConfig(std::istringstream& iss);
+    bool readPlayerConfig(std::istringstream& iss);
+    bool readEnemyConfig(std::istringstream& iss);
+    bool readBulletConfig(std::istringstream& iss);
+
+    bool readColor(std::istringstream& iss, sf::Color& color);
 };

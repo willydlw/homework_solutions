@@ -1,8 +1,10 @@
+#pragma once 
+
 #include <iostream>
 #include <string>
-#include <sstream>
 
-enum class LogLevel
+
+enum class LogLevel : int
 {
     INFO,
     WARNING,
@@ -10,7 +12,14 @@ enum class LogLevel
     FATAL
 };
 
-std::string logLevelToString(LogLevel level)
+#if 0
+static const char* const LEVELS[] = {
+    "INFO", "WARNING", "ERROR", "FATAL", "UNKNOWN"
+};
+#endif
+
+
+static std::string logLevelToString(LogLevel level)
 {
     switch(level)
     {
@@ -23,34 +32,27 @@ std::string logLevelToString(LogLevel level)
 }
 
 
-// Base case for variadic template recursion (no arguments)
-void logBuildMessage(std::ostringstream& oss)
-{
-    // end of recursion, do nothing
-    // Explicity cast to void to silence unused parameter warning
-    (void) oss;         
-}
 
-
-// Recursive variadic template function for format arguments
-template <typename T, typename... Args>
-void logBuildMessage(std::ostringstream& oss, const T& arg, const Args&... args)
+template <typename... Args>
+void logPrintMessage(const Args&... args)
 {
-    oss << arg;
-    logBuildMessage(oss, args...);
+    // C++ 17 fold expression to print all arguments
+    ((std::cout << args << " "), ...);
+    std::cout << std::endl;
 }
 
 
 // Main logging function
 template <typename... Args>
-void logMessage(LogLevel level, const char* file, const char* func,
-                int line, const Args&... args)
+void logMessage(LogLevel level, 
+                const char* file, 
+                const char* func,
+                int line, 
+                const Args&... args)
 {
-    std::ostringstream oss;
-    oss << "[" << logLevelToString(level) << "] ";
-    oss << file << ":" << line << " (" << func << ") - ";
-    logBuildMessage(oss, args...);
-    std::cerr << oss.str() << std::endl;
+    std::cout << "[" << logLevelToString(level) << "] "
+            << file << ":" << line << " (" << func << ") - ";
+    logPrintMessage(args...);  
 }
 
 
