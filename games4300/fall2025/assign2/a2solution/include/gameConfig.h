@@ -107,7 +107,7 @@ class GameConfig
     // Searches the target directory and its subdirectories for the target file 
     // Returns all directory paths found
     std::vector<std::filesystem::path> searchDirectory(
-        const std::string& targetDirectory, const std::string&& targetFile);
+        const std::string& targetDirectory, const std::string& targetFile);
 
     std::vector<std::filesystem::path> findFileRecursive( 
         const std::filesystem::path& startPath, 

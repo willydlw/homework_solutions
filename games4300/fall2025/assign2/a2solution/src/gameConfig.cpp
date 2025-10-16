@@ -1,8 +1,9 @@
-#include "gameConfig.h"
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
+
+#include "gameConfig.h"
+#include "logError.hpp"
 
  std::filesystem::path GameConfig::getWorkingDirectory()
  {
@@ -13,15 +14,14 @@
     } 
     catch (const std::filesystem::filesystem_error& e)
     {
-        std::cerr << "[ERROR] function: " << __PRETTY_FUNCTION__ 
-            << ", error description: " << e.what() << std::endl;
+        LOG_ERROR("\n\terror description: ", e.what());
         return {};
     }
  }
 
 
 std::vector<std::filesystem::path> GameConfig::searchDirectory(
-        const std::string& targetDirectory, const std::string&& targetFile)
+        const std::string& targetDirectory, const std::string& targetFile)
 {
     std::vector<std::filesystem::path> foundFiles = findFileRecursive(targetDirectory, targetFile);
 
@@ -29,25 +29,23 @@ std::vector<std::filesystem::path> GameConfig::searchDirectory(
     {
         std::filesystem::path workingDirectory = getWorkingDirectory();
 
-        std::cerr << "\n[WARNING] function: " << __PRETTY_FUNCTION__ 
-            << ", targetFile: " << targetFile 
-            << " not found in directory: " << targetDirectory << "\n";
-        std::cerr << "[RECOVERY ATTEMPT] searching directory path: " 
-            << workingDirectory << "\n";
+        LOG_WARNING("\n\ttargetFile: ", targetFile, " not found in directory: ", targetDirectory);
+        LOG_INFO("\n\tRecovery attempt, searching directory path: " , workingDirectory);
 
         foundFiles = findFileRecursive(workingDirectory, targetFile);
-
         if(foundFiles.empty())
         {
-            std::cerr << "\n[WARNING] targetFile: " << targetFile 
-                << " not found in directory: " << workingDirectory << "\n";
+            LOG_WARNING("\n\ttargetFile: ", targetFile, " not found in directory: ", targetDirectory);
         }
         else 
         {
-            std::cerr << "\n[RECOVERY RESULTS] found " << targetFile 
-                << " in search directory: " << workingDirectory 
-                << " at following locations:\n";
-            printPaths(foundFiles);
+            std::ostringstream oss;
+            for(const auto& file : foundFiles)
+            {
+                oss << "\t" << file << "\n";
+            }
+
+            LOG_INFO("\n\tRecovery results, found ", targetFile, " in directory: ", workingDirectory,"\n", oss.str());
         }
     }
 
@@ -63,9 +61,7 @@ std::vector<std::filesystem::path> GameConfig::findFileRecursive(
 
     if(!std::filesystem::exists(targetPath) || !std::filesystem::is_directory(targetPath))
     {
-        std::cerr << "[ERROR] function: " << __PRETTY_FUNCTION__ 
-            << " targetPath: " << targetPath 
-            << " does not exist or is not a directory\n";
+        LOG_ERROR("targetPath: ", targetPath, "does not exist or is not a directory");
         return foundFiles;
     }
 
@@ -100,9 +96,7 @@ bool GameConfig::readConfigFile(const std::string& fileName)
 
     if(foundFiles.empty())
     {
-        std::cerr << "[ERROR] function: " << __PRETTY_FUNCTION__ 
-            << ", file: " << fileName << " not found in directory : "
-            << CONFIG_DIR_NAME << "\n";
+        LOG_ERROR(fileName, " not found in directory: ", CONFIG_DIR_NAME);
         return false;
     }
 
@@ -111,19 +105,17 @@ bool GameConfig::readConfigFile(const std::string& fileName)
         inFile.open(f);
         if(inFile.is_open())
         {
-            std::cerr << "[INFO] opened file: " << f << "\n";
+            LOG_INFO("opened file: ", f);
             break;
         }
         else
         {
-            std::cerr << "[WARNING] function: " << __PRETTY_FUNCTION__ 
-                << " could not open file: " << f << "\n";
+            LOG_WARNING("failed to open file: ", f);
         }
 
         if(!inFile.is_open())
         {
-            std::cerr << "[ERROR] function: " << __PRETTY_FUNCTION__ 
-                << ", failed to open any of the found configuration files\n";
+            LOG_ERROR("failed to open any of the found configuration files");
             return false;
         }
 
@@ -150,4 +142,5 @@ bool GameConfig::readConfigFile(const std::string& fileName)
 
 
     inFile.close();
+    return true;
 }

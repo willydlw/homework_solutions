@@ -5,6 +5,7 @@ Game::Game() {}
 void Game::init(const std::string& configFile)
 {
     // TODO
+    GameConfig gameConfig;
 }
 
 

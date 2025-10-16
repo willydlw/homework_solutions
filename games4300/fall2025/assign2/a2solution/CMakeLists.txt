@@ -31,10 +31,11 @@ target_link_libraries(a2solution
     PUBLIC  m
 )
 
-# copy resource filed to binary directory
-#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
-#file(COPY ../fonts/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/fonts")
 
-#file(MAKE_DIRECTORY "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/config")
-#file(COPY ../config/ DESTINATION "${CMAKE_BINARY_DIR}/${PROJECT_NAME}/config")
+# copy resource files to binary directories
+set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets")
+set(DESTINATION_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/assets")
+file(COPY ${SOURCE_ASSET_DIR}/ DESTINATION "${DESTINATION_ASSET_DIR}")
 

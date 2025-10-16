@@ -4,6 +4,8 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 
+#include "gameConfig.h"
+
 class Game 
 {
     public:
@@ -14,6 +16,10 @@ class Game
 
     private:
         sf::RenderWindow    m_window;
+
+        PlayerConfig        m_playerConfig;
+        EnemyConfig         m_enemyConfig;
+        BulletConfig        m_bulletConfig;
 
     void initConfig(const std::string& configFile);
     std::vector<std::string> searchForFiles(const std::string& targetFile);
