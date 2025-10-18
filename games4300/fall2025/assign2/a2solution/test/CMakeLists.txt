@@ -16,12 +16,31 @@ include_directories("include")
 # create executables
 add_executable(vecTest)
 target_sources(vecTest PUBLIC 
-    vecTest.cpp
-    randomNumberGenerator.hpp
-    ../include/logError.hpp
+    src/vecTest.cpp
+    ../include/vec2.hpp
+    include/randomNumberGenerator.hpp
 )
 
 # PUBLIC m links math library
 target_link_libraries(vecTest
     PUBLIC  m
 )
+
+
+add_executable(gameConfigTest)
+target_sources(gameConfigTest PUBLIC 
+    src/testGameConfig.cpp
+    src/gameConfigTest.cpp 
+    ../src/gameConfig.cpp
+)
+
+target_link_libraries(gameConfigTest
+    PRIVATE SFML::Graphics
+)
+
+# copy resource files to binary directories
+set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../assets")
+set(DESTINATION_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/assets")
+file(COPY ${SOURCE_ASSET_DIR}/ DESTINATION "${DESTINATION_ASSET_DIR}")

@@ -2,8 +2,87 @@
 #include <iostream>
 #include <sstream>
 
-#include "gameConfig.h"
-#include "logError.hpp"
+#include "../include/gameConfig.h"
+#include "../include/logError.hpp"
+
+/*  Config Struct Friend Functions  */
+
+std::ostream& operator << (std::ostream& os, const ColorConfig& obj)
+{
+    os << "red:   " << obj.red << "\n";
+    os << "green: " << obj.green << "\n";
+    os << "blue:  " << obj.blue << "\n";
+    return os;
+}
+
+std::ostream& operator << (std::ostream& os, const WindowConfig& obj)
+{
+    os  << "width:           " << obj.width << "\n"
+        << "height:          " << obj.height << "\n"
+        << "frame limit:     " << obj.frameLimit 
+        << "fullscreen mode: " << obj.fullScreenMode << "\n";
+    return os;
+}
+
+std::ostream& operator << (std::ostream& os, const FontConfig& obj)
+{
+    os  << "file name:  " << obj.fileName << "\n"
+        << "size:       " << obj.size << "\n"
+        << "color, red: " << obj.color.red
+            << ", green: " << obj.color.green 
+            << ", blue: " << obj.color.blue << "\n";
+    return os;
+}
+
+std::ostream& operator << (std::ostream& os, const PlayerConfig& obj)
+{
+    os  << "shape radius:      " << obj.shapeRadius << "\n"
+        << "collision radius:  " << obj.collisionRadius << "\n"
+        << "speed:             " << obj.speed << "\n"
+        << "fill color "         << obj.fillColor
+        << "outline color "      << obj.outlineColor
+        << "outline thickness: " << obj.outlineThickness << "\n"
+        << "shape vertices   : " << obj.shapeVertices << "\n";
+
+    return os;
+}
+
+std::ostream& operator << (std::ostream& os, const EnemyConfig& obj)
+{
+    os  << "shape radius:      " << obj.shapeRadius << "\n"
+        << "collision radius:  " << obj.collisionRadius << "\n"
+        << "min speed:         " << obj.minSpeed << "\n"
+        << "outline color:     " << obj.outlineColor.red 
+            << ", green: " << obj.outlineColor.green 
+            << ", blue: " << obj.outlineColor.blue << "\n"
+        << "outline thickness: " << obj.outLineThickness << "\n"
+        << "min vertices:      " << obj.minVertices << "\n"
+        << "max vertices:      " << obj.maxVertices << "\n"
+        << "small lifespan:    " << obj.smallLifespan << "\n"
+        << "spawn interval:    " << obj.spawnInterval << "\n";
+
+    return os;
+}
+
+std::ostream& operator << (std::ostream& os, const BulletConfig& obj)
+{
+    os  << "shape radius:      " << obj.shapeRadius << "\n"
+        << "collision radius:  " << obj.collisionRadius << "\n"
+        << "speed:             " << obj.speed << "\n"
+        << "fill color, red:   " << obj.fillColor.red
+            << ", green: " << obj.fillColor.green 
+            << ", blue: " << obj.fillColor.blue << "\n"
+        << "outline color:     " << obj.outlineColor.red
+            << ", green: " << obj.outlineColor.green 
+            << ", blue: " << obj.outlineColor.blue << "\n"
+        << "outline thickness: " << obj.outLineThickness << "\n"
+        << "shape vertices   : " << obj.shapeVertices << "\n"
+        << "lifespan:          " << obj.lifespan << "\n";
+
+    return os;
+}
+
+
 
  std::filesystem::path GameConfig::getWorkingDirectory()
  {
@@ -89,14 +168,14 @@ void GameConfig::printPaths(const std::vector<std::filesystem::path>& paths)
 }
 
 
-bool GameConfig::readConfigFile(const std::string& fileName)
+bool GameConfig::readConfigFile(const std::string& filename)
 {
     std::ifstream inFile;
-    std::vector<std::filesystem::path> foundFiles = searchDirectory(CONFIG_DIR_NAME, fileName);
 
+    std::vector<std::filesystem::path> foundFiles = searchDirectory(CONFIG_DIR_PATH, filename);
     if(foundFiles.empty())
     {
-        LOG_ERROR(fileName, " not found in directory: ", CONFIG_DIR_NAME);
+        LOG_ERROR(filename, " not found in directory: ", CONFIG_DIR_PATH);
         return false;
     }
 
@@ -141,7 +220,7 @@ bool GameConfig::readConfigFile(const std::string& fileName)
             {
                 if(!readFontConfig(iss))
                 {
-                    LOG_WARNING("failed to read Font configuration, input: ", line);
+                    LOG_WARNING("failed to read Font configuration input: ", line);
                 }
                 continue;
             }
@@ -149,7 +228,7 @@ bool GameConfig::readConfigFile(const std::string& fileName)
             {
                 if(!readPlayerConfig(iss))
                 {
-                    LOG_WARNING("failed to read Player configuration, input: ", line);
+                    LOG_WARNING("failed to read Player configuration input: ", line);
                 }
                 continue;
             }
@@ -157,7 +236,7 @@ bool GameConfig::readConfigFile(const std::string& fileName)
             {
                 if(!readEnemyConfig(iss))
                 {
-                    LOG_WARNING("failed to read Enemy configuration, input: ", line);
+                    LOG_WARNING("failed to read Enemy configuration input: ", line);
                 }
                 continue;
             }
@@ -165,7 +244,7 @@ bool GameConfig::readConfigFile(const std::string& fileName)
             {
                 if(!readBulletConfig(iss))
                 {
-                    LOG_WARNING("failed to read Bullett configuration, input: ", line);
+                    LOG_WARNING("failed to read Bullett configuration input: ", line);
                 }
                 continue;
             }
@@ -265,21 +344,15 @@ bool GameConfig::readBulletConfig(std::istringstream& iss)
 
 */ 
             
-bool GameConfig::readColor(std::istringstream& iss, sf::Color& color)
+bool GameConfig::readColor(std::istringstream& iss, ColorConfig& color)
 {
-    unsigned red, green, blue;
-    if( !(iss >> red)   ||
-        !(iss >> green) ||
-        !(iss >> blue))
+    if( !(iss >> color.red)   ||
+        !(iss >> color.green) ||
+        !(iss >> color.blue))
     {
         std::cerr << "[ERROR] function " << __PRETTY_FUNCTION__ 
             << ", failed to read r,g, or b values\n";
         return false;
-    }
-    
-    color.r = static_cast<uint8_t>(red);
-    color.g = static_cast<uint8_t>(green);
-    color.b = static_cast<uint8_t>(blue);
-       
+    }   
     return true;
 }
