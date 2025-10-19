@@ -17,7 +17,7 @@ include_directories("include")
 add_executable(vecTest)
 target_sources(vecTest PUBLIC 
     src/vecTest.cpp
-    ../include/vec2.hpp
+    ../a2solution/include/vec2.hpp
     include/randomNumberGenerator.hpp
 )
 
@@ -31,7 +31,7 @@ add_executable(gameConfigTest)
 target_sources(gameConfigTest PUBLIC 
     src/testGameConfig.cpp
     src/gameConfigTest.cpp 
-    ../src/gameConfig.cpp
+    ../a2solution/src/gameConfig.cpp
 )
 
 target_link_libraries(gameConfigTest
@@ -39,7 +39,7 @@ target_link_libraries(gameConfigTest
 )
 
 # copy resource files to binary directories
-set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../assets")
+set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 set(DESTINATION_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/assets")

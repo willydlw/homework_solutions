@@ -1,6 +1,6 @@
 #pragma once 
 
-#include "../../include/gameConfig.h"
+#include "../../a2solution/include/gameConfig.h"
 
 class GameConfigTest 
 {

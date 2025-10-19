@@ -167,96 +167,99 @@ void GameConfig::printPaths(const std::vector<std::filesystem::path>& paths)
     std::cout << std::endl;
 }
 
-
-bool GameConfig::readConfigFile(const std::string& filename)
+void GameConfig::findAndOpenConfigFile(std::ifstream& infile, const std::string& filename)
 {
-    std::ifstream inFile;
-
     std::vector<std::filesystem::path> foundFiles = searchDirectory(CONFIG_DIR_PATH, filename);
     if(foundFiles.empty())
     {
         LOG_ERROR(filename, " not found in directory: ", CONFIG_DIR_PATH);
-        return false;
+        return;
     }
 
     for(const auto& f : foundFiles)
     {
-        inFile.open(f);
-        if(inFile.is_open())
+        infile.open(f);
+        if(infile.is_open())
         {
             LOG_INFO("opened file: ", f);
-            break;
+            return;
         }
         else
         {
             LOG_WARNING("failed to open file: ", f);
         }
+    }
+}
 
-        if(!inFile.is_open())
+
+bool GameConfig::readConfigFile(const std::string& filename)
+{
+    std::ifstream infile;
+    findAndOpenConfigFile(infile, filename);
+    if(!infile.is_open())
+    {
+        LOG_ERROR("failed to open any of the found configuration files");
+        return false;
+    }
+
+    std::string line;
+    while(std::getline(infile, line))
+    {
+        // since we declare iss object each time through the loop
+        // if the stream enters a fail state in one of the reads 
+        // below, the old object will destruct and we don't have to clear 
+        // the flags
+        std::istringstream iss(line);
+        std::string firstWord;
+        iss >> firstWord;
+
+        if(firstWord == "Window")
         {
-            LOG_ERROR("failed to open any of the found configuration files");
-            return false;
+            if(!readWindowConfig(iss))
+            {
+                LOG_WARNING("failed to read Window configuration input: ", line);
+            }
+            continue;
         }
-
-        std::string line;
-        while(std::getline(inFile, line))
+        else if(firstWord == "Font")
         {
-            // since we declare iss object each time through the loop
-            // if the stream enters a fail state in one of the reads 
-            // below, the old object will destruct and we don't have to clear 
-            // the flags
-            std::istringstream iss(line);
-            std::string firstWord;
-            iss >> firstWord;
-            if(firstWord == "Window")
+            if(!readFontConfig(iss))
             {
-                if(!readWindowConfig(iss))
-                {
-                    LOG_WARNING("failed to read Window configuration input: ", line);
-                }
-                continue;
+                LOG_WARNING("failed to read Font configuration input: ", line);
             }
-            else if(firstWord == "Font")
+            continue;
+        }
+        else if(firstWord == "Player")
+        {
+            if(!readPlayerConfig(iss))
             {
-                if(!readFontConfig(iss))
-                {
-                    LOG_WARNING("failed to read Font configuration input: ", line);
-                }
-                continue;
+                LOG_WARNING("failed to read Player configuration input: ", line);
             }
-            else if(firstWord == "Player")
+            continue;
+        }
+        else if(firstWord == "Enemy")
+        {
+            if(!readEnemyConfig(iss))
             {
-                if(!readPlayerConfig(iss))
-                {
-                    LOG_WARNING("failed to read Player configuration input: ", line);
-                }
-                continue;
+                LOG_WARNING("failed to read Enemy configuration input: ", line);
             }
-            else if(firstWord == "Enemy")
+            continue;
+        }
+        else if(firstWord == "Bullet")
+        {
+            if(!readBulletConfig(iss))
             {
-                if(!readEnemyConfig(iss))
-                {
-                    LOG_WARNING("failed to read Enemy configuration input: ", line);
-                }
-                continue;
+                LOG_WARNING("failed to read Bullett configuration input: ", line);
             }
-            else if(firstWord == "Bullet")
-            {
-                if(!readBulletConfig(iss))
-                {
-                    LOG_WARNING("failed to read Bullett configuration input: ", line);
-                }
-                continue;
-            }
-            else 
-            {
-                LOG_WARNING("Unknown first word: ", firstWord, "discarding input: ", line);
-            }
+            continue;
+        }
+        else 
+        {
+            LOG_WARNING("Unknown first word: ", firstWord, "discarding input: ", line);
         }
     }
 
-
-    inFile.close();
+    infile.close();
     return true;
 }
 
@@ -286,12 +289,12 @@ bool GameConfig::readFontConfig(std::istringstream& iss)
 
 bool GameConfig::readPlayerConfig(std::istringstream& iss)
 {
-    if( !(iss >> m_playerConfig.shapeRadius)        ||
-        !(iss >> m_playerConfig.collisionRadius)    ||
-        !(iss >> m_playerConfig.speed)              ||
-        !(readColor(iss, m_playerConfig.fillColor)) ||
-        !(readColor(iss, m_playerConfig.outlineColor)) ||
-        !(iss >> m_playerConfig.outlineThickness)   ||
+    if( !(iss >> m_playerConfig.shapeRadius)            ||
+        !(iss >> m_playerConfig.collisionRadius)        ||
+        !(iss >> m_playerConfig.speed)                  ||
+        !(readColor(iss, m_playerConfig.fillColor))     ||
+        !(readColor(iss, m_playerConfig.outlineColor))  ||
+        !(iss >> m_playerConfig.outlineThickness)       ||
         !(iss >> m_playerConfig.shapeVertices))
     {
         return false;
@@ -301,13 +304,13 @@ bool GameConfig::readPlayerConfig(std::istringstream& iss)
 
 bool GameConfig::readEnemyConfig(std::istringstream& iss)
 {
-     if( !(iss >> m_enemyConfig.shapeRadius)         ||
-        !(iss >> m_enemyConfig.collisionRadius)     ||
-        !(iss >> m_enemyConfig.minSpeed)            ||
-        !(iss >> m_enemyConfig.maxSpeed)            ||
-        !(readColor(iss, m_enemyConfig.outlineColor)) ||
-        !(iss >> m_enemyConfig.outLineThickness)    ||
-        !(iss >> m_enemyConfig.smallLifespan)       ||
+     if( !(iss >> m_enemyConfig.shapeRadius)            ||
+        !(iss >> m_enemyConfig.collisionRadius)         ||
+        !(iss >> m_enemyConfig.minSpeed)                ||
+        !(iss >> m_enemyConfig.maxSpeed)                ||
+        !(readColor(iss, m_enemyConfig.outlineColor))   ||
+        !(iss >> m_enemyConfig.outLineThickness)        ||
+        !(iss >> m_enemyConfig.smallLifespan)           ||
         !(iss >> m_enemyConfig.spawnInterval))
     {
         return false;
@@ -317,17 +320,18 @@ bool GameConfig::readEnemyConfig(std::istringstream& iss)
 
 bool GameConfig::readBulletConfig(std::istringstream& iss)
 {
-    if( !(iss >> m_bulletConfig.shapeRadius)        ||
-        !(iss >> m_bulletConfig.collisionRadius)    ||
-        !(iss >> m_bulletConfig.shapeRadius)        ||
-        !(readColor(iss, m_bulletConfig.fillColor)) ||
-        !(readColor(iss, m_bulletConfig.outlineColor)) ||
-        !(iss >> m_bulletConfig.outLineThickness)   ||
-        !(iss >> m_bulletConfig.shapeVertices)      ||
+    if( !(iss >> m_bulletConfig.shapeRadius)            ||
+        !(iss >> m_bulletConfig.collisionRadius)        ||
+        !(iss >> m_bulletConfig.speed)                  ||
+        !(readColor(iss, m_bulletConfig.fillColor))     ||
+        !(readColor(iss, m_bulletConfig.outlineColor))  ||
+        !(iss >> m_bulletConfig.outLineThickness)       ||
+        !(iss >> m_bulletConfig.shapeVertices)          ||
         !(iss >> m_bulletConfig.lifespan))
     {
         return false;
     }
+
     return true;
 }
 

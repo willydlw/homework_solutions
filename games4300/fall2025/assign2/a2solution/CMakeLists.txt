@@ -1,8 +1,6 @@
 # SubProject assign2/CMakeLists.txt
 project(a2solution)
 
-add_subdirectory(test)
-
 # specify binary output directory
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
@@ -34,7 +32,8 @@ target_link_libraries(a2solution
 
 
 # copy resource files to binary directories
-set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets")
+#set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../assets")
+set(SOURCE_ASSET_DIR "${CMAKE_CURRENT_SOURCE_DIR}/assets")
 set(DESTINATION_ASSET_DIR "${CMAKE_CURRENT_BINARY_DIR}/assets")
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/assets")

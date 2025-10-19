@@ -190,6 +190,8 @@ class GameConfig
     // 
     void printPaths(const std::vector<std::filesystem::path>& paths);
 
+    void findAndOpenConfigFile(std::ifstream& infile, const std::string& filename);
+
     bool readWindowConfig(std::istringstream& iss);
     bool readFontConfig(std::istringstream& iss);
     bool readPlayerConfig(std::istringstream& iss);

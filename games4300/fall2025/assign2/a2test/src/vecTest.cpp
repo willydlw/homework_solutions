@@ -6,7 +6,8 @@
 #include <cmath>
 #include <cstdlib>
 
-#include "../../include/vec2.hpp"
+
+#include "../../a2solution/include/vec2.hpp"
 #include "randomNumberGenerator.hpp"
 
 #ifndef NDEBUG // Only active in debug builds
