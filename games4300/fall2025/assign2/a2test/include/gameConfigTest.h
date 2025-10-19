@@ -6,8 +6,17 @@ class GameConfigTest
 {
     public:
 
+    static constexpr int MIN_RANDOM_INT = 0;
+    static constexpr int MAX_RANDOM_INT = 255;
+
+    static constexpr float MIN_RANDOM_FLOAT = 0.0f;
+    static constexpr float MAX_RANDOM_FLOAT = 255.0f;
+
     GameConfigTest() = default;
 
+    void runTests();
+    void testBulletConfig(int numRandomTests);
+    void testRandomBulletConfig();
     void testReadBulletConfig(const char* filename, const BulletConfig& expectedConfig);
 
     private:
@@ -29,4 +38,5 @@ class GameConfigTest
         v("lifespan",            a.lifespan, b.lifespan);
     }
 
+    BulletConfig generateRandomBulletConfig();
 };

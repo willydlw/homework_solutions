@@ -184,10 +184,6 @@ void GameConfig::findAndOpenConfigFile(std::ifstream& infile, const std::string&
             LOG_INFO("opened file: ", f);
             return;
         }
-        else
-        {
-            LOG_WARNING("failed to open file: ", f);
-        }
     }
 }
 

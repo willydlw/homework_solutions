@@ -13,29 +13,9 @@ struct FontConfig;
 struct PlayerConfig;
 struct WindowConfig;
 
-// Constant expressions
-static constexpr int DEFAULT_SHAPE_RADIUS       = 10;
-static constexpr int DEFAULT_COLLISION_RADIUS   = 10;
-
-static constexpr int DEFAULT_LIFESPAN           = 60;
-static constexpr int DEFAULT_SPAWN_INTERVAL     = 60;
-
-static constexpr int DEFAULT_MIN_SHAPE_VERTICES = 3;
-static constexpr int DEFAULT_MAX_SHAPE_VERTICES = 32;
-static constexpr int DEFAULT_SHAPE_VERTICES     = 8;
-
-static constexpr int DEFAULT_OUTLINE_THICKNESS  = 1;
-
-static constexpr float DEFAULT_SPEED_PIXELS_PER_FRAME   = 0;
-static constexpr float DEFAULT_MIN_SPEED                = 0;
-static constexpr float DEFAULT_MAX_SPEED                = 10;
-
-
-
-
 /* For debugging purposes, not using sf::Color because the data fields 
-   are uint8_t and will be output as characters when used with some 
-   templated debugging print functions.
+are uint8_t and will be output as characters when used with some 
+templated debugging print functions.
 */
 struct ColorConfig
 {
@@ -48,8 +28,38 @@ struct ColorConfig
     friend std::ostream& operator << (std::ostream& os, const ColorConfig& obj);
 };
 
-static constexpr ColorConfig DEFAULT_FILL_COLOR = {255,255,255}; 
-static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {0, 0, 0};
+
+class ConfigConstants
+{
+    public:
+    
+    static constexpr int MIN_SHAPE_RADIUS           = 3;
+    static constexpr int MAX_SHAPE_RADIUS           = 100;
+    static constexpr int DEFAULT_SHAPE_RADIUS       = 10;
+        
+    static constexpr int MIN_COLLISION_RADIUS       = 3;
+    static constexpr int MAX_COLLISION_RADIUS       = 100;
+    static constexpr int DEFAULT_COLLISION_RADIUS   = 10;
+
+    static constexpr int DEFAULT_LIFESPAN           = 60;
+    static constexpr int DEFAULT_SPAWN_INTERVAL     = 60;
+
+    static constexpr int DEFAULT_MIN_SHAPE_VERTICES = 3;
+    static constexpr int DEFAULT_MAX_SHAPE_VERTICES = 32;
+    static constexpr int DEFAULT_SHAPE_VERTICES     = 8;
+
+    static constexpr int DEFAULT_OUTLINE_THICKNESS  = 1;
+
+    static constexpr float DEFAULT_SPEED_PIXELS_PER_FRAME   = 0;
+    static constexpr float DEFAULT_MIN_SPEED                = 0;
+    static constexpr float DEFAULT_MAX_SPEED                = 10;
+
+
+    static constexpr ColorConfig DEFAULT_FILL_COLOR = {255,255,255}; 
+    static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {0, 0, 0};
+}
+
+
 
 struct WindowConfig
 {
@@ -80,7 +90,7 @@ struct FontConfig
 
 struct PlayerConfig
 {
-    int shapeRadius             = DEFAULT_SHAPE_RADIUS;
+    int shapeRadius             = ConfigConstants::DEFAULT_SHAPE_RADIUS;
     int collisionRadius         = DEFAULT_COLLISION_RADIUS;
     float speed                 = DEFAULT_SPEED_PIXELS_PER_FRAME ;  // pixels per frame, magnitude 
     ColorConfig fillColor       = DEFAULT_FILL_COLOR;
@@ -141,6 +151,8 @@ class GameConfig
 
     static constexpr const char* CONFIG_DIR_PATH = "assets/config";
     static constexpr const char* FONTS_DIR_PATH = "assets/fonts";
+
+    
 
     GameConfig() = default;
 

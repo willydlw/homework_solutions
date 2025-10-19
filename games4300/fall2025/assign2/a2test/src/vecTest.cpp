@@ -224,9 +224,9 @@ void singleVectorTests()
         RandomNumberGenerator rg;
         for(int i = 0; i < 100; i++)
         {
-            float x = rg.Generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
-            float y = rg.Generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
-            float scalar = rg.Generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
+            float x = rg.generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
+            float y = rg.generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
+            float scalar = rg.generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT);
             Vec2f v(x,y);
 
             testOperatorMultiply(v, scalar);
