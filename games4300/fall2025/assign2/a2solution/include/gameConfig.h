@@ -19,9 +19,10 @@ templated debugging print functions.
 */
 struct ColorConfig
 {
-    int red = 0;
-    int green = 0;
-    int blue = 0;
+    int red     = 0;
+    int green   = 0;
+    int blue    = 0;
+
     ColorConfig() = default;
     constexpr ColorConfig(int r, int g, int b) : red(r), green(g), blue(b) {}
     
@@ -29,44 +30,17 @@ struct ColorConfig
 };
 
 
-class ConfigConstants
-{
-    public:
-    
-    static constexpr int MIN_SHAPE_RADIUS           = 3;
-    static constexpr int MAX_SHAPE_RADIUS           = 100;
-    static constexpr int DEFAULT_SHAPE_RADIUS       = 10;
-        
-    static constexpr int MIN_COLLISION_RADIUS       = 3;
-    static constexpr int MAX_COLLISION_RADIUS       = 100;
-    static constexpr int DEFAULT_COLLISION_RADIUS   = 10;
-
-    static constexpr int DEFAULT_LIFESPAN           = 60;
-    static constexpr int DEFAULT_SPAWN_INTERVAL     = 60;
-
-    static constexpr int DEFAULT_MIN_SHAPE_VERTICES = 3;
-    static constexpr int DEFAULT_MAX_SHAPE_VERTICES = 32;
-    static constexpr int DEFAULT_SHAPE_VERTICES     = 8;
-
-    static constexpr int DEFAULT_OUTLINE_THICKNESS  = 1;
-
-    static constexpr float DEFAULT_SPEED_PIXELS_PER_FRAME   = 0;
-    static constexpr float DEFAULT_MIN_SPEED                = 0;
-    static constexpr float DEFAULT_MAX_SPEED                = 10;
-
-
-    static constexpr ColorConfig DEFAULT_FILL_COLOR = {255,255,255}; 
-    static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {0, 0, 0};
-}
-
-
-
 struct WindowConfig
 {
-    unsigned int width = 640U;
-    unsigned int height = 480U;
-    int frameLimit = 60;
-    int fullScreenMode = 0;         // 1 yes, 0 no
+    static constexpr unsigned int   DEFAULT_WIDTH = 640U;
+    static constexpr unsigned int   DEFAULT_HEIGHT = 480U;
+    static constexpr int            DEFAULT_FRAME_LIMIT = 60;
+
+    unsigned int width          = DEFAULT_WIDTH;
+    unsigned int height         = DEFAULT_HEIGHT;
+    int frameLimit              = DEFAULT_FRAME_LIMIT;
+    int fullScreenMode          = 0;                    // 1 yes, 0 no
+
     WindowConfig() = default;
     WindowConfig(int w, int h, int flimit, int screenMode) :
         width(w), height(h), frameLimit(flimit), fullScreenMode(screenMode){}
@@ -90,9 +64,17 @@ struct FontConfig
 
 struct PlayerConfig
 {
-    int shapeRadius             = ConfigConstants::DEFAULT_SHAPE_RADIUS;
+    static constexpr int DEFAULT_SHAPE_RADIUS = 8;
+    static constexpr int DEFAULT_COLLISION_RADIUS = 8;
+    static constexpr float DEFAULT_SPEED = 5.0f;
+    static constexpr ColorConfig DEFAULT_FILL_COLOR = {0, 255, 0};
+    static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {255, 0, 255};
+    static constexpr int DEFAULT_OUTLINE_THICKNESS = 3;
+    static constexpr int DEFAULT_SHAPE_VERTICES = 8;
+
+    int shapeRadius             = DEFAULT_SHAPE_RADIUS;
     int collisionRadius         = DEFAULT_COLLISION_RADIUS;
-    float speed                 = DEFAULT_SPEED_PIXELS_PER_FRAME ;  // pixels per frame, magnitude 
+    float speed                 = DEFAULT_SPEED;  // pixels per frame, magnitude 
     ColorConfig fillColor       = DEFAULT_FILL_COLOR;
     ColorConfig outlineColor    = DEFAULT_OUTLINE_COLOR;                                
     int outlineThickness        = DEFAULT_OUTLINE_THICKNESS;
@@ -106,12 +88,25 @@ struct PlayerConfig
 
 struct EnemyConfig
 {
+    static constexpr int    DEFAULT_SHAPE_RADIUS = 8;
+    static constexpr int    DEFAULT_COLLISION_RADIUS = 8;
+    static constexpr float  DEFAULT_MIN_SPEED = 1.0f;
+    static constexpr float  DEFAULT_MAX_SPEED = 20.0f;
+    
+    static constexpr int    DEFAULT_OUTLINE_THICKNESS = 1;
+    static constexpr int    DEFAULT_MIN_SHAPE_VERTICES = 3;
+    static constexpr int    DEFAULT_MAX_SHAPE_VERTICES = 30;
+    static constexpr int    DEFAULT_LIFESPAN = 255;
+    static constexpr int    DEFAULT_SPAWN_INTERVAL = 120;
+
+    static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {0, 0, 0};
+
     int shapeRadius             = DEFAULT_SHAPE_RADIUS;
     int collisionRadius         = DEFAULT_COLLISION_RADIUS;
     float minSpeed              = DEFAULT_MIN_SPEED;
     float maxSpeed              = DEFAULT_MAX_SPEED;
     ColorConfig outlineColor    = DEFAULT_OUTLINE_COLOR;
-    int outLineThickness        = DEFAULT_OUTLINE_THICKNESS;
+    int outlineThickness        = DEFAULT_OUTLINE_THICKNESS;
     int minVertices             = DEFAULT_MIN_SHAPE_VERTICES;
     int maxVertices             = DEFAULT_MAX_SHAPE_VERTICES;
     int smallLifespan           = DEFAULT_LIFESPAN;
@@ -124,12 +119,23 @@ struct EnemyConfig
 
 struct BulletConfig 
 {
+    static constexpr int    DEFAULT_SHAPE_RADIUS = 5;
+    static constexpr int    DEFAULT_COLLISION_RADIUS = 5;
+    static constexpr float  DEFAULT_SPEED = 5.0f;
+    
+    static constexpr int    DEFAULT_OUTLINE_THICKNESS = 1;
+    static constexpr int    DEFAULT_SHAPE_VERTICES = 3;
+    static constexpr int    DEFAULT_LIFESPAN = 60;
+
+    static constexpr ColorConfig DEFAULT_FILL_COLOR = {255, 255, 255};
+    static constexpr ColorConfig DEFAULT_OUTLINE_COLOR = {255, 255, 255};
+
     int shapeRadius             = DEFAULT_SHAPE_RADIUS;
     int collisionRadius         = DEFAULT_COLLISION_RADIUS;
-    float speed                 = DEFAULT_SPEED_PIXELS_PER_FRAME;
+    float speed                 = DEFAULT_SPEED;
     ColorConfig fillColor       = DEFAULT_FILL_COLOR;
     ColorConfig outlineColor    = DEFAULT_OUTLINE_COLOR;
-    int outLineThickness        = DEFAULT_OUTLINE_THICKNESS;
+    int outlineThickness        = DEFAULT_OUTLINE_THICKNESS;
     int shapeVertices           = DEFAULT_SHAPE_VERTICES;
     int lifespan                = DEFAULT_LIFESPAN;
 

@@ -52,10 +52,11 @@ std::ostream& operator << (std::ostream& os, const EnemyConfig& obj)
     os  << "shape radius:      " << obj.shapeRadius << "\n"
         << "collision radius:  " << obj.collisionRadius << "\n"
         << "min speed:         " << obj.minSpeed << "\n"
+        << "max speed:         " << obj.maxSpeed << "\n"
         << "outline color:     " << obj.outlineColor.red 
             << ", green: " << obj.outlineColor.green 
             << ", blue: " << obj.outlineColor.blue << "\n"
-        << "outline thickness: " << obj.outLineThickness << "\n"
+        << "outline thickness: " << obj.outlineThickness << "\n"
         << "min vertices:      " << obj.minVertices << "\n"
         << "max vertices:      " << obj.maxVertices << "\n"
         << "small lifespan:    " << obj.smallLifespan << "\n"
@@ -75,7 +76,7 @@ std::ostream& operator << (std::ostream& os, const BulletConfig& obj)
         << "outline color:     " << obj.outlineColor.red
             << ", green: " << obj.outlineColor.green 
             << ", blue: " << obj.outlineColor.blue << "\n"
-        << "outline thickness: " << obj.outLineThickness << "\n"
+        << "outline thickness: " << obj.outlineThickness << "\n"
         << "shape vertices   : " << obj.shapeVertices << "\n"
         << "lifespan:          " << obj.lifespan << "\n";
 
@@ -305,7 +306,9 @@ bool GameConfig::readEnemyConfig(std::istringstream& iss)
         !(iss >> m_enemyConfig.minSpeed)                ||
         !(iss >> m_enemyConfig.maxSpeed)                ||
         !(readColor(iss, m_enemyConfig.outlineColor))   ||
-        !(iss >> m_enemyConfig.outLineThickness)        ||
+        !(iss >> m_enemyConfig.outlineThickness)        ||
+        !(iss >> m_enemyConfig.minVertices)             ||
+        !(iss >> m_enemyConfig.maxVertices)             ||
         !(iss >> m_enemyConfig.smallLifespan)           ||
         !(iss >> m_enemyConfig.spawnInterval))
     {
@@ -321,7 +324,7 @@ bool GameConfig::readBulletConfig(std::istringstream& iss)
         !(iss >> m_bulletConfig.speed)                  ||
         !(readColor(iss, m_bulletConfig.fillColor))     ||
         !(readColor(iss, m_bulletConfig.outlineColor))  ||
-        !(iss >> m_bulletConfig.outLineThickness)       ||
+        !(iss >> m_bulletConfig.outlineThickness)       ||
         !(iss >> m_bulletConfig.shapeVertices)          ||
         !(iss >> m_bulletConfig.lifespan))
     {
