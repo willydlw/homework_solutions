@@ -14,15 +14,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)   # optional: Set to OFF for more portable code
 include_directories("include")
 
 # create executables
-add_executable(vecTest)
-target_sources(vecTest PUBLIC 
-    src/vecTest.cpp
-    ../a2solution/include/vec2.hpp
-    include/randomNumberGenerator.hpp
+add_executable(testVec2)
+target_sources(testVec2 PUBLIC 
+    src/testVec2.cpp 
+    include/vecTest.hpp
 )
 
 # PUBLIC m links math library
-target_link_libraries(vecTest
+target_link_libraries(testVec2
     PUBLIC  m
 )
 
