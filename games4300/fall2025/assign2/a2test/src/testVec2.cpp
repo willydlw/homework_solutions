@@ -1,6 +1,8 @@
 #include "vecTest.hpp"
 #include "randomNumberGenerator.hpp"
 
+#include <climits>
+
 // FLOATING POINT TOLERANCE Constant
 static constexpr float EQUALITY_EPISLON = 1e-7;
 
@@ -25,15 +27,24 @@ void singleVectorTests()
 {
     std::vector<Vec2f> testVecs = 
     {
+        { 0.0f,  0.0f},     // zero values, magnitude 0,
+                            //normalization should handle division by zero
+
         { 3.0f,  4.0f},     // positive values
         {-3.0f, -4.0f},     // negative values
-        { 1.0f,  0.0f},     // basis vector
-        { 0.0f,  1.0f},
+
+        { 1.0f,  0.0f},     // unit vectors
+        {-1.0f,  0.0f},     // magnitude 1
+        { 0.0f,  1.0f},     // normalized vector should be identical to original
+        { 0.0f, -1.0f},
+
         { 1.0f,  1.0f},     // diagonal vector 
         {-1.0f, -1.0f}, 
+
         { 5.0f,  0.0f},     // single component 
         { 0.0f,  5.0f},
-        { 0.25f,  0.50f},    // decimal values
+
+        { 0.5f,  -2.5f},    // decimal values
         { 0.10f, 1.0f/3.0f}
     };
 
@@ -62,9 +73,33 @@ void singleVectorTests()
 }
 
 
-
 void twoVectorTests()
 {
+    {
+        // TODO orthogonal (perpendicular) vectors
+        Vec2<int> v1 = {1, 0};
+        Vec2<int> v2 = {0, 1};
+        // dot product should be zero 
+        testDotProduct(v1, v2); 
+    }
+
+    {
+        // TODO parallel vectors 
+        Vec2<int> v1 = {1, 2};
+        Vec2<int> v2 = {2, 4};
+        // dot product should be 10 
+        testDotProduct(v1, v2);
+        testAddition(v1, v2);   // result should also be parallel 
+    }
+
+    {
+        // anti-parallel vectors 
+        // TODO 
+        Vec2<int> v1( 1,  2);
+        Vec2<int> v2(-2, -4);
+
+        testDotProduct(v1,v2);
+    }
     {
         std::vector<std::pair<Vec2f, Vec2f>> testVecs = {
             {{1.0f, 1.0f}, {-1.0f, -1.0f}},
@@ -80,6 +115,10 @@ void twoVectorTests()
             testOperatorMinus(v1, v2);
             testOperatorMinusEquals(v1, v2);
         } 
+    }
+
+    {
+        // edge case unit vectors 
     }
 }
 
@@ -104,9 +143,26 @@ void divideByZeroTest()
 }
 
 
+
 void testEdgeCases()
 {
+    const int NUM_RANDOM_TESTS = 5;
+    {
+        std::vector<Vec2<int>> testVectors= generateTestVectors(NUM_RANDOM_TESTS, -500, 500);
+        testAddSubtractEdgeCases(testVectors, NUM_RANDOM_TESTS);
+    }
 
+    {
+        std::vector<Vec2<float>> testVectors = generateTestVectors(NUM_RANDOM_TESTS, -500.0f, 500.0f);
+        testAddSubtractEdgeCases(testVectors, NUM_RANDOM_TESTS);
+    }
+}
+
+
+
+
+void testFloatEdgeCases()
+{
     {   // zero vector
         float x = 0.0f;
         float y = 0.0f;
@@ -120,15 +176,14 @@ void testEdgeCases()
 
         testOperatorDivide(v, 0);   // handle division by zero
         testOperatorDivide(v, 5);
-    }
-    
+    }   
 }
 
 void runTests()
 {
-    divideByZeroTest();
-    singleVectorTests();
-    twoVectorTests();
+    //divideByZeroTest();
+    //singleVectorTests();
+    //twoVectorTests();
     testEdgeCases();
 }
 

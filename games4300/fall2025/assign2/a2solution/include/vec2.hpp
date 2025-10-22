@@ -39,10 +39,12 @@ public:
         : x(vec.x), y(vec.y) 
     { }
 
+    #if 0
     // constructor to convert from sf::Vector2i 
     Vec2(const sf::Vector2i& vec)
         : x(T(vec.x)), y(T(vec.y))
     { }
+    #endif
 
     // allow automatic conversion to sf::Vector2 
     // this lets us pass Vec2 into sfml functions 
@@ -61,6 +63,12 @@ public:
     Vec2 operator - (const Vec2& rhs) const 
     {
         return Vec2<T>(x - rhs.x, y - rhs.y);
+    }
+
+    // unary minus
+    Vec2 operator - () const 
+    {
+        return Vec2<T>(-x, -y);
     }
 
     
@@ -136,7 +144,7 @@ public:
         return os;
     }
 
-    float dotProduct(const Vec2& rhs)
+    T dotProduct(const Vec2<T>& rhs) const
     {
         return (x*rhs.x + y * rhs.y);
     }
