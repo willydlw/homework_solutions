@@ -17,7 +17,7 @@ include_directories("include")
 add_executable(testVec2)
 target_sources(testVec2 PUBLIC 
     src/testVec2.cpp 
-    include/vecTest.hpp
+    include/Vec2Test.hpp 
 )
 
 # PUBLIC m links math library

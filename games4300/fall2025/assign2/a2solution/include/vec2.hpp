@@ -55,11 +55,14 @@ public:
 
 
     /****  Overloaded Operators ****/ 
+
+    // v3 = v1 + v2
     Vec2 operator + (const Vec2& rhs) const
     {
         return Vec2<T>(x + rhs.x, y + rhs.y);
     }
 
+    // v3 = v1 - v2
     Vec2 operator - (const Vec2& rhs) const 
     {
         return Vec2<T>(x - rhs.x, y - rhs.y);
@@ -72,6 +75,7 @@ public:
     }
 
     
+    // scalar division
     Vec2 operator / (const T val) const 
     {
         // throw runtime error for division by zero 
@@ -91,13 +95,14 @@ public:
     }
 
 
-
+    // scalar multiplication
     Vec2 operator * (const T val) const
     {
         return Vec2<T> ( x * val, y * val);
     }
 
 
+    // v1 = v1 + v2
     Vec2& operator += (const Vec2& rhs)
     {
         x += rhs.x;
@@ -106,6 +111,7 @@ public:
     }
     
    
+    // v1 = v1 - v2
     Vec2& operator -= (const Vec2& rhs)
     {
         x -= rhs.x;
@@ -113,7 +119,7 @@ public:
         return *this;
     }
    
-
+    // v1 = v1 * val
     Vec2& operator *= (const T val)
     {
         x *= val;
@@ -121,7 +127,8 @@ public:
         return *this;
     }
 
-     Vec2& operator /= (const T val)
+    // v1 = v1 / val
+    Vec2& operator /= (const T val)
     {
         x /= val;
         y /= val;
@@ -150,13 +157,9 @@ public:
     }
 
     // calculates angle between the two vectors
-    float angle(const Vec2& rhs)
+    float angle(const Vec2& rhs) const
     {
-        float dp = dotProduct(rhs);
-        float maga = magnitude();
-        float magb = rhs.magnitude();
-
-        return std::acos(dp / (maga * magb));
+        return std::acos(dotProduct(rhs) / (magnitude() * rhs.magnitude()));
     }
 
     float distance(const Vec2& rhs)const 
@@ -175,7 +178,7 @@ public:
 
         if(mag > 0)
         {
-            return Vec2<T> (x/mag, y/mag);
+            return Vec2<T> ((float)x/mag, (float)y/mag);
         }
         else
         {

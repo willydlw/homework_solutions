@@ -1,13 +1,7 @@
-#include "vecTest.hpp"
-#include "randomNumberGenerator.hpp"
+#include "Vec2Test.hpp"
 
-#include <climits>
 
-// FLOATING POINT TOLERANCE Constant
-static constexpr float EQUALITY_EPISLON = 1e-7;
-
-static constexpr float MIN_RANDOM_FLOAT = -2048;
-static constexpr float MAX_RANDOM_FLOAT = 2048;
+#if 0
 
 // 
 bool float_equality(const Vec2f& v1, const Vec2f& v2)
@@ -73,7 +67,8 @@ void singleVectorTests()
 }
 
 
-void twoVectorTests()
+
+void specialTwoVectorTests()
 {
     {
         // TODO orthogonal (perpendicular) vectors
@@ -117,7 +112,7 @@ void twoVectorTests()
         } 
     }
 
-    {
+    {   // random values 
         // edge case unit vectors 
     }
 }
@@ -179,18 +174,13 @@ void testFloatEdgeCases()
     }   
 }
 
-void runTests()
-{
-    //divideByZeroTest();
-    //singleVectorTests();
-    //twoVectorTests();
-    testEdgeCases();
-}
+#endif
 
 
 
 int main()
 {
-    runTests();
+    Vec2Test<int> vtest;
+    vtest.runAllTests();
     return 0;
 }
