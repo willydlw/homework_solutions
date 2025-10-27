@@ -20,6 +20,9 @@ void Game::initConfig(const std::string& configFile)
         LOG_FATAL("Configuration Failed\n");
         std::exit(EXIT_FAILURE);
     }
+
+    LOG_INFO("***Initial Configuration***");
+    std::cerr << gameConfig;
 }
 
 #if 0

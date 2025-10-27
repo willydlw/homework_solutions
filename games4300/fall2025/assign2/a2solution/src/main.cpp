@@ -1,13 +1,13 @@
 #include <iostream>
 
-#include "gameConfig.h"
+#include "game.h"
 
 int main()
 {
+    std::string configFile = {"config.txt"};
     std::cout << "Assign 2\n";
-    GameConfig gameConfig;
-
-    gameConfig.readConfigFile("config.txt");
+    Game game;
+    game.init(configFile);
 
     return 0;
 }

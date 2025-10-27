@@ -9,76 +9,68 @@
 
 std::ostream& operator << (std::ostream& os, const ColorConfig& obj)
 {
-    os << "red:   " << obj.red << "\n";
-    os << "green: " << obj.green << "\n";
-    os << "blue:  " << obj.blue << "\n";
+    os << "   red   \t" << obj.red      << "\n";
+    os << "   green \t" << obj.green    << "\n";
+    os << "   blue  \t" << obj.blue     << "\n";
     return os;
 }
 
 std::ostream& operator << (std::ostream& os, const WindowConfig& obj)
 {
-    os  << "width:           " << obj.width << "\n"
-        << "height:          " << obj.height << "\n"
-        << "frame limit:     " << obj.frameLimit 
-        << "fullscreen mode: " << obj.fullScreenMode << "\n";
+    os  << "width            " << obj.width             << "\n"
+        << "height           " << obj.height            << "\n"
+        << "frame limit      " << obj.frameLimit        << "\n"
+        << "fullscreen mode  " << obj.fullScreenMode    << "\n";
     return os;
 }
 
 std::ostream& operator << (std::ostream& os, const FontConfig& obj)
 {
-    os  << "file name:  " << obj.fileName << "\n"
-        << "size:       " << obj.size << "\n"
-        << "color, red: " << obj.color.red
-            << ", green: " << obj.color.green 
-            << ", blue: " << obj.color.blue << "\n";
+    os  << "file name   \t" << obj.fileName << "\n"
+        << "size        \t" << obj.size     << "\n"
+        << "color\n"        << obj.color    << "\n";
     return os;
 }
 
 std::ostream& operator << (std::ostream& os, const PlayerConfig& obj)
 {
-    os  << "shape radius:      " << obj.shapeRadius << "\n"
-        << "collision radius:  " << obj.collisionRadius << "\n"
-        << "speed:             " << obj.speed << "\n"
-        << "fill color "         << obj.fillColor
-        << "outline color "      << obj.outlineColor
-        << "outline thickness: " << obj.outlineThickness << "\n"
-        << "shape vertices   : " << obj.shapeVertices << "\n";
+    os  << "shape radius     \t" << obj.shapeRadius     << "\n"
+        << "collision radius \t" << obj.collisionRadius << "\n"
+        << "speed            \t" << obj.speed           << "\n\n"
+        << "fill color\n"        << obj.fillColor       << "\n"
+        << "outline color\n"     << obj.outlineColor    << "\n"
+        << "outline thickness\t" << obj.outlineThickness << "\n"
+        << "shape vertices   \t" << obj.shapeVertices   << "\n";
 
     return os;
 }
 
 std::ostream& operator << (std::ostream& os, const EnemyConfig& obj)
 {
-    os  << "shape radius:      " << obj.shapeRadius << "\n"
-        << "collision radius:  " << obj.collisionRadius << "\n"
-        << "min speed:         " << obj.minSpeed << "\n"
-        << "max speed:         " << obj.maxSpeed << "\n"
-        << "outline color:     " << obj.outlineColor.red 
-            << ", green: " << obj.outlineColor.green 
-            << ", blue: " << obj.outlineColor.blue << "\n"
-        << "outline thickness: " << obj.outlineThickness << "\n"
-        << "min vertices:      " << obj.minVertices << "\n"
-        << "max vertices:      " << obj.maxVertices << "\n"
-        << "small lifespan:    " << obj.smallLifespan << "\n"
-        << "spawn interval:    " << obj.spawnInterval << "\n";
+    os  << "shape radius      \t" << obj.shapeRadius        << "\n"
+        << "collision radius  \t" << obj.collisionRadius    << "\n"
+        << "min speed         \t" << obj.minSpeed           << "\n"
+        << "max speed         \t" << obj.maxSpeed           << "\n\n"
+        << "outline color\n"      << obj.outlineColor       << "\n"
+        << "outline thickness \t" << obj.outlineThickness   << "\n"
+        << "min vertices      \t" << obj.minVertices        << "\n"
+        << "max vertices      \t" << obj.maxVertices        << "\n"
+        << "small lifespan    \t" << obj.smallLifespan      << "\n"
+        << "spawn interval    \t" << obj.spawnInterval      << "\n";
 
     return os;
 }
 
 std::ostream& operator << (std::ostream& os, const BulletConfig& obj)
 {
-    os  << "shape radius:      " << obj.shapeRadius << "\n"
-        << "collision radius:  " << obj.collisionRadius << "\n"
-        << "speed:             " << obj.speed << "\n"
-        << "fill color, red:   " << obj.fillColor.red
-            << ", green: " << obj.fillColor.green 
-            << ", blue: " << obj.fillColor.blue << "\n"
-        << "outline color:     " << obj.outlineColor.red
-            << ", green: " << obj.outlineColor.green 
-            << ", blue: " << obj.outlineColor.blue << "\n"
-        << "outline thickness: " << obj.outlineThickness << "\n"
-        << "shape vertices   : " << obj.shapeVertices << "\n"
-        << "lifespan:          " << obj.lifespan << "\n";
+    os  << "shape radius       \t" << obj.shapeRadius       << "\n"
+        << "collision radius   \t" << obj.collisionRadius   << "\n"
+        << "speed              \t" << obj.speed             << "\n\n"
+        << "fill color\n"          << obj.fillColor
+        << "outline color\n"       << obj.outlineColor      << "\n"
+        << "outline thickness  \t" << obj.outlineThickness  << "\n"
+        << "shape vertices     \t" << obj.shapeVertices     << "\n"
+        << "lifespan           \t" << obj.lifespan          << "\n";
 
     return os;
 }
@@ -358,4 +350,20 @@ bool GameConfig::readColor(std::istringstream& iss, ColorConfig& color)
         return false;
     }   
     return true;
+}
+
+
+std::ostream& operator << (std::ostream& os, const GameConfig& gc)
+{
+    #define ANSI_BOLD       "\033[1m"
+    #define ANSI_UNDERLINE  "\033[4m"
+    #define ANSI_RESET      "\033[0m"
+    os << ANSI_BOLD << "\n=== Game Configuration ===\n" << ANSI_RESET
+       << ANSI_UNDERLINE << "\nWindow Config\n" << ANSI_RESET << gc.m_windowConfig
+       << ANSI_UNDERLINE << "\nFont Config\n"   << ANSI_RESET << gc.m_fontConfig 
+       << ANSI_UNDERLINE << "\nPlayer Config\n" << ANSI_RESET << gc.m_playerConfig
+       << ANSI_UNDERLINE<< "\nEnemy Config\n"   << ANSI_RESET << gc.m_enemyConfig
+       << ANSI_UNDERLINE<< "\nBullet Config\n"  << ANSI_RESET << gc.m_bulletConfig
+       << "\n";
+    return os;
 }

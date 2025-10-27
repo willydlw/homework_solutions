@@ -175,6 +175,9 @@ class GameConfig
     WindowConfig getWindowConfig() { return m_windowConfig;}
 
 
+    friend std::ostream& operator << (std::ostream& os, const GameConfig& gc);
+
+
     private:
 
     // Data members 
