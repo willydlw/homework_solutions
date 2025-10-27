@@ -3,18 +3,7 @@
 
 #if 0
 
-// 
-bool float_equality(const Vec2f& v1, const Vec2f& v2)
-{
-    if( fabs(v1.x - v2.x) < EQUALITY_EPISLON && fabs(v1.y - v2.y) < EQUALITY_EPISLON)
-    {
-        return true;
-    }
-    else 
-    {
-        return false;
-    }
-}
+
 
 
 void singleVectorTests()

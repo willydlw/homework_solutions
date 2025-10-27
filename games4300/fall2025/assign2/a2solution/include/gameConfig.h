@@ -211,7 +211,11 @@ class GameConfig
     // 
     void printPaths(const std::vector<std::filesystem::path>& paths);
 
-    void findAndOpenConfigFile(std::ifstream& infile, const std::string& filename);
+    void findAndOpenConfigFile( std::ifstream& infile, 
+                                const std::string& startPath, 
+                                const std::string& filename);
+
+    bool loadFontFile(const std::string& filename);
 
     bool readWindowConfig(std::istringstream& iss);
     bool readFontConfig(std::istringstream& iss);

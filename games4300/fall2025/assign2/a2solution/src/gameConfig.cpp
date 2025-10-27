@@ -160,12 +160,36 @@ void GameConfig::printPaths(const std::vector<std::filesystem::path>& paths)
     std::cout << std::endl;
 }
 
-void GameConfig::findAndOpenConfigFile(std::ifstream& infile, const std::string& filename)
+bool GameConfig::loadFontFile(const std::string& filename)
 {
-    std::vector<std::filesystem::path> foundFiles = searchDirectory(CONFIG_DIR_PATH, filename);
+    std::vector<std::filesystem::path> foundFiles = searchDirectory(FONTS_DIR_PATH, filename);
     if(foundFiles.empty())
     {
-        LOG_ERROR(filename, " not found in directory: ", CONFIG_DIR_PATH);
+        LOG_ERROR(filename, " not found in directory: ", FONTS_DIR_PATH);
+        return false;
+    }
+
+    for(const auto& f : foundFiles)
+    {
+        if(m_font.openFromFile(f))
+        {
+            LOG_INFO("SUCCESS opened font file: ", f);
+            return true;
+        }
+    }
+
+    LOG_ERROR("Failed to open font file: ", filename);
+    return false;
+}
+
+void GameConfig::findAndOpenConfigFile(std::ifstream& infile, 
+                    const std::string& assetPath, 
+                    const std::string& filename)
+{
+    std::vector<std::filesystem::path> foundFiles = searchDirectory(assetPath, filename);
+    if(foundFiles.empty())
+    {
+        LOG_ERROR(filename, " not found in directory: ", assetPath);
         return;
     }
 
@@ -184,7 +208,7 @@ void GameConfig::findAndOpenConfigFile(std::ifstream& infile, const std::string&
 bool GameConfig::readConfigFile(const std::string& filename)
 {
     std::ifstream infile;
-    findAndOpenConfigFile(infile, filename);
+    findAndOpenConfigFile(infile, CONFIG_DIR_PATH, filename);
     if(!infile.is_open())
     {
         LOG_ERROR("failed to open any of the found configuration files");
