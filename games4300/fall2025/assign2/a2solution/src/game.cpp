@@ -43,6 +43,7 @@ void Game::initWindow(const WindowConfig& wc)
 
 void Game::initFont(const FontConfig& fc)
 {
+    
     if(!m_font.openFromFile(fc.fileName))
     {
         LOG_ERROR("Failed to open file: ", fc.fileName);
