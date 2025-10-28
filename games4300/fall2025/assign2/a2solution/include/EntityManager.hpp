@@ -72,5 +72,11 @@ private:
     {
         // TODO
         // remove all entities from vec that are not alive 
+        std::cerr << "TODO, function: " << __func__ << "\n";
+        std::cerr << "printing dead entities to avoid unused parameter warning\n";
+        for(const auto& v : vec)
+        {
+            std::cerr << v << "\n";
+        }
     }
 };

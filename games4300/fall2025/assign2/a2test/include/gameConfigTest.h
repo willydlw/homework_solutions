@@ -39,12 +39,12 @@ class GameConfigTest
         v("shapeRadius",         a.shapeRadius, b.shapeRadius);
         v("collisionRadius",     a.collisionRadius, b.collisionRadius);
         v("speed",               a.speed, b.speed);
-        v("fill color red",      a.fillColor.red, b.fillColor.red);
-        v("fill color green",    a.fillColor.green, b.fillColor.green);
-        v("fill color blue",     a.fillColor.blue, b.fillColor.blue);
-        v("outline color red",   a.outlineColor.red , b.outlineColor.red);
-        v("outline color green", a.outlineColor.green, b.outlineColor.green);
-        v("outline color blue",  a.outlineColor.blue, b.outlineColor.blue);
+        v("fill color red",      a.fillColor.r, b.fillColor.r);
+        v("fill color green",    a.fillColor.g, b.fillColor.g);
+        v("fill color blue",     a.fillColor.b, b.fillColor.b);
+        v("outline color red",   a.outlineColor.r , b.outlineColor.r);
+        v("outline color green", a.outlineColor.g, b.outlineColor.g);
+        v("outline color blue",  a.outlineColor.b, b.outlineColor.b);
         v("outline thickness",   a.outlineThickness, b.outlineThickness);
         v("shape vertices",      a.shapeVertices, b.shapeVertices);
         v("lifespan",            a.lifespan, b.lifespan);
@@ -55,9 +55,9 @@ class GameConfigTest
     {
         v("file name",          a.fileName, b.fileName);
         v("height",             a.size, b.size);
-        v("color red",          a.color.red, b.color.red);
-        v("color green",        a.color.green, b.color.green);
-        v("color blue",         a.color.blue, b.color.blue);
+        v("color red",          a.color.r, b.color.r);
+        v("color green",        a.color.g, b.color.g);
+        v("color blue",         a.color.b, b.color.b);
     }
 
 
@@ -68,9 +68,9 @@ class GameConfigTest
         v("collisionRadius",    a.collisionRadius, b.collisionRadius);
         v("min speed",          a.minSpeed, b.minSpeed);
         v("max speed",          a.maxSpeed, b.maxSpeed);
-        v("outline color red",  a.outlineColor.red , b.outlineColor.red);
-        v("outline color green",a.outlineColor.green, b.outlineColor.green);
-        v("outline color blue", a.outlineColor.blue, b.outlineColor.blue);
+        v("outline color red",  a.outlineColor.r , b.outlineColor.r);
+        v("outline color green",a.outlineColor.g, b.outlineColor.g);
+        v("outline color blue", a.outlineColor.b, b.outlineColor.b);
         v("outline thickness",  a.outlineThickness, b.outlineThickness);
         v("min vertices",       a.minVertices, b.minVertices);
         v("max vertices",       a.maxVertices, b.maxVertices);
@@ -84,12 +84,12 @@ class GameConfigTest
         v("shapeRadius",         a.shapeRadius, b.shapeRadius);
         v("collisionRadius",     a.collisionRadius, b.collisionRadius);
         v("speed",               a.speed, b.speed);
-        v("fill color red",      a.fillColor.red, b.fillColor.red);
-        v("fill color green",    a.fillColor.green, b.fillColor.green);
-        v("fill color blue",     a.fillColor.blue, b.fillColor.blue);
-        v("outline color red",   a.outlineColor.red , b.outlineColor.red);
-        v("outline color green", a.outlineColor.green, b.outlineColor.green);
-        v("outline color blue",  a.outlineColor.blue, b.outlineColor.blue);
+        v("fill color red",      a.fillColor.r, b.fillColor.r);
+        v("fill color green",    a.fillColor.g, b.fillColor.g);
+        v("fill color blue",     a.fillColor.b, b.fillColor.b);
+        v("outline color red",   a.outlineColor.r , b.outlineColor.r);
+        v("outline color green", a.outlineColor.g, b.outlineColor.g);
+        v("outline color blue",  a.outlineColor.b, b.outlineColor.b);
         v("outline thickness",   a.outlineThickness, b.outlineThickness);
         v("shape vertices",      a.shapeVertices, b.shapeVertices);
     }

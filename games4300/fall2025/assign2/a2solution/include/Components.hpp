@@ -1,7 +1,8 @@
 #pragma once 
 
-#include "Vec2.hpp"
 #include <SFML/Graphics.hpp>
+
+#include "../include/vec2.hpp"
 
 
 // Base class - all components need exists attribute

@@ -6,13 +6,26 @@
 #include "../include/gameConfig.h"
 #include "../include/logError.hpp"
 
+// Default Color Constants
+
+const sf::Color PlayerConfig::DEFAULT_FILL_COLOR = {0, 255, 0};
+const sf::Color PlayerConfig::DEFAULT_OUTLINE_COLOR = {255, 0, 255};
+
+const sf::Color EnemyConfig::DEFAULT_OUTLINE_COLOR = {0, 0, 0};
+
+const sf::Color BulletConfig::DEFAULT_FILL_COLOR = {255, 255, 255};
+const sf::Color BulletConfig::DEFAULT_OUTLINE_COLOR = {255, 255, 255};
+
+
+
+
 /*  Config Struct Friend Functions  */
 
-std::ostream& operator << (std::ostream& os, const ColorConfig& obj)
+std::ostream& operator << (std::ostream& os, const sf::Color& obj)
 {
-    os << "   red   \t" << obj.red      << "\n";
-    os << "   green \t" << obj.green    << "\n";
-    os << "   blue  \t" << obj.blue     << "\n";
+    os << "   red   \t" << (int)obj.r    << "\n";
+    os << "   green \t" << (int)obj.g    << "\n";
+    os << "   blue  \t" << (int)obj.b    << "\n";
     return os;
 }
 
@@ -258,11 +271,11 @@ bool GameConfig::readBulletConfig(std::istringstream& iss)
 
 */ 
             
-bool GameConfig::readColor(std::istringstream& iss, ColorConfig& color)
+bool GameConfig::readColor(std::istringstream& iss, sf::Color& color)
 {
-    if( !(iss >> color.red)   ||
-        !(iss >> color.green) ||
-        !(iss >> color.blue))
+    if( !(iss >> color.r)   ||
+        !(iss >> color.g) ||
+        !(iss >> color.b))
     {
         std::cerr << "[ERROR] function " << __PRETTY_FUNCTION__ 
             << ", failed to read r,g, or b values\n";

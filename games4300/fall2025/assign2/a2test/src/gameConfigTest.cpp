@@ -52,12 +52,12 @@ void GameConfigTest::testRandomBulletConfig()
             << bc.shapeRadius << " "
             << bc.collisionRadius << " "
             << bc.speed << " "
-            << bc.fillColor.red << " "
-            << bc.fillColor.green << " "
-            << bc.fillColor.blue << " "
-            << bc.outlineColor.red << " "
-            << bc.outlineColor.green << " "
-            << bc.outlineColor.blue << " "
+            << bc.fillColor.r << " "
+            << bc.fillColor.g << " "
+            << bc.fillColor.b << " "
+            << bc.outlineColor.r << " "
+            << bc.outlineColor.g << " "
+            << bc.outlineColor.b << " "
             << bc.outlineThickness << " "
             << bc.shapeVertices << " "
             << bc.lifespan << "\n";
@@ -106,12 +106,12 @@ BulletConfig GameConfigTest::generateRandomBulletConfig()
     bc.collisionRadius = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
     // round to two decimal places
     bc.speed = std::round(rg.generate(MIN_RANDOM_FLOAT, MAX_RANDOM_FLOAT) * 100.0f) / 100.f;
-    bc.fillColor.red = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
-    bc.fillColor.green = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
-    bc.fillColor.blue = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
-    bc.outlineColor.red = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
-    bc.outlineColor.green = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
-    bc.outlineColor.blue = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.fillColor.r = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.fillColor.g = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.fillColor.b = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.outlineColor.r = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.outlineColor.g = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
+    bc.outlineColor.b = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
     bc.outlineThickness = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
     bc.shapeVertices = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
     bc.lifespan = rg.generate(MIN_RANDOM_INT, MAX_RANDOM_INT);
