@@ -31,8 +31,8 @@ public:
     void sGUI();
     void sUserInput();
     void sEnemySpawner();
+    #endif 
     void sRender();
-    #endif
 
 private:
 

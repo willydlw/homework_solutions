@@ -28,6 +28,7 @@ class EntityManager
 
         m_entitiesToAdd.clear();
 
+        #if 0
         // remove dead entities from the vector of all entities 
         removeDeadEntities(m_entities);
 
@@ -37,6 +38,7 @@ class EntityManager
         {
             removeDeadEntities(entityVec);
         }
+        #endif
     }
 
     
@@ -68,6 +70,7 @@ private:
     EntityMap m_entityMap;
     std::size_t m_totalEntities = 0;
 
+    #if 0
     void removeDeadEntities(EntityVec& vec)
     {
         // TODO
@@ -79,4 +82,5 @@ private:
             std::cerr << v << "\n";
         }
     }
+    #endif
 };

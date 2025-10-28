@@ -44,8 +44,11 @@ void Game::init(const std::string& configFile)
     m_bulletConfig = gameConfig.m_bulletConfig;
 
     LOG_INFO("Configuration complete\n");
-    std::cerr << gameConfig;
+    //std::cerr << gameConfig;
 
+    std::cerr << "TODO: init ImGui\n";
+
+    #if 0
     if(!ImGui::SFML::Init(m_window))
     {
         std::cerr << "ERROR, function: " << __PRETTY_FUNCTION__ 
@@ -57,6 +60,7 @@ void Game::init(const std::string& configFile)
     // scale the imgui ui and text size by 2 
     ImGui::GetStyle().ScaleAllSizes(2.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
+    #endif 
 
     spawnPlayer();
 
@@ -108,6 +112,7 @@ std::shared_ptr<Entity> Game::player()
 
 void Game::run()
 {
+    #if 0
     while(m_window.isOpen())
     {
         while (const std::optional event = m_window.pollEvent())
@@ -122,6 +127,33 @@ void Game::run()
         m_window.draw(m_text);
         m_window.display();
     }
+    #endif
+
+    #if 1
+    std::cerr << __PRETTY_FUNCTION__ << "TODO: "
+        << " add PAUSE functionality\n";
+    // Some systems should function while paused (rendering and gui)
+    // some systems should not function (movement, input)
+    // while rendering keep showing enemy rotation when rendering 
+
+    while(true)
+    {
+        // update the entity manager
+        m_entities.update();
+
+        // required update call to imgui 
+        //ImGui::SFML::Update(m_window, m_deltaClock.restart());
+
+        //sUserInput();
+        //sEnemySpawner();
+        //sMovement();
+        //sCollision();
+        //sGUI();
+        sRender();
+
+        m_currentFrame++;
+    }
+    #endif 
 }
 
 // respawn the player in the middle of the screen
@@ -264,6 +296,8 @@ void Game::sGUI()
     ImGui::End();
 }
 
+#endif
+
 void Game::sRender()
 {
     if(!m_window.isOpen()) { return; }
@@ -272,20 +306,29 @@ void Game::sRender()
     // sample drawing of the player Entity is given 
     m_window.clear();
 
+    static int printCount = 0;
+    if(printCount == 0)
+    {
+        auto playerPos = player()->get<CTransform>().pos;
+        std::cerr << "Player position x: " << playerPos.x << ", y: " << playerPos.y << "\n";
+        printCount++;
+    }
+
     // set the position o fthe shape based on the entity's transform->pos 
     player()->get<CShape>().circle.setPosition(player()->get<CTransform>().pos);
 
+    #if 0
     // set the rotation of the shape based on the entity's transform->angle 
     player()->get<CTransform>().angle += 1.0;
     player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
+    #endif
 
     // draw the entity's sf::CircleShape
     m_window.draw(player()->get<CShape>().circle);
 
     // draw the ui last 
-    ImGui::SFML::Render(m_window);
+    //ImGui::SFML::Render(m_window);
 
     m_window.display();
 
 }
-#endif 
