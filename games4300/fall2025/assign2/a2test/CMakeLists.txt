@@ -31,6 +31,7 @@ target_sources(gameConfigTest PUBLIC
     src/testGameConfig.cpp
     src/gameConfigTest.cpp 
     ../a2solution/src/gameConfig.cpp
+    ../a2solution/src/fileUtility.cpp
 )
 
 target_link_libraries(gameConfigTest

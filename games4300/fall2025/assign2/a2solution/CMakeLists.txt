@@ -19,6 +19,7 @@ target_sources(a2solution PUBLIC
     src/main.cpp
     src/gameConfig.cpp
     src/game.cpp
+    src/fileUtility.cpp
 )
 
 

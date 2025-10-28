@@ -12,6 +12,8 @@ class Game
 {
     public:
 
+    static constexpr const char* FONTS_DIR_PATH = "assets/fonts";
+
     Game();
 
     void init(const std::string& configFile);
@@ -30,10 +32,8 @@ class Game
 
        
 
-    void initConfig(const std::string& configFile);
-    
     void initWindow(const WindowConfig& wc);
-    void initFont(const FontConfig& fc);
+    bool initFont(const FontConfig& fc);
     
     
 };

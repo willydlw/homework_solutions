@@ -2,6 +2,7 @@
 #include <iostream>
 #include <sstream>
 
+#include "../include/fileUtility.h"
 #include "../include/gameConfig.h"
 #include "../include/logError.hpp"
 
@@ -75,112 +76,6 @@ std::ostream& operator << (std::ostream& os, const BulletConfig& obj)
     return os;
 }
 
-
-
- std::filesystem::path GameConfig::getWorkingDirectory()
- {
-    try
-    {
-        std::filesystem::path currentPath = std::filesystem::current_path();
-        return currentPath;
-    } 
-    catch (const std::filesystem::filesystem_error& e)
-    {
-        LOG_ERROR("\n\terror description: ", e.what());
-        return {};
-    }
- }
-
-
-std::vector<std::filesystem::path> GameConfig::searchDirectory(
-        const std::string& targetDirectory, const std::string& targetFile)
-{
-    std::vector<std::filesystem::path> foundFiles = findFileRecursive(targetDirectory, targetFile);
-
-    if(foundFiles.empty())
-    {
-        std::filesystem::path workingDirectory = getWorkingDirectory();
-
-        LOG_WARNING("\n\ttargetFile: ", targetFile, " not found in directory: ", targetDirectory);
-        LOG_INFO("\n\tRecovery attempt, searching directory path: " , workingDirectory);
-
-        foundFiles = findFileRecursive(workingDirectory, targetFile);
-        if(foundFiles.empty())
-        {
-            LOG_WARNING("\n\ttargetFile: ", targetFile, " not found in directory: ", targetDirectory);
-        }
-        else 
-        {
-            std::ostringstream oss;
-            for(const auto& file : foundFiles)
-            {
-                oss << "\t" << file << "\n";
-            }
-
-            LOG_INFO("\n\tRecovery results, found ", targetFile, " in directory: ", workingDirectory,"\n", oss.str());
-        }
-    }
-
-    return foundFiles;
-}
-
-
-std::vector<std::filesystem::path> GameConfig::findFileRecursive( 
-        const std::filesystem::path& targetPath, 
-        const std::string& targetFile)
-{
-    std::vector<std::filesystem::path> foundFiles; 
-
-    if(!std::filesystem::exists(targetPath) || !std::filesystem::is_directory(targetPath))
-    {
-        LOG_ERROR("targetPath: ", targetPath, "does not exist or is not a directory");
-        return foundFiles;
-    }
-
-    // iterate through the directory recursively 
-    for(const auto& entry : std::filesystem::recursive_directory_iterator(targetPath))
-    {
-        if(entry.is_regular_file() && entry.path().filename() == targetFile)
-        {
-            foundFiles.push_back(entry.path());
-        }
-    }
-
-    return foundFiles;
-}
-
-
-void GameConfig::printPaths(const std::vector<std::filesystem::path>& paths)
-{
-    for(const auto& path : paths)
-    {
-        std::cout << path << "\n";
-    }
-
-    std::cout << std::endl;
-}
-
-bool GameConfig::loadFontFile(const std::string& filename)
-{
-    std::vector<std::filesystem::path> foundFiles = searchDirectory(FONTS_DIR_PATH, filename);
-    if(foundFiles.empty())
-    {
-        LOG_ERROR(filename, " not found in directory: ", FONTS_DIR_PATH);
-        return false;
-    }
-
-    for(const auto& f : foundFiles)
-    {
-        if(m_font.openFromFile(f))
-        {
-            LOG_INFO("SUCCESS opened font file: ", f);
-            return true;
-        }
-    }
-
-    LOG_ERROR("Failed to open font file: ", filename);
-    return false;
-}
 
 void GameConfig::findAndOpenConfigFile(std::ifstream& infile, 
                     const std::string& assetPath, 
