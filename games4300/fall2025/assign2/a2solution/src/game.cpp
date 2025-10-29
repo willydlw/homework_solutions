@@ -5,6 +5,7 @@
 #include "../include/fileUtility.h"
 #include "game.h"
 #include "logError.hpp"
+#include "vec2.hpp"
 
 
 #include <SFML/Graphics.hpp>
@@ -31,6 +32,9 @@ void Game::init(const std::string& configFile)
         LOG_FATAL("Configuration Failed\n");
         std::exit(EXIT_FAILURE);
     }
+
+    LOG_INFO("Completed reading configuration file\n");
+    std::cerr << gameConfig << "\n";
 
     initWindow(gameConfig.m_windowConfig);
     if(!initFont(gameConfig.m_fontConfig))
@@ -164,18 +168,27 @@ void Game::spawnPlayer()
     if(m_entities.getEntities("player").empty())
     {
         std::cerr << "player does not exist, adding new player\n";
-        auto e = m_entities.addEntity("player");
+
+        // Entity Manager allocates memory for a new entity
+        // with tag name: "player" and places it in the vector 
+        // of entities to be added
+        std::shared_ptr<Entity> e = m_entities.addEntity("player");
+
+        // Now we need to populate the player's component properties
 
         // Transfom properties
-
-        // Spawn player in window's center 
-        sf::Vector2i pos = m_window.getPosition();
+        sf::Vector2u winSize = m_window.getSize();
+        Vec2<float> pos = {winSize.x/2.0f, winSize.y/2.0f};        // window center
 
         // Velocity components - player config speed is magnitude
-        float velx = m_playerConfig.speed * cos(SPAWN_ANGLE);
-        float vely = m_playerConfig.speed * sin(SPAWN_ANGLE);
+        Vec2<float> vel = {1.0f, 1.0f};     // same speed in x,y directions 
+        vel.normalize();                    
+        vel *= m_playerConfig.speed;        // scale by the magitudue 
 
-        e->add<CTransform>(Vec2f(pos.x, pos.y), Vec2f(velx, vely), SPAWN_ANGLE);
+        e->add<CTransform>(pos, vel, SPAWN_ANGLE);
+
+        std::cerr << "m_player_config settings\n";
+        std::cerr << m_playerConfig << "\n";
 
         // Shape properties
         e->add<CShape>(m_playerConfig.shapeRadius, m_playerConfig.shapeVertices,
@@ -184,9 +197,7 @@ void Game::spawnPlayer()
         // Add an input component to the player so we can use inputs 
         e->add<CInput>();
     }
-
-   
-    
+ 
     // We create every entity by calling EntityMangers.addEntity(tag)
     // This returns a std::shared_ptr<Entity>. We use auto to save typing 
 

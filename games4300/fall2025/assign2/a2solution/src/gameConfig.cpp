@@ -273,14 +273,24 @@ bool GameConfig::readBulletConfig(std::istringstream& iss)
             
 bool GameConfig::readColor(std::istringstream& iss, sf::Color& color)
 {
-    if( !(iss >> color.r)   ||
-        !(iss >> color.g) ||
-        !(iss >> color.b))
+    // sf::Color variables are type uint8_t. Input string stream will 
+    // only read one character of uint8_t. For example, when the input 
+    // value is 150, only the 1 will be read.
+    // To avoid this, we use intermediate unsigned int variables 
+    // to extract the whole value and then case to uint8_t
+    unsigned int red, green, blue;      // 
+    if( !(iss >> red)   ||
+        !(iss >> green) ||
+        !(iss >> blue))
     {
         std::cerr << "[ERROR] function " << __PRETTY_FUNCTION__ 
             << ", failed to read r,g, or b values\n";
         return false;
     }   
+
+    color.r = static_cast<uint8_t>(red);
+    color.g = static_cast<uint8_t>(green);
+    color.b = static_cast<uint8_t>(blue);
     return true;
 }
 
