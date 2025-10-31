@@ -27,7 +27,6 @@ public:
     T x = 0.0f;
     T y = 0.0f;
 
-    /*  Constructors */
     Vec2() = default;
 
     Vec2(T xin, T yin)
@@ -40,11 +39,19 @@ public:
     { }
 
     #if 0
+    // Note: this causes an issue when creating Vec2<int> 
+    // as it duplicates integer copy constructors 
+     
     // constructor to convert from sf::Vector2i 
     Vec2(const sf::Vector2i& vec)
         : x(T(vec.x)), y(T(vec.y))
     { }
-    #endif
+    #endif 
+
+    Vec2(const sf::Vector2u& vec)
+        : x(T(vec.x)),
+          y(T(vec.y))
+    { }
 
     // allow automatic conversion to sf::Vector2 
     // this lets us pass Vec2 into sfml functions 
@@ -52,7 +59,6 @@ public:
     {
         return sf::Vector2<T>(x,y);
     }
-
 
     /****  Overloaded Operators ****/ 
 

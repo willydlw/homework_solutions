@@ -50,9 +50,7 @@ void Game::init(const std::string& configFile)
     LOG_INFO("Configuration complete\n");
     //std::cerr << gameConfig;
 
-    std::cerr << "TODO: init ImGui\n";
 
-    #if 0
     if(!ImGui::SFML::Init(m_window))
     {
         std::cerr << "ERROR, function: " << __PRETTY_FUNCTION__ 
@@ -64,7 +62,6 @@ void Game::init(const std::string& configFile)
     // scale the imgui ui and text size by 2 
     ImGui::GetStyle().ScaleAllSizes(2.0f);
     ImGui::GetIO().FontGlobalScale = 2.0f;
-    #endif 
 
     spawnPlayer();
 
@@ -116,24 +113,6 @@ std::shared_ptr<Entity> Game::player()
 
 void Game::run()
 {
-    #if 0
-    while(m_window.isOpen())
-    {
-        while (const std::optional event = m_window.pollEvent())
-        {
-            if(event->is<sf::Event::Closed>())
-            {
-                m_window.close();
-            }
-        }
-
-        m_window.clear(sf::Color::Black);
-        m_window.draw(m_text);
-        m_window.display();
-    }
-    #endif
-
-    #if 1
     std::cerr << __PRETTY_FUNCTION__ << "TODO: "
         << " add PAUSE functionality\n";
     // Some systems should function while paused (rendering and gui)
@@ -146,24 +125,32 @@ void Game::run()
         m_entities.update();
 
         // required update call to imgui 
-        //ImGui::SFML::Update(m_window, m_deltaClock.restart());
+        ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
-        //sUserInput();
+        sUserInput();
         //sEnemySpawner();
-        //sMovement();
-        //sCollision();
-        //sGUI();
+        sMovement();
+        sCollision();
+        sGUI();
         sRender();
 
         m_currentFrame++;
     }
-    #endif 
 }
 
 // respawn the player in the middle of the screen
 void Game::spawnPlayer()
 {
+    // Transform properties
     static const float SPAWN_ANGLE = 0.0f;
+
+    // position window's center
+    sf::Vector2u winSize = m_window.getSize();
+    Vec2<float> pos = {winSize.x/2.0f, winSize.y/2.0f}; 
+
+    // translational velocity
+    Vec2<float> vel = {5.0f, 0.0f};    
+       
 
     if(m_entities.getEntities("player").empty())
     {
@@ -175,20 +162,7 @@ void Game::spawnPlayer()
         std::shared_ptr<Entity> e = m_entities.addEntity("player");
 
         // Now we need to populate the player's component properties
-
-        // Transfom properties
-        sf::Vector2u winSize = m_window.getSize();
-        Vec2<float> pos = {winSize.x/2.0f, winSize.y/2.0f};        // window center
-
-        // Velocity components - player config speed is magnitude
-        Vec2<float> vel = {1.0f, 1.0f};     // same speed in x,y directions 
-        vel.normalize();                    
-        vel *= m_playerConfig.speed;        // scale by the magitudue 
-
         e->add<CTransform>(pos, vel, SPAWN_ANGLE);
-
-        std::cerr << "m_player_config settings\n";
-        std::cerr << m_playerConfig << "\n";
 
         // Shape properties
         e->add<CShape>(m_playerConfig.shapeRadius, m_playerConfig.shapeVertices,
@@ -197,14 +171,16 @@ void Game::spawnPlayer()
         // Add an input component to the player so we can use inputs 
         e->add<CInput>();
     }
- 
-    // We create every entity by calling EntityMangers.addEntity(tag)
-    // This returns a std::shared_ptr<Entity>. We use auto to save typing 
+    else
+    {
+        player()->get<CShape>().circle.setPosition(pos);
+        player()->get<CTransform>().velocity = vel;
+        player()->get<CTransform>().angle = SPAWN_ANGLE;
+    }
 
     std::cerr << __PRETTY_FUNCTION__ << "TODO: "
         << "When a player already exists, we do not need to add a new player, just respawn it in widow center\n";
 
-    
 }
 
 #if 0
@@ -251,6 +227,8 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
     // TODO: implement your own special weapon 
 }
 
+#endif
+
 void Game::sMovement()
 {
     // TODO: implement all entity movement in this function 
@@ -263,6 +241,7 @@ void Game::sMovement()
     transform.pos.y += transform.velocity.y;
 }
 
+#if 0
 void Game::sLifespan()
 {
     // TODO: implement all lifespan functionality 
@@ -275,11 +254,14 @@ void Game::sLifespan()
     //          destroy the entity 
 }
 
+#endif 
+
 void Game::sCollision()
 {
     // TODO: implement all proper collisions between entities 
     //      be sure to use the collision radius, NOT the shape radius 
 
+    #if 0
     // Note data types of b, e are shared_ptr so a copy of the pointer 
     // will make permanent changes to memory. We don't need auto&
     for(auto b : m_entities.getEntities("bullet"))
@@ -294,20 +276,164 @@ void Game::sCollision()
         }
     }
 
+    #endif 
+
     // also need to check player collision with all enemies
     // player collision with walls
+    Vec2f playerPos = player()->get<CTransform>().pos;
+    float radius = player()->get<CShape>().circle.getRadius();
+    Vec2f wallBoundary = m_window.getSize();
+    if(playerPos.x - radius <= 0.0f)
+    {
+        player()->get<CTransform>().velocity.x *= -1;
+        player()->get<CTransform>().pos.x = radius;
+    }
+    else if(playerPos.x + radius >= wallBoundary.x)
+    {
+        player()->get<CTransform>().velocity.x *= -1;
+        player()->get<CTransform>().pos.x = wallBoundary.x - radius;
+    }
+
+    if(playerPos.y - radius <= 0.0f) 
+    {
+        player()->get<CTransform>().velocity.y *= -1;
+        player()->get<CTransform>().pos.y = radius;
+    }
+    else if(playerPos.y + radius >= wallBoundary.y)
+    {
+        player()->get<CTransform>().velocity.y *= -1;
+        player()->get<CTransform>().pos.y = wallBoundary.y - radius;
+    }
 }
+
 
 void Game::sGUI()
-{
-    ImGui::Begin("Geometry Wars");
+{ 
+    #if 0
+    // state variables to store the currently selected item for each drop down
+    static size_t selected_item1 = 0;
+    static size_t selected_item2 = 1;
+    static size_t selected_item3 = 0;
 
-    ImGui::Text("Stuff goes here");
+    // items for the drop down lists 
+    const std::vector<std::string> items1 = {"Option A", "Option B", "Option C"};
+    const std::vector<std::string> items2 = {"Apple", "Banana", "Cherry", "Orange"};
+    const std::vector<std::string> items3 = {"Red", "Green", "Blue"};
+    #endif
 
-    ImGui::End();
+    ImGui::Begin("Geometry Wars");          // create main window
+
+    if(ImGui::BeginTabBar("MyTabBar"))      // create tab bar within the window
+    {
+        if(ImGui::BeginTabItem("Systems"))    // create first tab 
+        {
+            ImGui::Text("Content of Tab 1");
+            ImGui::Button("button in tab 1");
+            ImGui::EndTabItem();
+        }
+
+        if(ImGui::BeginTabItem("Entity Manager"))
+        {
+            if(ImGui::CollapsingHeader("Entities By Tag"))
+            {
+                if(ImGui::CollapsingHeader("bullet"))
+                {
+                    // button followed by id number, string "bullet" and position (x, y)
+                    // button should show lifespan state bright white for alive 
+                    // graying over time to black when dead
+                    // Letter D in button to indicate it is deletable by mouse right-click
+                }
+
+                if(ImGui::CollapsingHeader("enemy"))
+                {
+                    // buttos same color as enemy fill color
+                }
+
+                if(ImGui::CollapsingHeader("player"))
+                {
+
+                }
+
+                if(ImGui::CollapsingHeader("small"))
+                {
+
+                }
+                // content in this block will be rendered when the header is uncollapsed 
+
+                #if 0
+                // Dropdown 1 
+                const char* preview1 = items1[selected_item1].c_str();
+                // "##combo1" hides the label, but gives it a unique ID
+                if(ImGui::BeginCombo("##combo1", preview1))
+                {
+                    for(size_t n = 0; n < items1.size(); n++)
+                    {
+                        const bool is_selected = (selected_item1 == n);
+                        if(ImGui::Selectable(items1[n].c_str()), is_selected)
+                        {
+                            selected_item1 = n;
+                        }
+                        if(is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }    
+
+                // Dropdown 2
+                const char* preview2 = items2[selected_item2].c_str();
+                // "##combo1" hides the label, but gives it a unique ID
+                if(ImGui::BeginCombo("Choose Fruit", preview2))
+                {
+                    for(size_t n = 0; n < items2.size(); n++)
+                    {
+                        const bool is_selected = (selected_item2 == n);
+                        if(ImGui::Selectable(items2[n].c_str()), is_selected)
+                        {
+                            selected_item2 = n;
+                        }
+                        if(is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                } 
+
+                // Dropdown 3
+                const char* preview3 = items3[selected_item3].c_str();
+                // "##combo1" hides the label, but gives it a unique ID
+                if(ImGui::BeginCombo("Choose Color", preview3))
+                {
+                    for(size_t n = 0; n < items3.size(); n++)
+                    {
+                        const bool is_selected = (selected_item3 == n);
+                        if(ImGui::Selectable(items3[n].c_str()), is_selected)
+                        {
+                            selected_item3 = n;
+                        }
+                        if(is_selected)
+                        {
+                            ImGui::SetItemDefaultFocus();
+                        }
+                    }
+                    ImGui::EndCombo();
+                }
+
+                #endif          
+            }   // End top-level collapsing header
+
+            ImGui::EndTabItem();
+        }
+
+        ImGui::EndTabBar();
+    }
+
+    ImGui::End();                       // end main window
 }
 
-#endif
+
 
 void Game::sRender()
 {
@@ -325,10 +451,10 @@ void Game::sRender()
         printCount++;
     }
 
-    // set the position o fthe shape based on the entity's transform->pos 
+    // set the position of the shape based on the entity's transform->pos 
     player()->get<CShape>().circle.setPosition(player()->get<CTransform>().pos);
 
-    #if 0
+    #if 1
     // set the rotation of the shape based on the entity's transform->angle 
     player()->get<CTransform>().angle += 1.0;
     player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
@@ -338,8 +464,78 @@ void Game::sRender()
     m_window.draw(player()->get<CShape>().circle);
 
     // draw the ui last 
-    //ImGui::SFML::Render(m_window);
+    ImGui::SFML::Render(m_window);
 
     m_window.display();
 
+}
+
+
+void Game::sUserInput()
+{
+    // TODO: handle user input here 
+    //  note that yous should only be setting the player's input component variables here 
+    //  you should not implement the player's movement logic here 
+    //  the movement system will read the variables you set in this function 
+
+    while(auto event = m_window.pollEvent())
+    {
+        // pass the event to imgui to be parsed 
+        ImGui::SFML::ProcessEvent(m_window, *event);
+
+        // this event triggers when the window is closed 
+        if(event->is<sf::Event::Closed>())
+        {
+            std::exit(0);
+        }
+
+        // this event is triggered when a key is pressed 
+        if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
+        {
+            std::cout << "Key pressed = " << int(keyPressed->scancode) << "\n";
+
+            if(keyPressed->scancode == sf::Keyboard::Scancode::W)
+            {
+                 // TODO: set player's input component up to true
+                std::cout << "W key pressed\n";
+               player()->get<CInput>().up = true;
+               if(player()->get<CInput>().up == true)
+               {
+                    std::cerr << "player up set to true after w key press\n";
+               }
+            }
+           
+        }
+
+        // this event is triggered when a key is released 
+        if(const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
+        {
+            std::cout << "Key released = " << int(keyReleased->scancode) << "\n";
+            if(keyReleased->scancode == sf::Keyboard::Scancode::W)
+            {
+                // TODO: set player's input component to false
+                std::cout << "W key released\n";
+                player()->get<CInput>().up = false;
+                if(player()->get<CInput>().up == false){
+                    std::cerr << "player up set to false after w key release\n";
+                }
+            }
+        }
+
+        if(const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
+        {
+            Vec2f mpos = {static_cast<float>(mousePressed->position.x), 
+                            static_cast<float>(mousePressed->position.y)};
+            if(mousePressed->button == sf::Mouse::Button::Left)
+            {
+                std::cout << "Left mouse (" << mpos.x << ", " << mpos.y << ")\n";
+                // TODO: call spawn bullet here
+            }
+            else if(mousePressed->button == sf::Mouse::Button::Right)
+            {
+                // TODO: call special weapon here 
+                std::cout << "Right mouse (" << mpos.x << ", " << mpos.y << ")\n";
+            }
+        }
+    }
 }

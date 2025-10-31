@@ -24,14 +24,13 @@ public:
     void run();
     
     // systems 
-    #if 0
     void sMovement();
-    void sLifespan();
+    //void sLifespan();
     void sCollision();
+    //void sEnemySpawner();
+     
     void sGUI();
     void sUserInput();
-    void sEnemySpawner();
-    #endif 
     void sRender();
 
 private:
