@@ -149,9 +149,10 @@ void Game::spawnPlayer()
     Vec2<float> pos = {winSize.x/2.0f, winSize.y/2.0f}; 
 
     // translational velocity
-    Vec2<float> vel = {5.0f, 0.0f};    
+    Vec2<float> vel = {1.0f, 1.0f}; 
+    vel = vel.normalize();
+    vel *= m_playerConfig.speed;   
        
-
     if(m_entities.getEntities("player").empty())
     {
         std::cerr << "player does not exist, adding new player\n";
@@ -235,10 +236,34 @@ void Game::sMovement()
     //  you should read the m_player->cInput component to determine if the
     //  player is moving
 
-    // Sample movement speed update for the player 
     auto& transform = player()->get<CTransform>();
-    transform.pos.x += transform.velocity.x;
-    transform.pos.y += transform.velocity.y;
+    const auto& input = player()->get<CInput>();
+    Vec2f currentVelocity = {0.0f, 0.0f};
+
+    if(input.up == true)
+    {
+        currentVelocity.y = -transform.velocity.y;
+        std::cerr << "up, current velocity y: " << currentVelocity.y << "\n";
+    }
+    else if(input.down == true)
+    {
+        currentVelocity.y = transform.velocity.y;
+        std::cerr << "down, current velocity y: " << currentVelocity.y << "\n";
+    }
+
+    if(input.left == true)
+    {
+        currentVelocity.x = -transform.velocity.x;
+        std::cerr << "left, current velocity x: " << currentVelocity.x << "\n";
+    }
+    else if(input.right == true)
+    {
+        currentVelocity.x = transform.velocity.x;
+        std::cerr << "right, current velocity x: " << currentVelocity.x << "\n";
+    }
+
+    transform.pos.x += currentVelocity.x;
+    transform.pos.y += currentVelocity.y;
 }
 
 #if 0
@@ -279,29 +304,36 @@ void Game::sCollision()
     #endif 
 
     // also need to check player collision with all enemies
-    // player collision with walls
+
+    /* Player collision with walls
+    *  
+    *  Because player movement is controlled by up,down,left,right 
+    *  user input, when the player reaches a wall boundary, we 
+    *  position the player so that it has not crossed the boundary.
+    *  
+    *  The player's translational velocity is not changed to bounce 
+    *  off a wall and travel in the opposite direction. If the user
+    *  wants the player to travel in the opposite direction, the 
+    *  appropriate key input must be received.
+    */
     Vec2f playerPos = player()->get<CTransform>().pos;
     float radius = player()->get<CShape>().circle.getRadius();
     Vec2f wallBoundary = m_window.getSize();
     if(playerPos.x - radius <= 0.0f)
     {
-        player()->get<CTransform>().velocity.x *= -1;
         player()->get<CTransform>().pos.x = radius;
     }
     else if(playerPos.x + radius >= wallBoundary.x)
     {
-        player()->get<CTransform>().velocity.x *= -1;
         player()->get<CTransform>().pos.x = wallBoundary.x - radius;
     }
 
     if(playerPos.y - radius <= 0.0f) 
     {
-        player()->get<CTransform>().velocity.y *= -1;
         player()->get<CTransform>().pos.y = radius;
     }
     else if(playerPos.y + radius >= wallBoundary.y)
     {
-        player()->get<CTransform>().velocity.y *= -1;
         player()->get<CTransform>().pos.y = wallBoundary.y - radius;
     }
 }
@@ -496,13 +528,43 @@ void Game::sUserInput()
 
             if(keyPressed->scancode == sf::Keyboard::Scancode::W)
             {
-                 // TODO: set player's input component up to true
+                // TODO: set player's input component up to true
                 std::cout << "W key pressed\n";
-               player()->get<CInput>().up = true;
-               if(player()->get<CInput>().up == true)
-               {
-                    std::cerr << "player up set to true after w key press\n";
-               }
+                player()->get<CInput>().up = true;
+                if(player()->get<CInput>().up == true)
+                {
+                    std::cerr << "player UP set to true after w key press\n";
+                }
+            }
+            else if(keyPressed->scancode == sf::Keyboard::Scancode::S)
+            {
+                // TODO: set player's input component up to true
+                std::cout << "S key pressed\n";
+                player()->get<CInput>().down = true;
+                if(player()->get<CInput>().down == true)
+                {
+                    std::cerr << "player DOWN set to true after S key press\n";
+                }
+            }
+            else if(keyPressed->scancode == sf::Keyboard::Scancode::A)
+            {
+                // TODO: set player's input component up to true
+                std::cout << "A key pressed\n";
+                player()->get<CInput>().left = true;
+                if(player()->get<CInput>().left == true)
+                {
+                    std::cerr << "player LEFT set to true after A key press\n";
+                }
+            }
+            else if(keyPressed->scancode == sf::Keyboard::Scancode::D)
+            {
+                // TODO: set player's input component up to true
+                std::cout << "D key pressed\n";
+                player()->get<CInput>().right = true;
+                if(player()->get<CInput>().right == true)
+                {
+                    std::cerr << "player RIGHT set to true after D key press\n";
+                }
             }
            
         }
@@ -518,6 +580,33 @@ void Game::sUserInput()
                 player()->get<CInput>().up = false;
                 if(player()->get<CInput>().up == false){
                     std::cerr << "player up set to false after w key release\n";
+                }
+            }
+            else if(keyReleased->scancode == sf::Keyboard::Scancode::S)
+            {
+                // TODO: set player's input component to false
+                std::cout << "S key released\n";
+                player()->get<CInput>().down = false;
+                if(player()->get<CInput>().down == false){
+                    std::cerr << "player DOWN set to false after S key release\n";
+                }
+            }
+            else if(keyReleased->scancode == sf::Keyboard::Scancode::A)
+            {
+                // TODO: set player's input component to false
+                std::cout << "A key released\n";
+                player()->get<CInput>().left = false;
+                if(player()->get<CInput>().left == false){
+                    std::cerr << "player LEFT set to false after A key release\n";
+                }
+            }
+            else if(keyReleased->scancode == sf::Keyboard::Scancode::D)
+            {
+                // TODO: set player's input component to false
+                std::cout << "D key released\n";
+                player()->get<CInput>().right = false;
+                if(player()->get<CInput>().right == false){
+                    std::cerr << "player RIGHT set to false after S key release\n";
                 }
             }
         }
