@@ -25,7 +25,7 @@ public:
     
     // systems 
     void sMovement();
-    //void sLifespan();
+    void sLifespan();
     void sCollision();
     //void sEnemySpawner();
      
@@ -65,7 +65,14 @@ private:
     #if 0
     void spawnEnemy();
     void spawnSmallEnemies(std::shared_ptr<Entity> e);
+    #endif 
+
     void spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target);
+
+    #if 0
     void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
     #endif
+
+    void sPlayerMovement();
+    void sBulletMovement();
 };

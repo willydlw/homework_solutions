@@ -212,16 +212,41 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
     //e->get<Shape>.circle.getPointCount();
 }
 
+#endif 
+
 // spawns a bullet from a given entity to a target location
 void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target)
 {
-     std::cerr << __PRETTY_FUNCTION__ << "TODO\n";
-     // TODO: implement the spawning fo a bullet which travels toward target 
-     //     - bullet speed is given as a scalar speed 
-     //     - you must set the velocity of x, y componnents 
+    std::cerr << __PRETTY_FUNCTION__ << "TODO\n";
+    // TODO: implement the spawning fo a bullet which travels toward target 
+    //     - bullet speed is given as a scalar speed 
+    //     - you must set the velocity of x, y componnents 
+
+    std::shared_ptr<Entity> bullet = m_entities.addEntity("bullet");
+
+    // bullet should be spawned at the origin of the parameter entity 
+    Vec2f start = entity->get<CTransform>().pos;
+
+    // Difference vector is target - startPos
+    Vec2f diff = target - start;
+
+    // speed is the desired magnitude of the vector from bullet start position 
+    // to the target position. Two ways to calculate this 
+    Vec2f bulletVel = diff.normalize();
+    bulletVel *= m_bulletConfig.speed;
+
+    // add bullet components
+    bullet->add<CTransform>(start, bulletVel, 0.0f);
+    bullet->add<CShape>(   m_bulletConfig.shapeRadius, 
+                            m_bulletConfig.shapeVertices,
+                            m_bulletConfig.fillColor,
+                            m_bulletConfig.outlineColor,
+                            m_bulletConfig.outlineThickness);
+    bullet->add<CCollision>(m_bulletConfig.collisionRadius);
+    bullet->add<CLifeSpan>(m_bulletConfig.lifespan);
 }
 
-
+#if 0
 void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 {
     std::cerr << __PRETTY_FUNCTION__ << "TODO\n";
@@ -236,6 +261,12 @@ void Game::sMovement()
     //  you should read the m_player->cInput component to determine if the
     //  player is moving
 
+    sPlayerMovement();
+    sBulletMovement();
+}
+
+void Game::sPlayerMovement()
+{
     auto& transform = player()->get<CTransform>();
     const auto& input = player()->get<CInput>();
     Vec2f currentVelocity = {0.0f, 0.0f};
@@ -266,7 +297,24 @@ void Game::sMovement()
     transform.pos.y += currentVelocity.y;
 }
 
-#if 0
+void Game::sBulletMovement()
+{
+    for(auto& b : m_entities.getEntities("bullet"))
+    {
+        std::cerr << "bullet id: " << b->id() << ", alive: " << b->isAlive() << "\n";
+       
+        // update position 
+        b->get<CTransform>().pos.x += b->get<CTransform>().velocity.x;
+        b->get<CTransform>().pos.y += b->get<CTransform>().velocity.y;
+
+        // update fill color alpha value 
+        b->get<CShape>().circle.setFillColor(sf::Color(m_bulletConfig.fillColor.r, 
+                m_bulletConfig.fillColor.g, m_bulletConfig.fillColor.b, 
+                b->get<CLifeSpan>().remaining * 255.0 / b->get<CLifeSpan>().lifespan));
+    }
+}
+
+
 void Game::sLifespan()
 {
     // TODO: implement all lifespan functionality 
@@ -277,9 +325,18 @@ void Game::sLifespan()
     //          scale its alpha channel properly 
     //      if it has lifespan and its time is up 
     //          destroy the entity 
+
+    for(auto& b : m_entities.getEntities("bullet"))
+    {
+        b->get<CLifeSpan>().remaining -= 1;
+
+        if(b->get<CLifeSpan>().remaining <= 0)
+        {
+            b->destroy();
+        }
+    }
 }
 
-#endif 
 
 void Game::sCollision()
 {
@@ -495,6 +552,12 @@ void Game::sRender()
     // draw the entity's sf::CircleShape
     m_window.draw(player()->get<CShape>().circle);
 
+    // draw bullets 
+    for(const auto& b : m_entities.getEntities("bullet"))
+    {
+        m_window.draw(b->get<CShape>().circle);
+    }
+
     // draw the ui last 
     ImGui::SFML::Render(m_window);
 
@@ -619,6 +682,8 @@ void Game::sUserInput()
             {
                 std::cout << "Left mouse (" << mpos.x << ", " << mpos.y << ")\n";
                 // TODO: call spawn bullet here
+                spawnBullet(player(), mpos);
+
             }
             else if(mousePressed->button == sf::Mouse::Button::Right)
             {
