@@ -128,7 +128,13 @@ void Game::run()
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
         sUserInput();
-        //sEnemySpawner();
+
+        // Enemies will spawn in a random location on the screen every X frames,
+        // where X is defined in the configuration file.
+        if(m_currentFrame - m_lastEnemySpawnTime >= m_enemyConfig.spawnInterval)
+        {
+            spawnEnemy();
+        }
         sLifespan();
         sMovement();
         sCollision();
@@ -143,9 +149,7 @@ void Game::run()
 void Game::spawnPlayer()
 {
     // Transform properties
-    static const float SPAWN_ANGLE = 0.0f;
-
-    // position window's center
+    // position in window's center
     sf::Vector2u winSize = m_window.getSize();
     Vec2<float> pos = {winSize.x/2.0f, winSize.y/2.0f}; 
 
@@ -166,6 +170,9 @@ void Game::spawnPlayer()
         // Now we need to populate the player's component properties
         e->add<CTransform>(pos, vel, SPAWN_ANGLE);
 
+        // Collision Properties 
+        e->add<CCollision>(m_playerConfig.collisionRadius);
+
         // Shape properties
         e->add<CShape>(m_playerConfig.shapeRadius, m_playerConfig.shapeVertices,
                     m_playerConfig.fillColor, m_playerConfig.outlineColor, m_playerConfig.outlineThickness);
@@ -175,30 +182,67 @@ void Game::spawnPlayer()
     }
     else
     {
+        std::cerr << __PRETTY_FUNCTION__ << "TODO: "
+        << "When a player already exists, we do not need to add a new player, just respawn it in widow center\n";
         player()->get<CShape>().circle.setPosition(pos);
-        player()->get<CTransform>().velocity = vel;
+        player()->get<CTransform>().velocity = vel;         // likely redundant due to way current vel calculated
         player()->get<CTransform>().angle = SPAWN_ANGLE;
     }
-
-    std::cerr << __PRETTY_FUNCTION__ << "TODO: "
-        << "When a player already exists, we do not need to add a new player, just respawn it in widow center\n";
-
 }
 
-#if 0
+
 // spawn an enemy at a random position
 void Game::spawnEnemy()
 {
     // Enemy must be spawned within bounds of the window
-    std::cerr << __PRETTY_FUNCTION__ << "TODO: " 
-        << " finish adding all properties of the ENEMY with the correct values from the config file\n";
-    
+    // Enemies will spawn in a random location
+    // Enemies must not overlap the sides of the screen at the time of spawn.
+    sf::Vector2u boundary = m_window.getSize();
+    Vec2f pos;
+    pos.x = m_rg.generate(m_enemyConfig.shapeRadius, boundary.x - m_enemyConfig.shapeRadius);
+    pos.y = m_rg.generate(m_enemyConfig.shapeRadius, boundary.y - m_enemyConfig.shapeRadius);
+
+    // Enemies will be given a random speed upon spawning, between a minimum and 
+    // maximum value specified in the config file.
+    float speed = m_rg.generate(m_enemyConfig.minSpeed, m_enemyConfig.maxSpeed);
+    Vec2<float> vel = {1.0f, 1.0f}; 
+    vel = vel.normalize();
+    vel *= speed;   
+
+    // Enemies shapes have random number of vertices, between a given minimum and
+    // maximum number, which is also specified in the config file.
+    int vertices = m_rg.generate(m_enemyConfig.minVertices, m_enemyConfig.maxVertices);
+
+    // Enemies will be given a random color upon spawning
+    sf::Color fillColor;
+    fillColor.r = m_rg.generate(0,255);
+    fillColor.g = m_rg.generate(0,255);
+    fillColor.b = m_rg.generate(0,255);
+
+    // Entity Manager allocates memory for a new entity
+    // with tag name: "enemy" and places it in the vector 
+    // of entities to be added
+    std::shared_ptr<Entity> e = m_entities.addEntity("enemy");
+
+    // Now we need to populate the player's component properties
+    e->add<CTransform>(pos, vel, SPAWN_ANGLE);
+
+    // Shape properties
+    //Enemy shape radius will be specified in the config file.
+    e->add<CShape>(m_enemyConfig.shapeRadius, vertices, fillColor, 
+                    m_enemyConfig.outlineColor, m_enemyConfig.outlineThickness);
+
+    // no lifespan component. Remains alive until shot with bullet
+    // no input component
+
+    e->add<CScore>(vertices*SCORE_MULTIPLE);
+    e->add<CCollision>(m_enemyConfig.collisionRadius);
   
     // record when the most recent enemy was spawned 
     m_lastEnemySpawnTime = m_currentFrame;
 }
 
-
+#if 0
 void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
     
@@ -211,21 +255,23 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
     // - small enemies are worth double points of the original enemy
 
     //e->get<Shape>.circle.getPointCount();
+
+
 }
 
 #endif 
 
-// spawns a bullet from a given entity to a target location
+
 void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target)
 {
-    std::cerr << __PRETTY_FUNCTION__ << "TODO\n";
-    // TODO: implement the spawning fo a bullet which travels toward target 
+    
+    // Implement the spawning fo a bullet which travels toward target 
     //     - bullet speed is given as a scalar speed 
     //     - you must set the velocity of x, y componnents 
 
     std::shared_ptr<Entity> bullet = m_entities.addEntity("bullet");
 
-    // bullet should be spawned at the origin of the parameter entity 
+    // bullet should be spawned at the entity origin
     Vec2f start = entity->get<CTransform>().pos;
 
     // Difference vector is target - startPos
@@ -263,6 +309,7 @@ void Game::sMovement()
     //  player is moving
 
     sPlayerMovement();
+    sEnemyMovement();
     sBulletMovement();
 }
 
@@ -298,6 +345,14 @@ void Game::sPlayerMovement()
     transform.pos.y += currentVelocity.y;
 }
 
+void Game::sEnemyMovement()
+{
+    for(auto& e : m_entities.getEntities("enemy"))
+    {
+       e->get<CTransform>().pos += e->get<CTransform>().velocity;
+    }
+}
+
 void Game::sBulletMovement()
 {
     for(auto& b : m_entities.getEntities("bullet"))
@@ -306,13 +361,8 @@ void Game::sBulletMovement()
         {
             CLifeSpan lifespan = b->get<CLifeSpan>();
 
-            auto& pos = b->get<CTransform>().pos;
-            auto& vel = b->get<CTransform>().velocity;
-
             // update position 
-            //b->get<CTransform>().pos.x += b->get<CTransform>().velocity.x;
-            //b->get<CTransform>().pos.y += b->get<CTransform>().velocity.y;
-            pos += vel;
+            b->get<CTransform>().pos += b->get<CTransform>().velocity;
 
             // update fill color alpha value 
             float alpha = static_cast<float>(lifespan.remaining) * 255.0f / 
@@ -327,12 +377,6 @@ void Game::sBulletMovement()
             };
 
             b->get<CShape>().circle.setFillColor(fillColor);
-
-            std::cerr << "bullet id  " << b->id() << ", alive: " << b->isAlive() << "\n";
-            std::cerr << "postion x  " << pos.x << ", y: " << pos.y << "\n";
-            std::cerr << "velocity x " << vel.x << ", y: " << vel.y << "\n"; 
-            std::cerr << "lifespan   " << lifespan.lifespan << ", remaining: " << lifespan.remaining << "\n";
-            std::cerr << "alpha      " << alpha << "\n";
         }
     }
 }
@@ -398,25 +442,66 @@ void Game::sCollision()
     *  wants the player to travel in the opposite direction, the 
     *  appropriate key input must be received.
     */
-    Vec2f playerPos = player()->get<CTransform>().pos;
-    float radius = player()->get<CShape>().circle.getRadius();
+   
     Vec2f wallBoundary = m_window.getSize();
-    if(playerPos.x - radius <= 0.0f)
+    sWallBoundaryNoBounce(player(), wallBoundary);
+
+    for(auto& e : m_entities.getEntities("enemy"))
     {
-        player()->get<CTransform>().pos.x = radius;
+        sWallBoundary(e, wallBoundary);
     }
-    else if(playerPos.x + radius >= wallBoundary.x)
+    
+}
+
+void Game::sWallBoundaryNoBounce(std::shared_ptr<Entity> entity, const Vec2f& boundary)
+{
+    Vec2f pos = entity->get<CTransform>().pos;
+    float radius = entity->get<CCollision>().radius;
+    if(pos.x - radius <= 0.0f)
     {
-        player()->get<CTransform>().pos.x = wallBoundary.x - radius;
+        entity->get<CTransform>().pos.x = radius;
+    }
+    else if(pos.x + radius >= boundary.x)
+    {
+        entity->get<CTransform>().pos.x = boundary.x - radius;
     }
 
-    if(playerPos.y - radius <= 0.0f) 
+    if(pos.y - radius <= 0.0f) 
     {
-        player()->get<CTransform>().pos.y = radius;
+        entity->get<CTransform>().pos.y = radius;
     }
-    else if(playerPos.y + radius >= wallBoundary.y)
+    else if(pos.y + radius >= boundary.y)
     {
-        player()->get<CTransform>().pos.y = wallBoundary.y - radius;
+        entity->get<CTransform>().pos.y = boundary.y - radius;
+    }
+
+}
+
+// entity bounces off wall when colliding
+void Game::sWallBoundary(std::shared_ptr<Entity> entity, const Vec2f& boundary)
+{
+    Vec2f pos = entity->get<CTransform>().pos;
+    float radius = entity->get<CCollision>().radius;
+    if(pos.x - radius <= 0.0f)
+    {
+        entity->get<CTransform>().pos.x = radius;
+        entity->get<CTransform>().velocity.x *= -1;
+    }
+    else if(pos.x + radius >= boundary.x)
+    {
+        entity->get<CTransform>().pos.x = boundary.x - radius;
+        entity->get<CTransform>().velocity.x *= -1;
+    }
+
+    if(pos.y - radius <= 0.0f) 
+    {
+        entity->get<CTransform>().pos.y = radius;
+        entity->get<CTransform>().velocity.y *= -1;
+    }
+    else if(pos.y + radius >= boundary.y)
+    {
+        entity->get<CTransform>().pos.y = boundary.y - radius;
+        entity->get<CTransform>().velocity.y *= -1;
     }
 }
 
@@ -558,10 +643,9 @@ void Game::sRender()
     m_window.clear(sf::Color::Black);
 
 
-
-
     sRenderPlayer();
     sRenderBullet();
+    sRenderEnemy();
 
     // draw the ui last 
     ImGui::SFML::Render(m_window);
@@ -592,13 +676,27 @@ void Game::sRenderPlayer()
 
 }
 
+void Game::sRenderEnemy()
+{
+    // draw enemies
+    for(auto& e : m_entities.getEntities("enemy"))
+    {
+        // set the shape rotation based on entity's transform angle
+        e->get<CTransform>().angle += 1.0;
+        e->get<CShape>().circle.setRotation(sf::degrees(e->get<CTransform>().angle));
+        e->get<CShape>().circle.setPosition(e->get<CTransform>().pos);
+        m_window.draw(e->get<CShape>().circle);
+    }
+
+}
+
 void Game::sRenderBullet()
 {
     // draw bullets 
-    for(const auto& b : m_entities.getEntities("bullet"))
+    for(const auto& e : m_entities.getEntities("bullet"))
     {
-        b->get<CShape>().circle.setPosition(b->get<CTransform>().pos);
-        m_window.draw(b->get<CShape>().circle);
+        e->get<CShape>().circle.setPosition(e->get<CTransform>().pos);
+        m_window.draw(e->get<CShape>().circle);
     }
 }
 

@@ -20,6 +20,7 @@ target_sources(a2solution PUBLIC
     src/gameConfig.cpp
     src/game.cpp
     src/fileUtility.cpp
+    include/randomNumberGenerator.hpp
 )
 
 

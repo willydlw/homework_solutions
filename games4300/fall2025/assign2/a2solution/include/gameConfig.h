@@ -96,30 +96,30 @@ struct PlayerConfig
 
 struct EnemyConfig
 {
-    static const sf::Color DEFAULT_OUTLINE_COLOR;
-
-    static constexpr int    DEFAULT_SHAPE_RADIUS = 8;
-    static constexpr int    DEFAULT_COLLISION_RADIUS = 8;
-    static constexpr float  DEFAULT_MIN_SPEED = 1.0f;
-    static constexpr float  DEFAULT_MAX_SPEED = 20.0f;
+    static const sf::Color          DEFAULT_OUTLINE_COLOR;
     
-    static constexpr int    DEFAULT_OUTLINE_THICKNESS = 1;
-    static constexpr int    DEFAULT_MIN_SHAPE_VERTICES = 3;
-    static constexpr int    DEFAULT_MAX_SHAPE_VERTICES = 30;
-    static constexpr int    DEFAULT_LIFESPAN = 255;
-    static constexpr int    DEFAULT_SPAWN_INTERVAL = 120;
+    static constexpr float          DEFAULT_MIN_SPEED = 1.0f;
+    static constexpr float          DEFAULT_MAX_SPEED = 20.0f;
+    
+    static constexpr int            DEFAULT_SHAPE_RADIUS = 8;
+    static constexpr int            DEFAULT_COLLISION_RADIUS = 8;
+    static constexpr int            DEFAULT_OUTLINE_THICKNESS = 1;
+    static constexpr int            DEFAULT_MIN_SHAPE_VERTICES = 3;
+    static constexpr int            DEFAULT_MAX_SHAPE_VERTICES = 30;
+    static constexpr int            DEFAULT_LIFESPAN = 255;
+    static constexpr unsigned int   DEFAULT_SPAWN_INTERVAL = 120;
 
 
-    int shapeRadius             = DEFAULT_SHAPE_RADIUS;
-    int collisionRadius         = DEFAULT_COLLISION_RADIUS;
-    float minSpeed              = DEFAULT_MIN_SPEED;
-    float maxSpeed              = DEFAULT_MAX_SPEED;
-    sf::Color outlineColor      = DEFAULT_OUTLINE_COLOR;
-    int outlineThickness        = DEFAULT_OUTLINE_THICKNESS;
-    int minVertices             = DEFAULT_MIN_SHAPE_VERTICES;
-    int maxVertices             = DEFAULT_MAX_SHAPE_VERTICES;
-    int smallLifespan           = DEFAULT_LIFESPAN;
-    int spawnInterval           = DEFAULT_SPAWN_INTERVAL;
+    int shapeRadius             =   DEFAULT_SHAPE_RADIUS;
+    int collisionRadius         =   DEFAULT_COLLISION_RADIUS;
+    float minSpeed              =   DEFAULT_MIN_SPEED;
+    float maxSpeed              =   DEFAULT_MAX_SPEED;
+    sf::Color outlineColor      =   DEFAULT_OUTLINE_COLOR;
+    int outlineThickness        =   DEFAULT_OUTLINE_THICKNESS;
+    int minVertices             =   DEFAULT_MIN_SHAPE_VERTICES;
+    int maxVertices             =   DEFAULT_MAX_SHAPE_VERTICES;
+    int smallLifespan           =   DEFAULT_LIFESPAN;
+    unsigned int spawnInterval  =   DEFAULT_SPAWN_INTERVAL;
 
     EnemyConfig() = default;
 
