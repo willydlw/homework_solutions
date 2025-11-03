@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <algorithm>
 #include <map>
 #include <memory>
 #include <string>
@@ -28,7 +29,7 @@ class EntityManager
 
         m_entitiesToAdd.clear();
 
-        #if 0
+        #if 1
         // remove dead entities from the vector of all entities 
         removeDeadEntities(m_entities);
 
@@ -38,6 +39,7 @@ class EntityManager
         {
             removeDeadEntities(entityVec);
         }
+
         #endif
     }
 
@@ -70,17 +72,18 @@ private:
     EntityMap m_entityMap;
     std::size_t m_totalEntities = 0;
 
-    #if 0
+    #if 1
     void removeDeadEntities(EntityVec& vec)
     {
-        // TODO
-        // remove all entities from vec that are not alive 
-        std::cerr << "TODO, function: " << __func__ << "\n";
-        std::cerr << "printing dead entities to avoid unused parameter warning\n";
-        for(const auto& v : vec)
-        {
-            std::cerr << v << "\n";
-        }
+        // Erase-Remove Idiom 
+        // mark not Alive objects for removal
+        // moves objects to be removed to end of vector
+        auto newEnd = std::remove_if(vec.begin(), vec.end(), 
+            [](const std::shared_ptr<Entity>& obj) {
+                return !obj->isAlive();
+            });
+
+        vec.erase(newEnd, vec.end());
     }
     #endif
 };

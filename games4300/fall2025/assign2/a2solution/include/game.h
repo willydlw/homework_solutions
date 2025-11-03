@@ -73,6 +73,8 @@ private:
     void spawnSpecialWeapon(std::shared_ptr<Entity> entity);
     #endif
 
+    void sRenderPlayer();
+    void sRenderBullet();
     void sPlayerMovement();
     void sBulletMovement();
 };

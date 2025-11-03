@@ -48,7 +48,7 @@ void Game::init(const std::string& configFile)
     m_bulletConfig = gameConfig.m_bulletConfig;
 
     LOG_INFO("Configuration complete\n");
-    //std::cerr << gameConfig;
+    std::cerr << gameConfig;
 
 
     if(!ImGui::SFML::Init(m_window))
@@ -129,6 +129,7 @@ void Game::run()
 
         sUserInput();
         //sEnemySpawner();
+        sLifespan();
         sMovement();
         sCollision();
         sGUI();
@@ -301,18 +302,42 @@ void Game::sBulletMovement()
 {
     for(auto& b : m_entities.getEntities("bullet"))
     {
-        std::cerr << "bullet id: " << b->id() << ", alive: " << b->isAlive() << "\n";
-       
-        // update position 
-        b->get<CTransform>().pos.x += b->get<CTransform>().velocity.x;
-        b->get<CTransform>().pos.y += b->get<CTransform>().velocity.y;
+        if(b->isAlive())
+        {
+            CLifeSpan lifespan = b->get<CLifeSpan>();
 
-        // update fill color alpha value 
-        b->get<CShape>().circle.setFillColor(sf::Color(m_bulletConfig.fillColor.r, 
-                m_bulletConfig.fillColor.g, m_bulletConfig.fillColor.b, 
-                b->get<CLifeSpan>().remaining * 255.0 / b->get<CLifeSpan>().lifespan));
+            auto& pos = b->get<CTransform>().pos;
+            auto& vel = b->get<CTransform>().velocity;
+
+            // update position 
+            //b->get<CTransform>().pos.x += b->get<CTransform>().velocity.x;
+            //b->get<CTransform>().pos.y += b->get<CTransform>().velocity.y;
+            pos += vel;
+
+            // update fill color alpha value 
+            float alpha = static_cast<float>(lifespan.remaining) * 255.0f / 
+                            static_cast<float>(lifespan.lifespan);
+            
+            sf::Color fillColor = 
+            {
+                m_bulletConfig.fillColor.r, 
+                m_bulletConfig.fillColor.g, 
+                m_bulletConfig.fillColor.b,
+                static_cast<uint8_t>(alpha)
+            };
+
+            b->get<CShape>().circle.setFillColor(fillColor);
+
+            std::cerr << "bullet id  " << b->id() << ", alive: " << b->isAlive() << "\n";
+            std::cerr << "postion x  " << pos.x << ", y: " << pos.y << "\n";
+            std::cerr << "velocity x " << vel.x << ", y: " << vel.y << "\n"; 
+            std::cerr << "lifespan   " << lifespan.lifespan << ", remaining: " << lifespan.remaining << "\n";
+            std::cerr << "alpha      " << alpha << "\n";
+        }
     }
 }
+
+
 
 
 void Game::sLifespan()
@@ -320,7 +345,7 @@ void Game::sLifespan()
     // TODO: implement all lifespan functionality 
     // for all entities
     //      if entity has no lifespan component, skip it 
-    //      if entity has > 0 remaining lifespan, substract 1 
+    //      if entity has > 0 remaining lifespan, subtract 1 
     //      if it has lifespan and is alive 
     //          scale its alpha channel properly 
     //      if it has lifespan and its time is up 
@@ -530,8 +555,23 @@ void Game::sRender()
 
     // TODO: change the code below to draw all of the entities 
     // sample drawing of the player Entity is given 
-    m_window.clear();
+    m_window.clear(sf::Color::Black);
 
+
+
+
+    sRenderPlayer();
+    sRenderBullet();
+
+    // draw the ui last 
+    ImGui::SFML::Render(m_window);
+
+    m_window.display();
+
+}
+
+void Game::sRenderPlayer()
+{
     static int printCount = 0;
     if(printCount == 0)
     {
@@ -543,26 +583,23 @@ void Game::sRender()
     // set the position of the shape based on the entity's transform->pos 
     player()->get<CShape>().circle.setPosition(player()->get<CTransform>().pos);
 
-    #if 1
     // set the rotation of the shape based on the entity's transform->angle 
     player()->get<CTransform>().angle += 1.0;
     player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
-    #endif
 
     // draw the entity's sf::CircleShape
     m_window.draw(player()->get<CShape>().circle);
 
+}
+
+void Game::sRenderBullet()
+{
     // draw bullets 
     for(const auto& b : m_entities.getEntities("bullet"))
     {
+        b->get<CShape>().circle.setPosition(b->get<CTransform>().pos);
         m_window.draw(b->get<CShape>().circle);
     }
-
-    // draw the ui last 
-    ImGui::SFML::Render(m_window);
-
-    m_window.display();
-
 }
 
 
@@ -587,47 +624,23 @@ void Game::sUserInput()
         // this event is triggered when a key is pressed 
         if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
         {
-            std::cout << "Key pressed = " << int(keyPressed->scancode) << "\n";
+            //std::cout << "Key pressed = " << int(keyPressed->scancode) << "\n";
 
             if(keyPressed->scancode == sf::Keyboard::Scancode::W)
             {
-                // TODO: set player's input component up to true
-                std::cout << "W key pressed\n";
                 player()->get<CInput>().up = true;
-                if(player()->get<CInput>().up == true)
-                {
-                    std::cerr << "player UP set to true after w key press\n";
-                }
             }
             else if(keyPressed->scancode == sf::Keyboard::Scancode::S)
             {
-                // TODO: set player's input component up to true
-                std::cout << "S key pressed\n";
                 player()->get<CInput>().down = true;
-                if(player()->get<CInput>().down == true)
-                {
-                    std::cerr << "player DOWN set to true after S key press\n";
-                }
             }
             else if(keyPressed->scancode == sf::Keyboard::Scancode::A)
             {
-                // TODO: set player's input component up to true
-                std::cout << "A key pressed\n";
                 player()->get<CInput>().left = true;
-                if(player()->get<CInput>().left == true)
-                {
-                    std::cerr << "player LEFT set to true after A key press\n";
-                }
             }
             else if(keyPressed->scancode == sf::Keyboard::Scancode::D)
             {
-                // TODO: set player's input component up to true
-                std::cout << "D key pressed\n";
                 player()->get<CInput>().right = true;
-                if(player()->get<CInput>().right == true)
-                {
-                    std::cerr << "player RIGHT set to true after D key press\n";
-                }
             }
            
         }
@@ -635,42 +648,22 @@ void Game::sUserInput()
         // this event is triggered when a key is released 
         if(const auto* keyReleased = event->getIf<sf::Event::KeyReleased>())
         {
-            std::cout << "Key released = " << int(keyReleased->scancode) << "\n";
+            //std::cout << "Key released = " << int(keyReleased->scancode) << "\n";
             if(keyReleased->scancode == sf::Keyboard::Scancode::W)
             {
-                // TODO: set player's input component to false
-                std::cout << "W key released\n";
                 player()->get<CInput>().up = false;
-                if(player()->get<CInput>().up == false){
-                    std::cerr << "player up set to false after w key release\n";
-                }
             }
             else if(keyReleased->scancode == sf::Keyboard::Scancode::S)
             {
-                // TODO: set player's input component to false
-                std::cout << "S key released\n";
                 player()->get<CInput>().down = false;
-                if(player()->get<CInput>().down == false){
-                    std::cerr << "player DOWN set to false after S key release\n";
-                }
             }
             else if(keyReleased->scancode == sf::Keyboard::Scancode::A)
             {
-                // TODO: set player's input component to false
-                std::cout << "A key released\n";
                 player()->get<CInput>().left = false;
-                if(player()->get<CInput>().left == false){
-                    std::cerr << "player LEFT set to false after A key release\n";
-                }
             }
             else if(keyReleased->scancode == sf::Keyboard::Scancode::D)
             {
-                // TODO: set player's input component to false
-                std::cout << "D key released\n";
                 player()->get<CInput>().right = false;
-                if(player()->get<CInput>().right == false){
-                    std::cerr << "player RIGHT set to false after S key release\n";
-                }
             }
         }
 
