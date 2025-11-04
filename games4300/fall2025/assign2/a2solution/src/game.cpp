@@ -242,10 +242,9 @@ void Game::spawnEnemy()
     m_lastEnemySpawnTime = m_currentFrame;
 }
 
-#if 0
+
 void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
-    
     // TODO: spawn small enemies at the location of the input enemy e
 
     // When we create the smaller enemy, we have to read the values of the original 
@@ -256,10 +255,36 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 
     //e->get<Shape>.circle.getPointCount();
 
+    Vec2f origin = e->get<CTransform>().pos;
+    float speed = e->get<CTransform>().velocity.magnitude();
 
+    size_t vertices = e->get<CShape>().circle.getPointCount();
+    int score = e->get<CScore>().score;
+
+    float shapeRadius = m_enemyConfig.shapeRadius / 2.0f;
+    int collisionRadius = m_enemyConfig.collisionRadius / 2.0f;
+
+    float angleIncrement = 360.0f / vertices;
+    float angleDegree = 0.0f;
+
+    sf::Color fillColor = e->get<CShape>().circle.getFillColor();
+
+    for(size_t i = 0; i < vertices; i++, angleDegree += angleIncrement)
+    {
+        std::shared_ptr<Entity> e = m_entities.addEntity("enemy");
+        
+        // transform properties
+        float angleRad = angleDegree * PI / 180.0f;
+        Vec2f vel = {speed * std::cos(angleRad), speed * std::sin(angleRad)};
+        e->add<CTransform>(origin, vel, angleDegree);
+
+        e->add<CShape>(shapeRadius, vertices, fillColor, m_enemyConfig.outlineColor, m_enemyConfig.outlineThickness);
+        e->add<CCollision>(collisionRadius);
+        e->add<CScore>(score);
+        e->add<CLifeSpan>(m_enemyConfig.smallLifespan);
+    }
 }
 
-#endif 
 
 
 void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target)
@@ -412,24 +437,57 @@ void Game::sCollision()
     // TODO: implement all proper collisions between entities 
     //      be sure to use the collision radius, NOT the shape radius 
 
-    #if 0
     // Note data types of b, e are shared_ptr so a copy of the pointer 
     // will make permanent changes to memory. We don't need auto&
     for(auto b : m_entities.getEntities("bullet"))
     {
+        Vec2f& bpos = b->get<CTransform>().pos; 
+        float bRadius = b->get<CCollision>().radius;
+        bool checkSmall = true;
+
         for(auto e : m_entities.getEntities("enemy"))
         {
             // do collsion logic
+            // calc distance between centers 
+            float dist = bpos.distance(e->get<CTransform>().pos);
+            if(dist <=  (bRadius + e->get<CCollision>().radius))
+            {
+                // we have a collision
+                std::cerr << "Bullet collision with enemy id: " << e->id() <<"\n";
+                // update score 
+                m_score += e->get<CScore>().score;
+
+                std::cerr << "Score: " << m_score << "\n";
+
+                // spawn small enemies 
+                spawnSmallEnemies(e);
+
+                // destroy the bullet
+                b->destroy();
+                // destroy the enemy 
+                e->destroy();
+                
+                // break out of this loop as this bullet will not be colliding 
+                // with any other enemies
+                checkSmall = false;
+                break;
+            }
+            
         }
+
+        if(checkSmall == false)
+        {
+            continue;
+        }
+
         for(auto e : m_entities.getEntities("smallEnemy"))
         {
             // do collision logic
         }
     }
 
-    #endif 
 
-    // also need to check player collision with all enemies
+    // TODO: also need to check player collision with all enemies
 
     /* Player collision with walls
     *  

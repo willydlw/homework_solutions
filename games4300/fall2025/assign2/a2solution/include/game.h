@@ -1,5 +1,6 @@
 #pragma once 
 
+#include <cmath>
 #include <memory>
 #include <vector>
 
@@ -20,6 +21,8 @@ public:
     static constexpr int SCORE_MULTIPLE = 100;
     static constexpr float SPAWN_ANGLE = 0.0f;
     static constexpr const char* FONTS_DIR_PATH = "assets/fonts";
+
+    static constexpr float PI = 3.14159;
 
     Game() = delete;
     Game(const std::string & config);
@@ -67,10 +70,7 @@ private:
     void spawnPlayer();
     void spawnEnemy();
 
-    #if 0
-    void spawnSmallEnemies(std::shared_ptr<Entity> e);
-    #endif 
-
+    void spawnSmallEnemies(std::shared_ptr<Entity> e); 
     void spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target);
 
     #if 0
