@@ -18,6 +18,10 @@ class Game
 
 public:
 
+    enum class Tag { BULLET, ENEMY, PLAYER, SMALL_ENEMY};
+
+    static const char* TAG_NAME[];
+
     static constexpr int SCORE_MULTIPLE = 100;
     static constexpr float SPAWN_ANGLE = 0.0f;
     static constexpr const char* FONTS_DIR_PATH = "assets/fonts";
@@ -105,4 +109,5 @@ private:
 
     // gui 
     void sSystemGui();
+    void sEntityManagerGui();
 };

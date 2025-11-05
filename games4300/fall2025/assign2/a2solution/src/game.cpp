@@ -15,9 +15,13 @@
 #include <imgui-SFML.h>
 #include <imgui.h>
 
+const char* Game::TAG_NAME[] = {
+    "bullet", "enemy", "player", "small"
+};
+
 // Note: SFML 3, sf::text has no default constructor
 // Constructing it with default font to avoid compilation 
-// error. The m_font and m_text objects will be initialized 
+// error. The m_font and m_text objects will be properly configured 
 // by calling the init function.
 Game::Game(const std::string & config) : m_text(m_font, "Default", 24)
 {
@@ -34,7 +38,6 @@ void Game::init(const std::string& configFile)
     }
 
     LOG_INFO("Completed reading configuration file\n");
-    std::cerr << gameConfig << "\n";
 
     initWindow(gameConfig.m_windowConfig);
     if(!initFont(gameConfig.m_fontConfig))
@@ -106,8 +109,8 @@ bool Game::initFont(const FontConfig& fc)
 
 std::shared_ptr<Entity> Game::player()
 {   
-    if(!m_entities.getEntities("player").empty()){
-        return m_entities.getEntities("player").back(); 
+    if(!m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::PLAYER)]).empty()){
+        return m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::PLAYER)]).back(); 
     }
 
     return nullptr;
@@ -176,14 +179,14 @@ void Game::spawnPlayer()
     vel = vel.normalize();
     vel *= m_playerConfig.speed;   
        
-    if(m_entities.getEntities("player").empty())
+    if(m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::PLAYER)]).empty())
     {
         std::cerr << "player does not exist, adding new player\n";
 
         // Entity Manager allocates memory for a new entity
         // with tag name: "player" and places it in the vector 
         // of entities to be added
-        std::shared_ptr<Entity> e = m_entities.addEntity("player");
+        std::shared_ptr<Entity> e = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::PLAYER)]);
 
         // Now we need to populate the player's component properties
         e->add<CTransform>(pos, vel, SPAWN_ANGLE);
@@ -240,7 +243,7 @@ void Game::spawnEnemy()
     // Entity Manager allocates memory for a new entity
     // with tag name: "enemy" and places it in the vector 
     // of entities to be added
-    std::shared_ptr<Entity> e = m_entities.addEntity("enemy");
+    std::shared_ptr<Entity> e = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::ENEMY)]);
 
     // Now we need to populate the player's component properties
     e->add<CTransform>(pos, vel, SPAWN_ANGLE);
@@ -289,7 +292,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 
     for(size_t i = 0; i < vertices; i++, angleDegree += angleIncrement)
     {
-        std::shared_ptr<Entity> e = m_entities.addEntity("enemy");
+        std::shared_ptr<Entity> e = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::ENEMY)]);
         
         // transform properties
         float angleRad = angleDegree * PI / 180.0f;
@@ -312,7 +315,7 @@ void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target)
     //     - bullet speed is given as a scalar speed 
     //     - you must set the velocity of x, y componnents 
 
-    std::shared_ptr<Entity> bullet = m_entities.addEntity("bullet");
+    std::shared_ptr<Entity> bullet = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::BULLET)]);
 
     // bullet should be spawned at the entity origin
     Vec2f start = entity->get<CTransform>().pos;
@@ -365,23 +368,19 @@ void Game::sPlayerMovement()
     if(input.up == true)
     {
         currentVelocity.y = -transform.velocity.y;
-        std::cerr << "up, current velocity y: " << currentVelocity.y << "\n";
     }
     else if(input.down == true)
     {
         currentVelocity.y = transform.velocity.y;
-        std::cerr << "down, current velocity y: " << currentVelocity.y << "\n";
     }
 
     if(input.left == true)
     {
         currentVelocity.x = -transform.velocity.x;
-        std::cerr << "left, current velocity x: " << currentVelocity.x << "\n";
     }
     else if(input.right == true)
     {
         currentVelocity.x = transform.velocity.x;
-        std::cerr << "right, current velocity x: " << currentVelocity.x << "\n";
     }
 
     transform.pos.x += currentVelocity.x;
@@ -390,7 +389,7 @@ void Game::sPlayerMovement()
 
 void Game::sEnemyMovement()
 {
-    for(auto& e : m_entities.getEntities("enemy"))
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
     {
        e->get<CTransform>().pos += e->get<CTransform>().velocity;
     }
@@ -480,7 +479,7 @@ void Game::sCollision()
         float bRadius = b->get<CCollision>().radius;
         //bool checkSmall = true;
 
-        for(auto e : m_entities.getEntities("enemy"))
+        for(auto e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
         {
             // do collsion logic
             // calc distance between centers 
@@ -543,7 +542,7 @@ void Game::sCollision()
     Vec2f wallBoundary = m_window.getSize();
     sWallBoundaryNoBounce(player(), wallBoundary);
 
-    for(auto& e : m_entities.getEntities("enemy"))
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
     {
         sWallBoundary(e, wallBoundary);
     }
@@ -614,191 +613,157 @@ void Game::sSystemGui()
     static constexpr int MIN_SPAWN_INTERVAL = 0;
     static constexpr int MAX_SPAWN_INTERVAL = 360;
 
-    if(ImGui::Checkbox("Movement", &checkBoxMovement))
+     if(ImGui::BeginTabItem("Systems"))    // create first tab 
     {
-        if(checkBoxMovement == true)
+        if(ImGui::Checkbox("Movement", &checkBoxMovement))
         {
-            std::cerr << "Check box movement is true\n";
-            m_pauseMovement = false;
+            if(checkBoxMovement == true)
+            {
+                m_pauseMovement = false;
+            }
+            else 
+            {
+                m_pauseMovement = true;
+            }
         }
-        else 
+
+        if(ImGui::Checkbox("LifeSpan", &checkBoxLifeSpan))
         {
-            std::cerr << "Check box movement is false\n";
-            m_pauseMovement = true;
+            if(checkBoxLifeSpan == true)
+            {
+                m_pauseLifeSpan = false;
+            }
+            else 
+            {
+                m_pauseLifeSpan = true;
+            }
         }
-    }
 
-    if(ImGui::Checkbox("LifeSpan", &checkBoxLifeSpan))
-    {
-        if(checkBoxLifeSpan == true)
+        if(ImGui::Checkbox("Collision", &checkBoxCollision))
         {
-            m_pauseLifeSpan = false;
+            if(checkBoxCollision == true) 
+            { 
+                m_pauseCollision = false;
+            }
+            else 
+            { 
+                m_pauseCollision = true; 
+            }
         }
-        else 
+
+        if(ImGui::Checkbox("Spawning", &checkBoxSpawning))
         {
-            m_pauseLifeSpan = true;
+            if(checkBoxSpawning == true) 
+            { 
+                m_pauseSpawning = false;
+            }
+            else 
+            { 
+                m_pauseSpawning = true; 
+            }
         }
+
+        ImGui::Indent();
+        if(ImGui::SliderInt("Spawn Rate", &spawnInterval, MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL))
+        {
+            m_spawnInterval = spawnInterval;
+        }
+
+        if(ImGui::Button("Manual Spawn"))
+        {
+            spawnEnemy();
+        }
+        ImGui::Unindent();
+
+        ImGui::EndTabItem();
+    }
+}
+
+void Game::sEntityManagerGui()
+{
+    if(ImGui::BeginTabItem("Entity Manager"))
+    {
+        if(ImGui::CollapsingHeader("Entities By Tag"))
+        {
+            ImGui::Indent();
+            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::BULLET)]))
+            {
+                // button followed by id number, string "bullet" and position (x, y)
+                // button should show lifespan state bright white for alive 
+                // graying over time to black when dead
+                // Letter D in button to indicate it is deletable by mouse right-click
+                int buttonId = 0;
+                for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::BULLET)]))
+                {
+                    ImGui::PushID(buttonId);
+
+                    // set button text color to black
+                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+                    // set button background color, same as bullet fill color
+                    ImVec4 buttonColor = e->get<CShape>().circle.getFillColor();
+                    ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
+                    std::string buttonLabel = "D##" + std::to_string(buttonId);
+                    
+
+                    if(ImGui::Button(buttonLabel.c_str()))
+                    {
+                        e->destroy();
+                        std::cerr << "button " << buttonId << " clicked\n";
+                        std::cerr << "remaining " << e->get<CLifeSpan>().remaining << "\n";
+                    }
+
+                    ImGui::PopStyleColor();
+                    ImGui::PopStyleColor();
+
+                    ImGui::SameLine();
+                    std::string id = std::to_string(e->id());
+                    ImGui::Text("%4lu", e->id());
+                    ImGui::SameLine();
+                    ImGui::Text("%s", e->tag().c_str());
+                    ImGui::SameLine();
+                    ImGui::Text("(%.0f, %.0f)", e->get<CTransform>().pos.x, e->get<CTransform>().pos.y);
+
+                    ImGui::PopID();
+                    buttonId++;
+                }
+            }
+
+            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
+            {
+                // button same color as enemy fill color
+            }
+
+            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::PLAYER)]))
+            {
+
+            }
+
+            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
+            {
+
+            }
+
+            ImGui::Unindent();
+            // content in this block will be rendered when the header is uncollapsed 
+
+          
+        }   // End top-level collapsing header
+
+        ImGui::EndTabItem();
     }
 
-    if(ImGui::Checkbox("Collision", &checkBoxCollision))
-    {
-        if(checkBoxCollision == true) 
-        { 
-            m_pauseCollision = false;
-        }
-        else 
-        { 
-            m_pauseCollision = true; 
-        }
-    }
-
-    if(ImGui::Checkbox("Spawning", &checkBoxSpawning))
-    {
-        if(checkBoxSpawning == true) 
-        { 
-            m_pauseSpawning = false;
-        }
-        else 
-        { 
-            m_pauseSpawning = true; 
-        }
-    }
-
-    ImGui::Indent();
-    if(ImGui::SliderInt("Spawn Rate", &spawnInterval, MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL))
-    {
-        m_spawnInterval = spawnInterval;
-    }
-
-    if(ImGui::Button("Manual Spawn"))
-    {
-        spawnEnemy();
-    }
-    ImGui::Unindent();
 }
 
 
 void Game::sGUI()
 { 
- 
-
-    #if 0
-    // state variables to store the currently selected item for each drop down
-    static size_t selected_item1 = 0;
-    static size_t selected_item2 = 1;
-    static size_t selected_item3 = 0;
-
-    // items for the drop down lists 
-    const std::vector<std::string> items1 = {"Option A", "Option B", "Option C"};
-    const std::vector<std::string> items2 = {"Apple", "Banana", "Cherry", "Orange"};
-    const std::vector<std::string> items3 = {"Red", "Green", "Blue"};
-    #endif
-
     ImGui::Begin("Geometry Wars");          // create main window
 
     if(ImGui::BeginTabBar("MyTabBar"))      // create tab bar within the window
     {
-        if(ImGui::BeginTabItem("Systems"))    // create first tab 
-        {
-            sSystemGui();
-            ImGui::EndTabItem();
-        }
-
-        if(ImGui::BeginTabItem("Entity Manager"))
-        {
-            if(ImGui::CollapsingHeader("Entities By Tag"))
-            {
-                if(ImGui::CollapsingHeader("bullet"))
-                {
-                    // button followed by id number, string "bullet" and position (x, y)
-                    // button should show lifespan state bright white for alive 
-                    // graying over time to black when dead
-                    // Letter D in button to indicate it is deletable by mouse right-click
-                }
-
-                if(ImGui::CollapsingHeader("enemy"))
-                {
-                    // buttos same color as enemy fill color
-                }
-
-                if(ImGui::CollapsingHeader("player"))
-                {
-
-                }
-
-                if(ImGui::CollapsingHeader("small"))
-                {
-
-                }
-                // content in this block will be rendered when the header is uncollapsed 
-
-                #if 0
-                // Dropdown 1 
-                const char* preview1 = items1[selected_item1].c_str();
-                // "##combo1" hides the label, but gives it a unique ID
-                if(ImGui::BeginCombo("##combo1", preview1))
-                {
-                    for(size_t n = 0; n < items1.size(); n++)
-                    {
-                        const bool is_selected = (selected_item1 == n);
-                        if(ImGui::Selectable(items1[n].c_str()), is_selected)
-                        {
-                            selected_item1 = n;
-                        }
-                        if(is_selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-                    ImGui::EndCombo();
-                }    
-
-                // Dropdown 2
-                const char* preview2 = items2[selected_item2].c_str();
-                // "##combo1" hides the label, but gives it a unique ID
-                if(ImGui::BeginCombo("Choose Fruit", preview2))
-                {
-                    for(size_t n = 0; n < items2.size(); n++)
-                    {
-                        const bool is_selected = (selected_item2 == n);
-                        if(ImGui::Selectable(items2[n].c_str()), is_selected)
-                        {
-                            selected_item2 = n;
-                        }
-                        if(is_selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-                    ImGui::EndCombo();
-                } 
-
-                // Dropdown 3
-                const char* preview3 = items3[selected_item3].c_str();
-                // "##combo1" hides the label, but gives it a unique ID
-                if(ImGui::BeginCombo("Choose Color", preview3))
-                {
-                    for(size_t n = 0; n < items3.size(); n++)
-                    {
-                        const bool is_selected = (selected_item3 == n);
-                        if(ImGui::Selectable(items3[n].c_str()), is_selected)
-                        {
-                            selected_item3 = n;
-                        }
-                        if(is_selected)
-                        {
-                            ImGui::SetItemDefaultFocus();
-                        }
-                    }
-                    ImGui::EndCombo();
-                }
-
-                #endif          
-            }   // End top-level collapsing header
-
-            ImGui::EndTabItem();
-        }
-
+        sSystemGui();
+        sEntityManagerGui();
         ImGui::EndTabBar();
     }
 
@@ -842,7 +807,7 @@ void Game::sRenderPlayer()
 void Game::sRenderEnemy()
 {
     // draw enemies
-    for(auto& e : m_entities.getEntities("enemy"))
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
     {
         // set the shape rotation based on entity's transform angle
         e->get<CTransform>().angle += 1.0;
@@ -858,7 +823,7 @@ void Game::sRenderEnemy()
 void Game::sRenderBullet()
 {
     // draw bullets 
-    for(const auto& e : m_entities.getEntities("bullet"))
+    for(const auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::BULLET)]))
     {
         e->get<CShape>().circle.setPosition(e->get<CTransform>().pos);
         m_window.draw(e->get<CShape>().circle);
@@ -875,6 +840,9 @@ void Game::sUserInput()
 
     while(auto event = m_window.pollEvent())
     {
+        // Get the ImGui IO object
+        auto& io = ImGui::GetIO();
+
         // pass the event to imgui to be parsed 
         ImGui::SFML::ProcessEvent(m_window, *event);
 
@@ -930,21 +898,27 @@ void Game::sUserInput()
             }
         }
 
-        if(const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
-        {
-            Vec2f mpos = {static_cast<float>(mousePressed->position.x), 
-                            static_cast<float>(mousePressed->position.y)};
-            if(mousePressed->button == sf::Mouse::Button::Left)
+        // Check the ImGui IO object flag before processing a mouse click 
+        // If the flag is true, skip the game's click logic because the click occurred
+        // in the ImGui 
+        if(!io.WantCaptureMouse)
+        {            
+            if(const auto* mousePressed = event->getIf<sf::Event::MouseButtonPressed>())
             {
-                std::cout << "Left mouse (" << mpos.x << ", " << mpos.y << ")\n";
-                // TODO: call spawn bullet here
-                spawnBullet(player(), mpos);
+                Vec2f mpos = {static_cast<float>(mousePressed->position.x), 
+                                static_cast<float>(mousePressed->position.y)};
+                if(mousePressed->button == sf::Mouse::Button::Left)
+                {
+                    std::cout << "Left mouse (" << mpos.x << ", " << mpos.y << ")\n";
+                    // TODO: call spawn bullet here
+                    spawnBullet(player(), mpos);
 
-            }
-            else if(mousePressed->button == sf::Mouse::Button::Right)
-            {
-                // TODO: call special weapon here 
-                std::cout << "Right mouse (" << mpos.x << ", " << mpos.y << ")\n";
+                }
+                else if(mousePressed->button == sf::Mouse::Button::Right)
+                {
+                    // TODO: call special weapon here 
+                    std::cout << "Right mouse (" << mpos.x << ", " << mpos.y << ")\n";
+                }
             }
         }
     }
