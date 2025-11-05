@@ -47,6 +47,8 @@ void Game::init(const std::string& configFile)
     m_enemyConfig = gameConfig.m_enemyConfig;
     m_bulletConfig = gameConfig.m_bulletConfig;
 
+    m_spawnInterval = m_enemyConfig.spawnInterval;
+
     LOG_INFO("Configuration complete\n");
     std::cerr << gameConfig;
 
@@ -129,18 +131,34 @@ void Game::run()
 
         sUserInput();
 
-        // Enemies will spawn in a random location on the screen every X frames,
-        // where X is defined in the configuration file.
-        if(m_currentFrame - m_lastEnemySpawnTime >= m_enemyConfig.spawnInterval)
+        if(m_pauseSpawning == false)
         {
-            spawnEnemy();
+            // Enemies will spawn in a random location on the screen every X frames,
+            // where X is defined in the configuration file.
+            if(m_currentFrame - m_lastEnemySpawnTime >= m_spawnInterval)
+            {
+                spawnEnemy();
+            }
         }
-        sLifespan();
-        sMovement();
-        sCollision();
-        sGUI();
-        sRender();
+        
 
+        if(m_pauseLifeSpan == false)
+        {
+            sLifespan();
+        }
+
+        if(m_pauseMovement == false)
+        {
+            sMovement();
+        }
+
+        if(m_pauseCollision == false)
+        {
+            sCollision();
+        }
+      
+        sGUI();
+        sRender();       
         m_currentFrame++;
     }
 }
@@ -376,6 +394,11 @@ void Game::sEnemyMovement()
     {
        e->get<CTransform>().pos += e->get<CTransform>().velocity;
     }
+
+     for(auto& e : m_entities.getEntities("small"))
+    {
+       e->get<CTransform>().pos += e->get<CTransform>().velocity;
+    }
 }
 
 void Game::sBulletMovement()
@@ -429,6 +452,18 @@ void Game::sLifespan()
             b->destroy();
         }
     }
+
+    #if 0
+    for(auto& b : m_entities.getEntities("small"))
+    {
+        b->get<CLifeSpan>().remaining -= 1;
+
+        if(b->get<CLifeSpan>().remaining <= 0)
+        {
+            b->destroy();
+        }
+    }
+    #endif
 }
 
 
@@ -443,7 +478,7 @@ void Game::sCollision()
     {
         Vec2f& bpos = b->get<CTransform>().pos; 
         float bRadius = b->get<CCollision>().radius;
-        bool checkSmall = true;
+        //bool checkSmall = true;
 
         for(auto e : m_entities.getEntities("enemy"))
         {
@@ -460,21 +495,23 @@ void Game::sCollision()
                 std::cerr << "Score: " << m_score << "\n";
 
                 // spawn small enemies 
-                spawnSmallEnemies(e);
+                //spawnSmallEnemies(e);
 
                 // destroy the bullet
                 b->destroy();
+
                 // destroy the enemy 
                 e->destroy();
                 
                 // break out of this loop as this bullet will not be colliding 
                 // with any other enemies
-                checkSmall = false;
+                //checkSmall = false;
                 break;
             }
             
         }
 
+        #if 0
         if(checkSmall == false)
         {
             continue;
@@ -484,6 +521,8 @@ void Game::sCollision()
         {
             // do collision logic
         }
+
+        #endif
     }
 
 
@@ -563,9 +602,86 @@ void Game::sWallBoundary(std::shared_ptr<Entity> entity, const Vec2f& boundary)
     }
 }
 
+void Game::sSystemGui()
+{
+    static bool checkBoxMovement = true;
+    static bool checkBoxLifeSpan = true;
+    static bool checkBoxCollision = true;
+    static bool checkBoxSpawning = true;
+    
+    static int spawnInterval = m_spawnInterval;
+
+    static constexpr int MIN_SPAWN_INTERVAL = 0;
+    static constexpr int MAX_SPAWN_INTERVAL = 360;
+
+    if(ImGui::Checkbox("Movement", &checkBoxMovement))
+    {
+        if(checkBoxMovement == true)
+        {
+            std::cerr << "Check box movement is true\n";
+            m_pauseMovement = false;
+        }
+        else 
+        {
+            std::cerr << "Check box movement is false\n";
+            m_pauseMovement = true;
+        }
+    }
+
+    if(ImGui::Checkbox("LifeSpan", &checkBoxLifeSpan))
+    {
+        if(checkBoxLifeSpan == true)
+        {
+            m_pauseLifeSpan = false;
+        }
+        else 
+        {
+            m_pauseLifeSpan = true;
+        }
+    }
+
+    if(ImGui::Checkbox("Collision", &checkBoxCollision))
+    {
+        if(checkBoxCollision == true) 
+        { 
+            m_pauseCollision = false;
+        }
+        else 
+        { 
+            m_pauseCollision = true; 
+        }
+    }
+
+    if(ImGui::Checkbox("Spawning", &checkBoxSpawning))
+    {
+        if(checkBoxSpawning == true) 
+        { 
+            m_pauseSpawning = false;
+        }
+        else 
+        { 
+            m_pauseSpawning = true; 
+        }
+    }
+
+    ImGui::Indent();
+    if(ImGui::SliderInt("Spawn Rate", &spawnInterval, MIN_SPAWN_INTERVAL, MAX_SPAWN_INTERVAL))
+    {
+        m_spawnInterval = spawnInterval;
+    }
+
+    if(ImGui::Button("Manual Spawn"))
+    {
+        spawnEnemy();
+    }
+    ImGui::Unindent();
+}
+
 
 void Game::sGUI()
 { 
+ 
+
     #if 0
     // state variables to store the currently selected item for each drop down
     static size_t selected_item1 = 0;
@@ -584,8 +700,7 @@ void Game::sGUI()
     {
         if(ImGui::BeginTabItem("Systems"))    // create first tab 
         {
-            ImGui::Text("Content of Tab 1");
-            ImGui::Button("button in tab 1");
+            sSystemGui();
             ImGui::EndTabItem();
         }
 
@@ -696,14 +811,11 @@ void Game::sRender()
 {
     if(!m_window.isOpen()) { return; }
 
-    // TODO: change the code below to draw all of the entities 
-    // sample drawing of the player Entity is given 
     m_window.clear(sf::Color::Black);
-
-
     sRenderPlayer();
     sRenderBullet();
     sRenderEnemy();
+
 
     // draw the ui last 
     ImGui::SFML::Render(m_window);
@@ -714,17 +826,10 @@ void Game::sRender()
 
 void Game::sRenderPlayer()
 {
-    static int printCount = 0;
-    if(printCount == 0)
-    {
-        auto playerPos = player()->get<CTransform>().pos;
-        std::cerr << "Player position x: " << playerPos.x << ", y: " << playerPos.y << "\n";
-        printCount++;
-    }
-
+    
     // set the position of the shape based on the entity's transform->pos 
     player()->get<CShape>().circle.setPosition(player()->get<CTransform>().pos);
-
+    
     // set the rotation of the shape based on the entity's transform->angle 
     player()->get<CTransform>().angle += 1.0;
     player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
@@ -742,7 +847,9 @@ void Game::sRenderEnemy()
         // set the shape rotation based on entity's transform angle
         e->get<CTransform>().angle += 1.0;
         e->get<CShape>().circle.setRotation(sf::degrees(e->get<CTransform>().angle));
+
         e->get<CShape>().circle.setPosition(e->get<CTransform>().pos);
+            
         m_window.draw(e->get<CShape>().circle);
     }
 

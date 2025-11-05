@@ -55,8 +55,15 @@ private:
     unsigned int            m_score = 0;
     unsigned int            m_currentFrame = 0;
     unsigned int            m_lastEnemySpawnTime = 0;
-    bool                    m_paused = false;           // whether we update game logic
+    unsigned int            m_spawnInterval = 60;
     bool                    m_running = true;
+
+    // GUI Debugging State Variables 
+    bool                    m_pauseMovement = false;
+    bool                    m_pauseLifeSpan = false;
+    bool                    m_pauseCollision = false;
+    bool                    m_pauseSpawning = false;
+   
 
    
        
@@ -95,4 +102,7 @@ private:
     void sPlayerMovement();
     void sEnemyMovement();
     void sBulletMovement();
+
+    // gui 
+    void sSystemGui();
 };
