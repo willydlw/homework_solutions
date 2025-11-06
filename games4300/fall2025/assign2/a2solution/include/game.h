@@ -107,6 +107,9 @@ private:
     void sEnemyMovement();
     void sBulletMovement();
 
+    // lifespan 
+    void sLifeSpan(Tag tag );
+
     // gui 
     void sSystemGui();
     void sEntityManagerGui();

@@ -118,12 +118,6 @@ std::shared_ptr<Entity> Game::player()
 
 void Game::run()
 {
-    std::cerr << __PRETTY_FUNCTION__ << "TODO: "
-        << " add PAUSE functionality\n";
-    // Some systems should function while paused (rendering and gui)
-    // some systems should not function (movement, input)
-    // while rendering keep showing enemy rotation when rendering 
-
     while(true)
     {
         // update the entity manager
@@ -132,7 +126,10 @@ void Game::run()
         // required update call to imgui 
         ImGui::SFML::Update(m_window, m_deltaClock.restart());
 
-        sUserInput();
+        if(m_pauseMovement == false)
+        {
+            sUserInput();
+        }
 
         if(m_pauseSpawning == false)
         {
@@ -144,7 +141,6 @@ void Game::run()
             }
         }
         
-
         if(m_pauseLifeSpan == false)
         {
             sLifespan();
@@ -159,7 +155,11 @@ void Game::run()
         {
             sCollision();
         }
-      
+
+        std::string score = {"Score "};
+        score += std::to_string(m_score);
+        m_text.setString(score);
+
         sGUI();
         sRender();       
         m_currentFrame++;
@@ -274,13 +274,11 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
     // - set each small enemy to the same color as the original, half the size 
     // - small enemies are worth double points of the original enemy
 
-    //e->get<Shape>.circle.getPointCount();
-
     Vec2f origin = e->get<CTransform>().pos;
     float speed = e->get<CTransform>().velocity.magnitude();
 
     size_t vertices = e->get<CShape>().circle.getPointCount();
-    int score = e->get<CScore>().score;
+    int score = e->get<CScore>().score * 2;
 
     float shapeRadius = m_enemyConfig.shapeRadius / 2.0f;
     int collisionRadius = m_enemyConfig.collisionRadius / 2.0f;
@@ -292,7 +290,7 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 
     for(size_t i = 0; i < vertices; i++, angleDegree += angleIncrement)
     {
-        std::shared_ptr<Entity> e = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::ENEMY)]);
+        std::shared_ptr<Entity> e = m_entities.addEntity(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]);
         
         // transform properties
         float angleRad = angleDegree * PI / 180.0f;
@@ -394,7 +392,7 @@ void Game::sEnemyMovement()
        e->get<CTransform>().pos += e->get<CTransform>().velocity;
     }
 
-     for(auto& e : m_entities.getEntities("small"))
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
     {
        e->get<CTransform>().pos += e->get<CTransform>().velocity;
     }
@@ -406,15 +404,27 @@ void Game::sBulletMovement()
     {
         if(b->isAlive())
         {
-            CLifeSpan lifespan = b->get<CLifeSpan>();
-
             // update position 
             b->get<CTransform>().pos += b->get<CTransform>().velocity;
+        }
+    }
+}
 
-            // update fill color alpha value 
+void Game::sLifeSpan(Tag tag )
+{
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(tag)]))
+    {
+        CLifeSpan& lifespan = e->get<CLifeSpan>();
+       
+         // if entity has > 0 remaining lifespan, subtract 1 
+        if(lifespan.remaining > 0)
+        {
+            lifespan.remaining -= 1;
+
+            // scale alpha channel remaining / total lifespan
             float alpha = static_cast<float>(lifespan.remaining) * 255.0f / 
-                            static_cast<float>(lifespan.lifespan);
-            
+                                static_cast<float>(lifespan.lifespan);
+                
             sf::Color fillColor = 
             {
                 m_bulletConfig.fillColor.r, 
@@ -423,12 +433,14 @@ void Game::sBulletMovement()
                 static_cast<uint8_t>(alpha)
             };
 
-            b->get<CShape>().circle.setFillColor(fillColor);
+            e->get<CShape>().circle.setFillColor(fillColor);
+        }
+        else
+        {
+            e->destroy();
         }
     }
 }
-
-
 
 
 void Game::sLifespan()
@@ -436,33 +448,9 @@ void Game::sLifespan()
     // TODO: implement all lifespan functionality 
     // for all entities
     //      if entity has no lifespan component, skip it 
-    //      if entity has > 0 remaining lifespan, subtract 1 
-    //      if it has lifespan and is alive 
-    //          scale its alpha channel properly 
-    //      if it has lifespan and its time is up 
-    //          destroy the entity 
-
-    for(auto& b : m_entities.getEntities("bullet"))
-    {
-        b->get<CLifeSpan>().remaining -= 1;
-
-        if(b->get<CLifeSpan>().remaining <= 0)
-        {
-            b->destroy();
-        }
-    }
-
-    #if 0
-    for(auto& b : m_entities.getEntities("small"))
-    {
-        b->get<CLifeSpan>().remaining -= 1;
-
-        if(b->get<CLifeSpan>().remaining <= 0)
-        {
-            b->destroy();
-        }
-    }
-    #endif
+    
+    sLifeSpan(Tag::BULLET);
+    sLifeSpan(Tag::SMALL_ENEMY); 
 }
 
 
@@ -477,52 +465,44 @@ void Game::sCollision()
     {
         Vec2f& bpos = b->get<CTransform>().pos; 
         float bRadius = b->get<CCollision>().radius;
-        //bool checkSmall = true;
+        bool collisionDetected = false;                 // determines if bullet is destroyed
 
         for(auto e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
         {
-            // do collsion logic
             // calc distance between centers 
             float dist = bpos.distance(e->get<CTransform>().pos);
             if(dist <=  (bRadius + e->get<CCollision>().radius))
             {
-                // we have a collision
-                std::cerr << "Bullet collision with enemy id: " << e->id() <<"\n";
-                // update score 
-                m_score += e->get<CScore>().score;
+                // Not destroying bullet here. Assuming bullet can destroy 
+                // multiple enemies when those enemies are overlapping.
+                // Enemies are allowed to collide with each other.
+                // Bullet will be destroyed later when this state variable is checked.
+                collisionDetected = true;
 
-                std::cerr << "Score: " << m_score << "\n";
-
-                // spawn small enemies 
-                //spawnSmallEnemies(e);
-
-                // destroy the bullet
-                b->destroy();
-
-                // destroy the enemy 
-                e->destroy();
-                
-                // break out of this loop as this bullet will not be colliding 
-                // with any other enemies
-                //checkSmall = false;
-                break;
+                m_score += e->get<CScore>().score;          // update score
+                spawnSmallEnemies(e);
+                e->destroy();                               // destroy enemy entity          
             }
             
         }
 
-        #if 0
-        if(checkSmall == false)
+        for(auto e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
         {
-            continue;
+            // calc distance between centers 
+            float dist = bpos.distance(e->get<CTransform>().pos);
+            if(dist <=  (bRadius + e->get<CCollision>().radius))
+            {
+                collisionDetected = true;
+                m_score += e->get<CScore>().score;
+                e->destroy();   
+            }
         }
 
-        for(auto e : m_entities.getEntities("smallEnemy"))
+        if(collisionDetected == true)
         {
-            // do collision logic
+            b->destroy();
         }
-
-        #endif
-    }
+    }       // end of bullet loop
 
 
     // TODO: also need to check player collision with all enemies
@@ -611,7 +591,7 @@ void Game::sSystemGui()
     static int spawnInterval = m_spawnInterval;
 
     static constexpr int MIN_SPAWN_INTERVAL = 0;
-    static constexpr int MAX_SPAWN_INTERVAL = 360;
+    static constexpr int MAX_SPAWN_INTERVAL = 240;
 
      if(ImGui::BeginTabItem("Systems"))    // create first tab 
     {
@@ -680,73 +660,61 @@ void Game::sSystemGui()
 }
 
 void Game::sEntityManagerGui()
-{
+{   
+    static constexpr size_t NUM_TAGS = 4;
+
     if(ImGui::BeginTabItem("Entity Manager"))
     {
         if(ImGui::CollapsingHeader("Entities By Tag"))
         {
             ImGui::Indent();
-            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::BULLET)]))
+            for(size_t i = 0; i < NUM_TAGS; i++)
             {
-                // button followed by id number, string "bullet" and position (x, y)
-                // button should show lifespan state bright white for alive 
-                // graying over time to black when dead
-                // Letter D in button to indicate it is deletable by mouse right-click
-                int buttonId = 0;
-                for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::BULLET)]))
+                if(ImGui::CollapsingHeader(TAG_NAME[i]))
                 {
-                    ImGui::PushID(buttonId);
-
-                    // set button text color to black
-                    ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-                    // set button background color, same as bullet fill color
-                    ImVec4 buttonColor = e->get<CShape>().circle.getFillColor();
-                    ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
-                    std::string buttonLabel = "D##" + std::to_string(buttonId);
-                    
-
-                    if(ImGui::Button(buttonLabel.c_str()))
+                    // button followed by id number, string "bullet" and position (x, y)
+                    // button should show lifespan state bright white for alive 
+                    // graying over time to black when dead
+                    // Letter D in button to indicate it is deletable by mouse right-click
+                    int buttonId = 0;
+                    for(auto& e : m_entities.getEntities(TAG_NAME[i]))
                     {
-                        e->destroy();
-                        std::cerr << "button " << buttonId << " clicked\n";
-                        std::cerr << "remaining " << e->get<CLifeSpan>().remaining << "\n";
+                        ImGui::PushID(buttonId);
+
+                        // set button text color to black
+                        ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+                        // set button background color, same as bullet fill color
+                        ImVec4 buttonColor = e->get<CShape>().circle.getFillColor();
+                        ImGui::PushStyleColor(ImGuiCol_Button, buttonColor);
+                        std::string buttonLabel = "D##" + std::to_string(buttonId);
+                        
+
+                        if(ImGui::Button(buttonLabel.c_str()))
+                        {
+                            e->destroy();
+                            std::cerr << "button " << buttonId << " clicked\n";
+                            std::cerr << "remaining " << e->get<CLifeSpan>().remaining << "\n";
+                        }
+
+                        ImGui::PopStyleColor();
+                        ImGui::PopStyleColor();
+
+                        ImGui::SameLine();
+                        std::string id = std::to_string(e->id());
+                        ImGui::Text("%4lu", e->id());
+                        ImGui::SameLine();
+                        ImGui::Text("%s", e->tag().c_str());
+                        ImGui::SameLine();
+                        ImGui::Text("(%.0f, %.0f)", e->get<CTransform>().pos.x, e->get<CTransform>().pos.y);
+
+                        ImGui::PopID();
+                        buttonId++;
                     }
-
-                    ImGui::PopStyleColor();
-                    ImGui::PopStyleColor();
-
-                    ImGui::SameLine();
-                    std::string id = std::to_string(e->id());
-                    ImGui::Text("%4lu", e->id());
-                    ImGui::SameLine();
-                    ImGui::Text("%s", e->tag().c_str());
-                    ImGui::SameLine();
-                    ImGui::Text("(%.0f, %.0f)", e->get<CTransform>().pos.x, e->get<CTransform>().pos.y);
-
-                    ImGui::PopID();
-                    buttonId++;
                 }
-            }
-
-            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
-            {
-                // button same color as enemy fill color
-            }
-
-            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::PLAYER)]))
-            {
-
-            }
-
-            if(ImGui::CollapsingHeader(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
-            {
-
-            }
+            }       // end for loop iterating through tags
 
             ImGui::Unindent();
-            // content in this block will be rendered when the header is uncollapsed 
-
           
         }   // End top-level collapsing header
 
@@ -781,6 +749,7 @@ void Game::sRender()
     sRenderBullet();
     sRenderEnemy();
 
+    m_window.draw(m_text);
 
     // draw the ui last 
     ImGui::SFML::Render(m_window);
@@ -909,15 +878,13 @@ void Game::sUserInput()
                                 static_cast<float>(mousePressed->position.y)};
                 if(mousePressed->button == sf::Mouse::Button::Left)
                 {
-                    std::cout << "Left mouse (" << mpos.x << ", " << mpos.y << ")\n";
-                    // TODO: call spawn bullet here
                     spawnBullet(player(), mpos);
 
                 }
                 else if(mousePressed->button == sf::Mouse::Button::Right)
                 {
                     // TODO: call special weapon here 
-                    std::cout << "Right mouse (" << mpos.x << ", " << mpos.y << ")\n";
+                    std::cout << "Right mouse (" << mpos.x << ", " << mpos.y << "), no special weapon added yet\n";
                 }
             }
         }
