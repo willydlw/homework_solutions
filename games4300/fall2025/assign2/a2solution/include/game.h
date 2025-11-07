@@ -18,6 +18,8 @@ class Game
 
 public:
 
+    static constexpr int NUM_TAGS = 4;
+
     enum class Tag { BULLET, ENEMY, PLAYER, SMALL_ENEMY};
 
     static const char* TAG_NAME[];
@@ -98,8 +100,7 @@ private:
     void sWallBoundary(std::shared_ptr<Entity> entity, const Vec2f& boundary);
 
     // rendering
-    void sRenderPlayer();
-    void sRenderEnemy();
+    void sRenderRotatingEntities(const std::string& tagname);
     void sRenderBullet();
 
     // movement 

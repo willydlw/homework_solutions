@@ -480,6 +480,7 @@ void Game::sCollision()
                 collisionDetected = true;
 
                 m_score += e->get<CScore>().score;          // update score
+               
                 spawnSmallEnemies(e);
                 e->destroy();                               // destroy enemy entity          
             }
@@ -745,10 +746,16 @@ void Game::sRender()
     if(!m_window.isOpen()) { return; }
 
     m_window.clear(sf::Color::Black);
-    sRenderPlayer();
-    sRenderBullet();
-    sRenderEnemy();
 
+    // bullet does not rotate and is itagname index 0
+    sRenderBullet();
+
+    // other entities, indices 1-3 do rotate
+    for(size_t i = 1; i < NUM_TAGS; i++)
+    {
+        sRenderRotatingEntities(TAG_NAME[i]);
+    }
+    
     m_window.draw(m_text);
 
     // draw the ui last 
@@ -758,25 +765,9 @@ void Game::sRender()
 
 }
 
-void Game::sRenderPlayer()
+void Game::sRenderRotatingEntities(const std::string& tagname)
 {
-    
-    // set the position of the shape based on the entity's transform->pos 
-    player()->get<CShape>().circle.setPosition(player()->get<CTransform>().pos);
-    
-    // set the rotation of the shape based on the entity's transform->angle 
-    player()->get<CTransform>().angle += 1.0;
-    player()->get<CShape>().circle.setRotation(sf::degrees(player()->get<CTransform>().angle));
-
-    // draw the entity's sf::CircleShape
-    m_window.draw(player()->get<CShape>().circle);
-
-}
-
-void Game::sRenderEnemy()
-{
-    // draw enemies
-    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
+    for(auto& e : m_entities.getEntities(tagname))
     {
         // set the shape rotation based on entity's transform angle
         e->get<CTransform>().angle += 1.0;
@@ -786,7 +777,6 @@ void Game::sRenderEnemy()
             
         m_window.draw(e->get<CShape>().circle);
     }
-
 }
 
 void Game::sRenderBullet()
