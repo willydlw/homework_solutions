@@ -53,9 +53,7 @@ void Game::init(const std::string& configFile)
     m_spawnInterval = m_enemyConfig.spawnInterval;
 
     LOG_INFO("Configuration complete\n");
-    std::cerr << gameConfig;
-
-
+    
     if(!ImGui::SFML::Init(m_window))
     {
         std::cerr << "ERROR, function: " << __PRETTY_FUNCTION__ 
@@ -181,8 +179,6 @@ void Game::spawnPlayer()
        
     if(m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::PLAYER)]).empty())
     {
-        std::cerr << "player does not exist, adding new player\n";
-
         // Entity Manager allocates memory for a new entity
         // with tag name: "player" and places it in the vector 
         // of entities to be added
@@ -203,8 +199,7 @@ void Game::spawnPlayer()
     }
     else
     {
-        std::cerr << __PRETTY_FUNCTION__ << "TODO: "
-        << "When a player already exists, we do not need to add a new player, just respawn it in widow center\n";
+        // respawn player in window center
         player()->get<CShape>().circle.setPosition(pos);
         player()->get<CTransform>().velocity = vel;         // likely redundant due to way current vel calculated
         player()->get<CTransform>().angle = SPAWN_ANGLE;
@@ -266,8 +261,6 @@ void Game::spawnEnemy()
 
 void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 {
-    // TODO: spawn small enemies at the location of the input enemy e
-
     // When we create the smaller enemy, we have to read the values of the original 
     // enemy 
     // - spawn a number of small enemies equal to the vertices of the original entity 
@@ -308,7 +301,6 @@ void Game::spawnSmallEnemies(std::shared_ptr<Entity> e)
 
 void Game::spawnBullet(std::shared_ptr<Entity> entity, const Vec2f & target)
 {
-    
     // Implement the spawning fo a bullet which travels toward target 
     //     - bullet speed is given as a scalar speed 
     //     - you must set the velocity of x, y componnents 
@@ -348,10 +340,6 @@ void Game::spawnSpecialWeapon(std::shared_ptr<Entity> entity)
 
 void Game::sMovement()
 {
-    // TODO: implement all entity movement in this function 
-    //  you should read the m_player->cInput component to determine if the
-    //  player is moving
-
     sPlayerMovement();
     sEnemyMovement();
     sBulletMovement();
@@ -404,7 +392,6 @@ void Game::sBulletMovement()
     {
         if(b->isAlive())
         {
-            // update position 
             b->get<CTransform>().pos += b->get<CTransform>().velocity;
         }
     }
@@ -415,8 +402,6 @@ void Game::sLifeSpan(Tag tag )
     for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(tag)]))
     {
         CLifeSpan& lifespan = e->get<CLifeSpan>();
-       
-         // if entity has > 0 remaining lifespan, subtract 1 
         if(lifespan.remaining > 0)
         {
             lifespan.remaining -= 1;
@@ -439,69 +424,72 @@ void Game::sLifeSpan(Tag tag )
 
 void Game::sLifespan()
 {
-    // TODO: implement all lifespan functionality 
-    // for all entities
-    //      if entity has no lifespan component, skip it 
-    
     sLifeSpan(Tag::BULLET);
     sLifeSpan(Tag::SMALL_ENEMY); 
+}
+
+void Game::sBulletEnemyCollision(const std::string& enemyTag)
+{
+    // Note data types of b, e are shared_ptr so a copy of the pointer 
+    // will make permanent changes to memory. We don't need auto&
+    for(auto b : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::BULLET)]))
+    {
+        Vec2f& bpos = b->get<CTransform>().pos; 
+        float bRadius = b->get<CCollision>().radius;
+       
+        for(auto e : m_entities.getEntities(enemyTag))
+        {
+            // calc distance between centers 
+            float dist = bpos.distance(e->get<CTransform>().pos);
+            if(dist <=  (bRadius + e->get<CCollision>().radius))
+            {
+                // Assuming bullet-enemy collision can destroy 
+                // multiple enemies when enemies are overlapping
+                // Enemies are allowed to collide with each other and survive.
+                // Bullet will be destroyed later when this state variable is checked.
+
+                m_score += e->get<CScore>().score;          // update score
+                if(enemyTag == TAG_NAME[static_cast<int>(Tag::ENEMY)])
+                {
+                    spawnSmallEnemies(e);
+                }
+
+                // destroy entities that have collided
+                e->destroy();   
+
+                // Sets flag for later removal. Entity will still exist 
+                // while in this function and not be destroyed until the Entity Manager
+                // update function is called later in the Game::run function
+                b->destroy();                 
+            }
+        }
+    }   
+}
+
+
+void Game::sPlayerEnemyCollision(const std::string& enemyTag)
+{
+    auto& pos = player()->get<CTransform>().pos;
+    auto& radius = player()->get<CCollision>().radius;
+
+    for(auto e : m_entities.getEntities(enemyTag))
+    {
+        float dist = pos.distance(e->get<CTransform>().pos);
+        if(dist <= radius + e->get<CCollision>().radius)
+        {
+            if(enemyTag == TAG_NAME[static_cast<int>(Tag::ENEMY)])
+            {
+                spawnSmallEnemies(e);
+            }
+            e->destroy();
+            spawnPlayer();      // respawn player, unlimited lives
+        }
+    }
 }
 
 
 void Game::sCollision()
 {
-    // TODO: implement all proper collisions between entities 
-    //      be sure to use the collision radius, NOT the shape radius 
-
-    // Note data types of b, e are shared_ptr so a copy of the pointer 
-    // will make permanent changes to memory. We don't need auto&
-    for(auto b : m_entities.getEntities("bullet"))
-    {
-        Vec2f& bpos = b->get<CTransform>().pos; 
-        float bRadius = b->get<CCollision>().radius;
-        bool collisionDetected = false;                 // determines if bullet is destroyed
-
-        for(auto e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
-        {
-            // calc distance between centers 
-            float dist = bpos.distance(e->get<CTransform>().pos);
-            if(dist <=  (bRadius + e->get<CCollision>().radius))
-            {
-                // Not destroying bullet here. Assuming bullet can destroy 
-                // multiple enemies when those enemies are overlapping.
-                // Enemies are allowed to collide with each other.
-                // Bullet will be destroyed later when this state variable is checked.
-                collisionDetected = true;
-
-                m_score += e->get<CScore>().score;          // update score
-               
-                spawnSmallEnemies(e);
-                e->destroy();                               // destroy enemy entity          
-            }
-            
-        }
-
-        for(auto e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
-        {
-            // calc distance between centers 
-            float dist = bpos.distance(e->get<CTransform>().pos);
-            if(dist <=  (bRadius + e->get<CCollision>().radius))
-            {
-                collisionDetected = true;
-                m_score += e->get<CScore>().score;
-                e->destroy();   
-            }
-        }
-
-        if(collisionDetected == true)
-        {
-            b->destroy();
-        }
-    }       // end of bullet loop
-
-
-    // TODO: also need to check player collision with all enemies
-
     /* Player collision with walls
     *  
     *  Because player movement is controlled by up,down,left,right 
@@ -517,10 +505,25 @@ void Game::sCollision()
     Vec2f wallBoundary = m_window.getSize();
     sWallBoundaryNoBounce(player(), wallBoundary);
 
+    // Enemy collision with walls
     for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::ENEMY)]))
     {
         sWallBoundary(e, wallBoundary);
     }
+
+    for(auto& e : m_entities.getEntities(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]))
+    {
+        sWallBoundary(e, wallBoundary);
+    }
+
+    // Bullet collision with enemies
+    sBulletEnemyCollision(TAG_NAME[static_cast<int>(Tag::ENEMY)]);
+    sBulletEnemyCollision(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]);
+   
+    // Player collision withe enemies 
+    sPlayerEnemyCollision(TAG_NAME[static_cast<int>(Tag::ENEMY)]);
+    sPlayerEnemyCollision(TAG_NAME[static_cast<int>(Tag::SMALL_ENEMY)]);
+
     
 }
 

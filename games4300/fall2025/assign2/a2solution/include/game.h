@@ -92,6 +92,8 @@ private:
 
 
     // collisions 
+    void sBulletEnemyCollision(const std::string& enemyTag);
+    void sPlayerEnemyCollision(const std::string& enemyTag);
 
     // Entity remains at wall boundary upon collision
     void sWallBoundaryNoBounce(std::shared_ptr<Entity> entity, const Vec2f& boundary);
