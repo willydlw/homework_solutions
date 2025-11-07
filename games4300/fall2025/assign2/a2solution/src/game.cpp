@@ -424,15 +424,9 @@ void Game::sLifeSpan(Tag tag )
             // scale alpha channel remaining / total lifespan
             float alpha = static_cast<float>(lifespan.remaining) * 255.0f / 
                                 static_cast<float>(lifespan.lifespan);
-                
-            sf::Color fillColor = 
-            {
-                m_bulletConfig.fillColor.r, 
-                m_bulletConfig.fillColor.g, 
-                m_bulletConfig.fillColor.b,
-                static_cast<uint8_t>(alpha)
-            };
 
+            sf::Color fillColor = e->get<CShape>().circle.getFillColor();
+            fillColor.a = static_cast<uint8_t>(alpha);
             e->get<CShape>().circle.setFillColor(fillColor);
         }
         else
