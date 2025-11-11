@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "../include/fileUtility.h"
 #include "../include/logError.hpp"
 
