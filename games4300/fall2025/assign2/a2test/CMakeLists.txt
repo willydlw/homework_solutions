@@ -22,6 +22,7 @@ target_sources(testVec2 PUBLIC
 
 # PUBLIC m links math library
 target_link_libraries(testVec2
+    PRIVATE SFML::Graphics
     PUBLIC  m
 )
 
