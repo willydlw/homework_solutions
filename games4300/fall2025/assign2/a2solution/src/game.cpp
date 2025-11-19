@@ -665,6 +665,7 @@ void Game::sEntityManagerGui()
     {
         if(ImGui::CollapsingHeader("Entities By Tag"))
         {
+            int buttonId = 0;
             ImGui::Indent();
             for(size_t i = 0; i < NUM_TAGS; i++)
             {
@@ -674,7 +675,6 @@ void Game::sEntityManagerGui()
                     // button should show lifespan state bright white for alive 
                     // graying over time to black when dead
                     // Letter D in button to indicate it is deletable by mouse right-click
-                    int buttonId = 0;
                     for(auto& e : m_entities.getEntities(TAG_NAME[i]))
                     {
                         ImGui::PushID(buttonId);
