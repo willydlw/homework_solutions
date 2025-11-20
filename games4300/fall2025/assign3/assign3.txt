@@ -214,6 +214,13 @@ Player GX GY CW CH SX SY SM GY B
 Assignemnt Hints 
 ------------------------------
 
-- Rendering system 
+- Rendering system has already been set up for you, to help you debug:
+  You can press the T key to toggle drawing textures 
+  You can press the C key to toggle drawing bounding boxes 
+  You can press the G key to toggle drawing the grid 
 
-Go to video 51:00 to see list of game source code files and start explanation.
+- You can implement Animation::update() and Animation::hasEnded() at any time,
+  it will not affect the gameplay mechanics whatsoever, just animation 
+
+
+Go to video 51:00 to see list of game source code files and start code explanation.
