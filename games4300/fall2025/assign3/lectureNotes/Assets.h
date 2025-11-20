@@ -28,22 +28,47 @@
     Assets loaded once at beginning of program
 */
 
+
+#pragma once 
+
+#include <SFML/Graphics.hpp>
+#include <map>
+#include <cassert>
+#include <iostream>
+#include <fstream>
+
+class Animation;
+
 class Assets
 {
+    private:
+
     // data
-    std::map<std::string, sf::Texture>
-    std::map<std::string, Animation>
-    std::map<std::string, sf::Sound>
-    std::map<std::string, sf::Font>
+    std::map<std::string, sf::Texture> m_textureMap;
+    std::map<std::string, Animation>   m_animationMap;
+    std::map<std::string, sf::Font>    m_fontMap;  
 
     // functions 
-    void addTexture(name, path)
-    void addSound(name, path);
-    void addFont(name, path);
-    void addAnimation(name, Animation);
+    void addTexture(const std::string& textureName, const std::string& path,
+            bool smooth = ?);
 
-    sf::Texture& getTexture(name);
-    sf::Sound& getSound(name);
-    sf::Font& getFont(name);
-    Animation& getAnimation(name);
+    void addAnimation(const std::string& animationName, const std::string& textureName,
+            size_t ??);
+
+    void addFont(const std::string& fontName, const std::string& path);
+
+    Assets() = default;
+   
+public:
+
+    static Assets& Instance();
+
+    void loadFromFile(const std::string& path);
+
+    const sf::Texture& getTexture(const std::string& textureName) const;
+    const Animation& getAnimation(const std::string& animationName) const;
+    const sf::Font& getFont(const std::string& fontName) const;
+    const std::map<std::string, sf::Texture>& getTextures() const;
+    const std::map<std::string, Animation>& getAnimations() const;
+    
 }

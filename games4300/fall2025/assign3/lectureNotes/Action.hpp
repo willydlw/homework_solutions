@@ -36,8 +36,16 @@
             m_actionMap[inputKey] = actionName
 */
 
+#pragma once 
+
+#include "Entity.hpp"
+#include <string>
+#include <sstream>
+
 class Action
 {
+    private:
+    
     std::string m_name = "NONE";
     std::string m_type = "NONE";
 

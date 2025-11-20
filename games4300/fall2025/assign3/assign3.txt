@@ -222,5 +222,64 @@ Assignemnt Hints
 - You can implement Animation::update() and Animation::hasEnded() at any time,
   it will not affect the gameplay mechanics whatsoever, just animation 
 
+- Implement Scene_Play::loadLevel()
+  Since rendering is already completed, once you correctly read in the different 
+  types of entities, add them to the EntityManager and they should 
+  automatically be drawn to the screen. Add the correct bounding boxes to Tile 
+  entities, and no bounding boxes to the Dec entities. Remember, you can toggle 
+  debug viewing of bouding boxes with the T and C keys
+  
+  As part of this step, implement the Scene_Play::gridToMidPixel() 
+  function, which takes in as parameters a grid x,y position and an Entity,
+  and returns the Vec2 position of the CENTER of that entity. You must use 
+  the Animation size of the Entity to determine where its center point should be.
+  Keep in mind taht this meand your Entity must have its CAnimation component added
+  first, so that it can be used to calculate the midpoint in this function.
 
-Go to video 51:00 to see list of game source code files and start code explanation.
+
+- Implement Scene_Play::spawnPlayer()
+    Read the configuration from the level file and spawn the player 
+    This is where the player should respawn when they die.
+
+- Implement some basic WASD u/l/d/r movement for the player entity sot that you can
+  use this to help test collisions in the future. Remember that you must registerAction 
+  to register a new action for the scene. See the actions already registered for you, and 
+  the sDoAction() function for syntax on how to perform actions.
+
+  Test this before adding gravity and jumping.
+
+- Implement Scene_Play::spawnBullet()
+  Bullet should shoot when Space is pressed in same direction player facing
+  Holding down the space button should not continuously fire bullets. A 
+  new bullet can only be fired after the space key has been released. Use 
+  the entity's CInput.canShoot variable to implement this.
+
+- Implement Physics::GetOverlap()
+  This function should return the overlap dimensions between the bounding boxes 
+  of two entities. This is the same as the purple rectangle in notes.
+  GetPreviousOverlap should be a copy/paste of this solution except using the 
+  previous positions instead of the current positions of the entity. 
+  If either input entity has no bouding box, then return Vec2(0,0)
+
+- Implement collsion checking wiht bullets / brick tiles such that the brick 
+  is destroyed when a bullet collides with it. Remember, a collision occurs 
+  when the overlap is non-zero in both the x and y components. Bullets should 
+  always be destroyed whtn the collide with any non-decorative tile. 
+
+- Implement collision resolution such that when the player collides with a 
+  non-decorative tile from below, its y-velocity should be set to zero so 
+  that it falls back downward and doesn't 'hover' below the tile.
+
+- Implement a way of detecting which side the player collided with the tile 
+
+- Change the controls such that they are the proper left/right/jump style.
+  Note: All movement logic should be in the movement system. The sDoAction
+  system is ONLY used to set the proper CInput variables. If you modify the 
+  player's speed or position anywhere inside the sDoAction system, you will 
+  lose marks as this potentially unsafe / produces unwanted effects 
+
+- Implement gravity such that the player falls toward the bottom of the 
+  screen and lands on tiles when it collides with a tile from above. Note
+  that when the player lands on the tile from above, you should set its vertical
+  speed to zero so that gravity does not continue to accelerate the player downward.
+
