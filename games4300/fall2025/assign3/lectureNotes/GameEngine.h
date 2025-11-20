@@ -10,6 +10,9 @@
     GameEngine may be implemented as a singleton class, instead of pointer,  in assignment 3
 */
 
+#include <map>
+#include <string>
+
 class GameEngine
 {
     // functions
