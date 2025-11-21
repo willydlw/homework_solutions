@@ -50,7 +50,7 @@ Player:
 Animations:
 - See below for Animation asset specification 
 - Animations are implemented by storing multiple frames inside a texture 
-- The Animation class handles froma advancment based on animation speed 
+- The Animation class handles frame advancement based on animation speed 
 - You need to implement Animation::update() to properly progress animations 
 - You need to implement Animation:hasEnded() which returns to true if an 
   animation has finished its last frame, false otherwise 
