@@ -31,7 +31,7 @@ class Scene
     EntityManager   m_entityManager;
     ActionMap       m_actionMap;
     bool            m_pause = false;
-    bool            m_hadEnded = false;
+    bool            m_hasEnded = false;
     size_t          m_currentFrame = 0;
 
     virtual void onEnd() = 0;
