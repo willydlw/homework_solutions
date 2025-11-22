@@ -50,9 +50,8 @@ void Scene_Menu::init()
     for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
         sf::Text text(
-            m_menuStrings[i],
-            Assets::Instance().getFont("Mario"), 26
-        );
+            Assets::Instance().getFont("Mario"),
+            m_menuStrings[i], 26);
 
         if(i != m_selectedMenuIndex)
         {
@@ -111,7 +110,7 @@ void Scene_Menu::sDoAction(const Action& action)
         {
             m_game->changeScene("PLAY", 
                 std::make_shared<Scene_Play>(
-                    m_game, m_levelPaths[m_selectedMenuIndex]));
+                    m_game, m_levelPaths[m_selectedMenuIndex]), true);
         }
         else if(action.name() == "QUIT")
         {

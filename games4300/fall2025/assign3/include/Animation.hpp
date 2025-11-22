@@ -2,6 +2,8 @@
 
 #include <string>
 
+#include <SFML/Graphics/Rect.hpp>
+
 class Animation 
 {
     public:

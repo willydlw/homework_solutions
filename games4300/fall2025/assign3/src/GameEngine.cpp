@@ -36,12 +36,15 @@ sf::RenderWindow& GameEngine::window()
 
 void GameEngine::run()
 {
+    std::cerr << "TODO: Implement GameEngine:run()\n";
+    #if 0
     while(isRunning())
     {
         sUserInput();
         update();
         m_window.display();
     }
+    #endif
 }
 
 void GameEngine::sUserInput()

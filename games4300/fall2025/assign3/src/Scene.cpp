@@ -1,6 +1,8 @@
 #include "Scene.h"
 
 #include <SFML/Graphics/PrimitiveType.hpp>
+#include <SFML/Graphics/Vertex.hpp>
+#include <SFML/System/Vector2.hpp>
 
 Scene::Scene() {}
 
@@ -14,7 +16,12 @@ void Scene::doAction(const Action& action)
     sDoAction(action);
 }
 
-void Scene::simulate(const size_t frames) {}
+void Scene::simulate(const size_t frames) 
+{
+    std::cerr << "TODO: function " << __PRETTY_FUNCTION__ << 
+        " what does frames do? frames value: "
+    << frames << "\n";
+}
 
 void Scene::registerAction(int inputKey, const std::string& actionName)
 {
@@ -53,9 +60,9 @@ ActionMap& Scene::getActionMap()
 void Scene::drawLine(const Vec2f& p1, const Vec2f& p2)
 {
     sf::Vertex line[] = {
-        sf::Vertex(sf::Vector2f(p1.x, p1.y));
-        sf::Vertex(sf::Vector2f(p2.x, p2.y))
+        sf::Vertex{p1.x, p1.y},
+        sf::Vertex{p2.x, p2.y}
     };
 
-    m_game->window().draw(line, 2, sf::Lines);
+    m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
 }

@@ -19,6 +19,8 @@
     GameEngine may be implemented as a singleton class, instead of pointer,  in assignment 3
 */
 
+class Scene;
+
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
 
 class GameEngine

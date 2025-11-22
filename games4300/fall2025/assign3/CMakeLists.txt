@@ -15,6 +15,7 @@ set(SRC_FILES
     src/main.cpp
     src/Assets.cpp
     src/GameEngine.cpp
+    src/Scene.cpp
     src/Scene_Menu.cpp
     src/Scene_Play.cpp
     include/Action.hpp
