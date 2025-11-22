@@ -3,9 +3,17 @@
 #include <iostream>
 #include <memory>
 
+#include <SFML/Window/Keyboard.hpp>
 #include <SFML/Graphics/Text.hpp>
 
-Scene_Menu::Scene_Menu(GameEngine* gameEngine) : Scene(gameEngine)
+/* SFML 3.0.x class sf::Text has no default constructor which is 
+   why we must initialize the data member with a font reference 
+   in the constructor
+*/
+Scene_Menu::Scene_Menu(GameEngine* gameEngine) 
+    : Scene(gameEngine)  // call base class constructor
+    , m_title("Menu")    // initialize derived class members
+    , m_menuText(Assets::Instance().getFont("Mario"))
 {
     init();
 }
@@ -13,21 +21,23 @@ Scene_Menu::Scene_Menu(GameEngine* gameEngine) : Scene(gameEngine)
 void Scene_Menu::init()
 {
     std::cerr << "TODO: function: " << __func__ << " register all Actions\n"; 
-    registerAction(sf::Keyboard::W,  "UP");
-    registerAction(sf::Keyboard::S,  "DOWN");
-    registerAction(sf::Keyboard::D,  "PLAY");
-    registerAction(sf::Keyboard::Escape, "QUIT");
+    registerAction(static_cast<int>(sf::Keyboard::Key::W),  "UP");
+    registerAction(static_cast<int>(sf::Keyboard::Key::S),  "DOWN");
+    registerAction(static_cast<int>(sf::Keyboard::Key::D),  "PLAY");
+    registerAction(static_cast<int>(sf::Keyboard::Key::Escape), "QUIT");
 
     m_title = "TODO: Scene Menu Title";
+    int centerX = m_game->window().getSize().x / 2;
+
     int titleSize = 30;
     m_menuText.setString(m_title);
     m_menuText.setFont(Assets::Instance().getFont("Mario"));
     m_menuText.setCharacterSize(titleSize);
     m_menuText.setFillColor(sf::Color::Black);
     m_menuText.setPosition(
-        {m_game->window().getSize().x / 2.0f 
-        - titleSize * (m_title.length() + 1) / 2.0f,
-        titleSize * 3}
+        { static_cast<float>(centerX - titleSize * (m_title.length() + 1) / 2),
+          static_cast<float>(titleSize * 3)
+        }
     );
 
     m_menuStrings.push_back("LEVEL 1");
@@ -37,7 +47,7 @@ void Scene_Menu::init()
     m_levelPaths.push_back("config/level2.txt");
     m_levelPaths.push_back("config/level3.txt");
 
-    for(int i = 0; i < m_menuStrings.size(); i++)
+    for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
         sf::Text text(
             m_menuStrings[i],
@@ -50,9 +60,10 @@ void Scene_Menu::init()
         }
 
         text.setPosition( 
-            m_game->window().getSize().x / 2.0f 
-            - 26 * (m_menuStrings[i].length() + 1) / 2.0f,
-            m_menuText.getGlobalBounds().top + 10 + 30 * (i + 1)
+            { static_cast<float>(centerX - 26 * (m_menuStrings[i].length() + 1) / 2),
+              static_cast<float>(m_menuText.getGlobalBounds().position.x + 10 
+                                    + 30 * (i + 1))
+            }
         );
 
         m_menuItems.push_back(text);
