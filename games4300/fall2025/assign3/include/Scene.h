@@ -1,8 +1,8 @@
-#pragma once 
+#ifndef SCENE_H
+#define SCENE_H 
 
 #include "Action.hpp"
 #include "EntityManager.hpp"
-#include "GameEngine.h"
 #include "Vec2.hpp"
 
 #include <map>
@@ -19,28 +19,38 @@
 
 */
 
+// forward declarations
+class GameEngine;
+
+// typedefs
 typedef std::map<int, std::string> ActionMap;
 
-class GameEngine;
 
 class Scene
 {
-    protected:
+
+protected:
 
     GameEngine*     m_game= nullptr;
     EntityManager   m_entityManager;
     ActionMap       m_actionMap;
-    bool            m_pause = false;
+    bool            m_paused = false;
     bool            m_hasEnded = false;
     size_t          m_currentFrame = 0;
 
+    // pure virtual function
     virtual void onEnd() = 0;
+
+    // toggles action in game play
     void setPaused(bool paused);
 
-    public:
+public:
 
+    // constructors
     Scene();
-    Scene(GameEngine* gameEngine);
+    explicit Scene(GameEngine* gameEngine);
+
+    // destructor
     virtual ~Scene();
 
     // pure virtual functions
@@ -50,15 +60,19 @@ class Scene
 
     
     virtual void doAction(const Action& action);
+
     void simulate(const size_t frames);
     void registerAction(int inputKey, const std::string& actionName);
 
-    size_t width() const;
-    size_t height() const;
-    size_t currentFrame() const;
+    [[nodiscard]] size_t width() const;
+    [[nodiscard]] size_t height() const;
+    [[nodiscard]] size_t currentFrame() const;
 
-    bool hasEnded() const;
-    ActionMap& getActionMap();
+    [[nodiscard]] bool hasEnded() const;
+    [[nodiscard]] const ActionMap& getActionMap() const;
+    
     void drawLine(const Vec2f& p1, const Vec2f& p2);
 
 };
+
+#endif // SCENE_H

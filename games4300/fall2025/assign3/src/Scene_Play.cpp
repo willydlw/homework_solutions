@@ -1,13 +1,18 @@
 #include "Scene_Play.h"
-#include "Physics.hpp"
+
 #include "Assets.h"
-#include "GameEngine.h"
 #include "Components.hpp"
-#include "Action.hpp"
+#include "EntityManager.hpp"
+
+//#include "Physics.hpp"
+//#include "Assets.h"
+//#include "Components.hpp"
+//#include "Action.hpp"
+
+#include <iostream>
 
 Scene_Play::Scene_Play(GameEngine& gameEngine, const std::string& levelPath)
-    : Scene(gameEngine)
-    , m_levelPath(levelPath)
+    : Scene(gameEngine), m_levelPath(levelPath)
 {
     init(m_levelPath);
 }
@@ -16,11 +21,12 @@ void Scene_Play::init(const std::string& levelPath)
 {
     registerAction(sf::Keyboard::Scancode::P, "PAUSE");
     registerAction(sf::Keyboard::Scancode::Escape, "QUIT");
-    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_TEXTURE");    // Toggle drawing 
-    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_COLLISION");    // Toggle drawing 
-    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_GRID");    // Toggle drawing 
+    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_TEXTURE");    // Toggle drawing Textures
+    registerAction(sf::Keyboard::Scancode::C, "TOGGLE_COLLISION");  // Toggle drawing Collision Boxes
+    registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");       // Toggle drawing Grid
 
     // TODO: Register all other gameplay actions
+    std::cerr << "TODO function: " << __func__ << " register all other game play actions\n";
 
     loadLevel(levelPath);
 }
@@ -44,7 +50,15 @@ Vec2f Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entit
     //  1) Calculate grid cell bottom-left (Be sure to account for the y-flip)
     //  2) Add AnimationSize/2 
 
-    return Vec2f(0,0);
+    std::cerr << "TODO function: " << __func__ << " complete the calculations\n"
+        << " currently returning 0,0 by default\n";
+
+    std::cerr << "Parameters: gridX " << gridX << ", gridY " << gridY 
+        << ", entity: " << *entity << "\n";
+
+    Vec2f answer{0.0f, 0.0f};
+
+    return answer;
 }
 
 void Scene_Play::loadLevel(const std::string& filename)
@@ -58,14 +72,21 @@ void Scene_Play::loadLevel(const std::string& filename)
     // NOTE: all of the code below is sample code which shows you how to 
     // set up and use entities it should be removed 
 
+    std::cerr << "TODO function: " << __func__ 
+        << "\n\t1) read in the level file, parameter filename: " << filename 
+        << "\n\t2) add the appropriate entities\n";
+    
+    std::cerr << "Current output is based on sample code which will be removed\n";
+
     spawnPlayer();
 
     // some sample entities 
     auto brick = m_EntityManager.addEntity("tile");
+
     // IMPORTANT: always add the CAnimation component first so that gridToMidPixel 
-    // can compute 
+    // can compute correctly
     brick->add<CAnimation>(Assets::Instance().getAnimation("Brick"), true);
-    brick->add<CTransform>(Vec2f(96, 480));
+    brick->add<CTransform>(Vec2f(96.0f, 480,=.0f));
 
     // NOTE: Your final code should position the entity with hte grid x,y position read from
     // brick->add<CTransform>(gridToMidPixel(gridX, gridY, brick));
@@ -73,8 +94,10 @@ void Scene_Play::loadLevel(const std::string& filename)
     if (brick->get<CAnimation>().animation.getName() == "Brick")
     {
         // This could be a good way of identifying if a tile is a brick!
+        std::cout << "This could be a good way of identifying if a tile is a brick\n";
     }
 
+    // Try changing "Block" to "Ground" to render the ground
     auto block = m_entityManager.addEntity("tile");
     block->add<CAnimation>(Assets::Instance().getAnimation("Block"), true);
     block->add<CTransform>(Vec2f(224, 480));
@@ -83,7 +106,7 @@ void Scene_Play::loadLevel(const std::string& filename)
 
     auto question = m_entityManager.addEntity("tile");
     question->add<CAnimation>(Assets::Instance().getAnimation("Question"), true);
-    question->add<CTransform>(Vec2f(352.480));
+    question->add<CTransform>(Vec2f(352,480));
     
     // NOTE: THIS IS INCREDIBLY IMPORTANT PLEASE READ THIS EXAMPLE 
     //      Components are now returned as references rather than pointers 
@@ -101,9 +124,12 @@ void Scene_Play::loadLevel(const std::string& filename)
 
 void Scene_Play::spawnPlayer()
 {
+    std::cerr << "TODO function: " << __func__ 
+        << "\n\tHere is a sample player entity which you can use to construct other entities\n";
+
     // check to see if a player already exists before adding a new one 
     // if it already exists, just overwrite the values of the existing one 
-    /f(!m_player) {m_player = m_entityManager.addEntity("player");}
+    if(!m_player) {m_player = m_entityManager.addEntity("player");}
 
     // here is a sample player entity which you can use to construct other entities 
     m_player->add<CAnimation>(Assets::Instance().getAnimation("Stand"), true);
@@ -114,12 +140,17 @@ void Scene_Play::spawnPlayer()
 
     // TODO: be sure to add the remaining components to the player
     // NOTE: when setting component properties, read values from m_playerConfig
+    std::cerr << "TODO be sure to add the remaining components to the player\n";
 }
+
 
 void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 {
     // TODO: this should spawn a bullet at the given entity 
     // going in the direction the entity is facing 
+    std::cerr << "TODO function: " << __func__ << "\n";
+    std::cerr << "Parameter entity: " << entity << "\n";
+    std::cerr << "Add all code for spawning bullet\n";
 
 }
 
@@ -128,6 +159,7 @@ void Scene_Play::update()
     m_entityManger.update();
 
     // TODO; implement pause functionality
+    std::cerr << "TODO, function: " << __func__ << ", implements pause functionality\n";
 
     sMovement();
     sLifeSpan();
@@ -135,6 +167,8 @@ void Scene_Play::update()
     sAnimation();
     sGUI();
     sRender();
+
+    std::cerr << "Where does m_currentFrame get incremented?\n";
 }
 
 void Scene_Play::sMovement()
@@ -143,11 +177,19 @@ void Scene_Play::sMovement()
     // TODO: implement gravity's effect on the player 
     // TODO: implement the maximum player speed in both x and y directions 
     // NOTE: setting an entity's scale.x to -1/1 will make it face to the left/right 
+
+    std::cerr << "TODO function: " << __func__ << "\n";
+    std::cerr << "TODO: implement player movement / jumping based on its CInput component\n" 
+        << "TODO: implement gravity's effect on the player\n" 
+        << "TODO: implement the maximum player speed in both x and y directions\n"
+        << "NOTE: setting an entity's scale.x to -1/1 will make it face to the left/right\n";
 }
 
 void Scene_Play::sLifespan()
 {
     // TODO: Check lifespan of entities that have them, and destroy them if they go over
+    std::cerr << "TODO function " << __func__ << 
+        << "\n\tcheck lifespan of entities and destroy those that are dead\n";
 }
 
 void Scene_Play::sCollision()
@@ -170,10 +212,13 @@ void Scene_Play::sCollision()
 
     // TODO: Check to see if the player has fallen down a hole (y > height())
     // TODO: Don't let the player walk off the left side of the map
+    std::cerr << "TODO function " << __func__ << "\n\ttoo many collision checks to list here\n";
+
 }
 
 void Scene_Play::sDoAction(const Action& action)
 {
+    std::cerr << "TODO function " << __func__ << " test actions and add other actions\n";
     if(action.type() == "START")
     {
         if(action.name() == "TOGGLE_TEXTURE") { m_drawTexturess = !m_drawTextures;}

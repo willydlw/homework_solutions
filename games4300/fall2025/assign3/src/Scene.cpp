@@ -1,4 +1,5 @@
 #include "Scene.h"
+#include "GameEngine.h"
 
 #include <SFML/Graphics/PrimitiveType.hpp>
 #include <SFML/Graphics/Vertex.hpp>
@@ -6,13 +7,18 @@
 
 #include <array>
 
-Scene::Scene() {}
+
+Scene::Scene() = default;
 
 Scene::Scene(GameEngine* gameEngine) 
     : m_game(gameEngine) {}
 
-Scene::~Scene(){}
+Scene::~Scene() = default;
 
+// TODO: understand why we have this function
+// is it because sDoAction is a pure virtual function?
+// and we want an abstract base class pointer to call the 
+// appropriate action?
 void Scene::doAction(const Action& action)
 {
     sDoAction(action);
@@ -54,7 +60,7 @@ bool Scene::hasEnded() const
     return m_hasEnded;
 }
 
-ActionMap& Scene::getActionMap()
+const ActionMap& Scene::getActionMap() const
 {
     return m_actionMap;
 }
@@ -66,6 +72,5 @@ void Scene::drawLine(const Vec2f& p1, const Vec2f& p2)
         sf::Vertex{sf::Vector2f{p2.x, p2.y}}
     };
     
-
     m_game->window().draw(vertices.data(), vertices.size(), sf::PrimitiveType::Lines);
 }

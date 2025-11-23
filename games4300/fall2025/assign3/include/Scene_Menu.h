@@ -1,30 +1,37 @@
-#pragma once 
+#ifndef SCENE_MENU_H
+#define SCEEN_MENU_H
 
-#include <SFML/Graphics/Text.hpp>
-
-#include <vector>
-
+#include "Action.hpp"
 #include "GameEngine.h"
 #include "Scene.h"
 
+#include <SFML/Graphics/Text.hpp>
+
+#include <string>
+#include <vector>
+
+
 class Scene_Menu : public Scene 
 {
-    protected:
+
+protected:
 
     std::string                 m_title;
-    sf::Text                    m_menuText;
+    sf::Text                    m_menuText; 
     std::vector<std::string>    m_menuStrings;
     std::vector<std::string>    m_levelPaths;
     std::vector<sf::Text>       m_menuItems;
-    size_t m_selectedMenuIndex = 0;
+    size_t                      m_selectedMenuIndex = 0;
 
     void init();
-    void update();
-    void onEnd();
-    void sDoAction(const Action& action);
+    void update() override;
+    void onEnd()  override;
+    void sDoAction(const Action& action) override;
 
-    public:
+public:
 
-    Scene_Menu(GameEngine* gameEngine = nullptr);
-    void sRender();
+    explicit Scene_Menu(GameEngine* gameEngine = nullptr);
+    void sRender() override;
 };
+
+#endif  // SCENE_MENU_H
