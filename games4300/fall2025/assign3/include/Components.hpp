@@ -1,17 +1,9 @@
-#pragma once 
+#ifndef COMPONENTS_H
+#define COMPONENTS_H
 
 #include "Animation.hpp"
 #include "Assets.h"
 #include "Vec2.hpp"
-
-enum struct PlayerState{
-    STAND       = 1 << 0,
-    STANDSHOOT  = 1 << 1,
-    AIR         = 1 << 2,
-    AIRSHOOT    = 1 << 3,
-    RUN         = 1 << 4,
-    RUNSHOOT    = 1 << 5
-};
 
 class Component 
 {
@@ -31,8 +23,9 @@ class CTransform : public Component
     float angle   = 0.0f;
 
     CTransform() = default;
-    CTransform(const Vec2f& p)
+    explicit CTransform(const Vec2f& p)
         : position(p) {}
+
     CTransform(const Vec2f& p, const Vec2f& sp, const Vec2f& sc, float a)
         : position(p), prevPosition(p), velocity(sp), scale(sc), angle(a) {}
 };
@@ -63,14 +56,14 @@ class CInput : public Component
     CInput() = default;
 };
 
-class CBoundingBox 
+class CBoundingBox : public Component
 {
     public:
 
     Vec2f size;
     Vec2f halfSize;
     CBoundingBox() = default;
-    CBoundingBox(const Vec2f& s)
+    explicit CBoundingBox(const Vec2f& s)
         : size(s), halfSize(s.x/2.0f, s.y/2.0f) {}
 };
 
@@ -82,26 +75,25 @@ class CAnimation : public Component
     bool repeat = false;
 
     CAnimation() = default;
-    CAnimation(const Animation& animation, bool r)
-        : animation(animation), repeat(r) {}
+    CAnimation(const Animation& animation, bool repeats)
+        : animation(animation), repeat(repeats) {}
 };
 
 class CGravity : public Component
 {
-    public:
-
+public:
     float gravity = 0.0f;
     CGravity() = default;
-    CGravity(float g) : gravity(g) {}
+    explicit CGravity(float g) : gravity(g) {}
 };
 
 class CState : public Component
 {
-    public:
 
-    PlayerState playerState;
+public:
+    std::string  state = "jumping";
     CState() = default;
-    CState(const PlayerState s) : playerState(s) {}
+    explicit CState(std::string s) : state(std::move(s)) {}
 };
 
 // In order for a class to be stored in a tuple, it must be default constructible
@@ -113,3 +105,6 @@ static_assert(std::is_default_constructible_v<CBoundingBox>);
 static_assert(std::is_default_constructible_v<CAnimation>);
 static_assert(std::is_default_constructible_v<CGravity>);
 static_assert(std::is_default_constructible_v<CState>);
+
+
+#endif // COMPONENTS_H

@@ -74,9 +74,8 @@ void Scene_Menu::init()
     for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
         sf::Text text(
-            m_menuStrings[i],
             Assets::Instance().getFont("Mario"),
-            menuItemSize);
+            m_menuStrings[i], 26);
 
         if(i != m_selectedMenuIndex)
         {
@@ -162,19 +161,17 @@ void Scene_Menu::sRender()
         auto top = gbounds.position.y;
 
         m_menuItems[i].setPosition( 
-            m_game->window().getSize().x / 2.0f 
+            { m_game->window().getSize().x / 2.0f 
             - 26 * (m_menuStrings[i].length() + 1) / 2.0f,
-            top + 10 + 30 * (i+1)
+            top + 10 + 30 * (i+1)}
         );
 
         m_game->window().draw(m_menuItems[i]);
     }
 
     // draw help instructions 
-    sf::Text help("W:UP  S:DOWN  D:PLAY  ESC:BACK/QUIT",
-        Assets::Instance().getFont("Mario"),
-        26
-    );
+    sf::Text help(Assets::Instance().getFont("Mario"),
+        "W:UP  S:DOWN  D:PLAY  ESC:BACK/QUIT", 26);
 
     help.setFillColor(sf::Color::Black);
     help.setPosition(

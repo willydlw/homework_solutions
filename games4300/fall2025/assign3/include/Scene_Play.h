@@ -39,13 +39,14 @@ protected:
     void spawnBullet(std::shared_ptr<Entity> entity);
 
     // Systems 
-    void sAnimation();
     void sMovement();
-    void sEnemySpawner();
+    void sLifespan();
     void sCollision();
-    void sRender();
+    void sAnimation();
+    void sGui();
+    
+    void sRender() override;
     void sDoAction(const Action& action) override;
-    void sDebug();
 
 public:
 

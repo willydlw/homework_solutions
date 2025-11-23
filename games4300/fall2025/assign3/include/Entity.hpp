@@ -70,6 +70,13 @@ public:
     void                destroy() { m_alive = false; };   
     const std::string&  tag() const { return m_tag; }
 
+    friend std::ostream& operator << (std::ostream& os, const Entity& obj )
+    {
+        os << "tag: " << obj.m_tag 
+            << "id: " << obj.m_id << "\n";
+        return os;
+    }
+
 private:
    
     bool                m_alive = true;     // if false, will delete entity

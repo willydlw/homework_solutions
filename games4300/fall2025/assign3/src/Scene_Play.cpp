@@ -11,7 +11,7 @@
 
 #include <iostream>
 
-Scene_Play::Scene_Play(GameEngine& gameEngine, const std::string& levelPath)
+Scene_Play::Scene_Play(GameEngine* gameEngine, const std::string &levelPath)
     : Scene(gameEngine), m_levelPath(levelPath)
 {
     init(m_levelPath);
@@ -19,11 +19,11 @@ Scene_Play::Scene_Play(GameEngine& gameEngine, const std::string& levelPath)
 
 void Scene_Play::init(const std::string& levelPath)
 {
-    registerAction(sf::Keyboard::Scancode::P, "PAUSE");
-    registerAction(sf::Keyboard::Scancode::Escape, "QUIT");
-    registerAction(sf::Keyboard::Scancode::T, "TOGGLE_TEXTURE");    // Toggle drawing Textures
-    registerAction(sf::Keyboard::Scancode::C, "TOGGLE_COLLISION");  // Toggle drawing Collision Boxes
-    registerAction(sf::Keyboard::Scancode::G, "TOGGLE_GRID");       // Toggle drawing Grid
+    registerAction(static_cast<int>(sf::Keyboard::Key::P), "PAUSE");
+    registerAction(static_cast<int>(sf::Keyboard::Key::Escape), "QUIT");
+    registerAction(static_cast<int>(sf::Keyboard::Key::T), "TOGGLE_TEXTURE");    // Toggle drawing Textures
+    registerAction(static_cast<int>(sf::Keyboard::Key::C), "TOGGLE_COLLISION");  // Toggle drawing Collision Boxes
+    registerAction(static_cast<int>(sf::Keyboard::Key::G), "TOGGLE_GRID");       // Toggle drawing Grid
 
     // TODO: Register all other gameplay actions
     std::cerr << "TODO function: " << __func__ << " register all other game play actions\n";
@@ -64,7 +64,7 @@ Vec2f Scene_Play::gridToMidPixel(float gridX, float gridY, std::shared_ptr<Entit
 void Scene_Play::loadLevel(const std::string& filename)
 {
     // reset the entity manager every time we load a level 
-    m_entityManger = EntityManager();
+    m_entityManager = EntityManager();
 
     // TODO: read in the level file and add the appropriate entities 
     //  use the PlayerConfig struct m_playerConfig to store player properties 
@@ -81,12 +81,12 @@ void Scene_Play::loadLevel(const std::string& filename)
     spawnPlayer();
 
     // some sample entities 
-    auto brick = m_EntityManager.addEntity("tile");
+    auto brick = m_entityManager.addEntity("tile");
 
     // IMPORTANT: always add the CAnimation component first so that gridToMidPixel 
     // can compute correctly
     brick->add<CAnimation>(Assets::Instance().getAnimation("Brick"), true);
-    brick->add<CTransform>(Vec2f(96.0f, 480,=.0f));
+    brick->add<CTransform>(Vec2f(96.0f, 480.0f));
 
     // NOTE: Your final code should position the entity with hte grid x,y position read from
     // brick->add<CTransform>(gridToMidPixel(gridX, gridY, brick));
@@ -102,7 +102,10 @@ void Scene_Play::loadLevel(const std::string& filename)
     block->add<CAnimation>(Assets::Instance().getAnimation("Block"), true);
     block->add<CTransform>(Vec2f(224, 480));
     // add a bounding box, this will now show up if we press the 'C' key
-    block->add<CBoundingBox>(sf::Vector2f(Assets::Instance().getAnimation("Block"),getRect().size)
+
+    auto blockSize = Assets::Instance().getAnimation("Block").getRect().size;
+    Vec2f fSize = {static_cast<float>(blockSize.x), static_cast<float>(blockSize.y)};
+    block->add<CBoundingBox>(fSize);
 
     auto question = m_entityManager.addEntity("tile");
     question->add<CAnimation>(Assets::Instance().getAnimation("Question"), true);
@@ -156,16 +159,16 @@ void Scene_Play::spawnBullet(std::shared_ptr<Entity> entity)
 
 void Scene_Play::update()
 {
-    m_entityManger.update();
+    m_entityManager.update();
 
     // TODO; implement pause functionality
     std::cerr << "TODO, function: " << __func__ << ", implements pause functionality\n";
 
     sMovement();
-    sLifeSpan();
+    sLifespan();
     sCollision();
     sAnimation();
-    sGUI();
+    sGui();
     sRender();
 
     std::cerr << "Where does m_currentFrame get incremented?\n";
@@ -188,7 +191,7 @@ void Scene_Play::sMovement()
 void Scene_Play::sLifespan()
 {
     // TODO: Check lifespan of entities that have them, and destroy them if they go over
-    std::cerr << "TODO function " << __func__ << 
+    std::cerr << "TODO function " << __func__ 
         << "\n\tcheck lifespan of entities and destroy those that are dead\n";
 }
 
@@ -216,12 +219,13 @@ void Scene_Play::sCollision()
 
 }
 
+
 void Scene_Play::sDoAction(const Action& action)
 {
     std::cerr << "TODO function " << __func__ << " test actions and add other actions\n";
     if(action.type() == "START")
     {
-        if(action.name() == "TOGGLE_TEXTURE") { m_drawTexturess = !m_drawTextures;}
+        if(action.name() == "TOGGLE_TEXTURE") { m_drawTextures = !m_drawTextures;}
         else if(action.name() == "TOGGLE_COLLISION") { m_drawCollision = !m_drawCollision;}
         else if(action.name() == "TOGGLE_GRID") { m_drawGrid = !m_drawGrid;}
         else if(action.name() == "PAUSE") { setPaused(!m_paused);}
@@ -233,12 +237,13 @@ void Scene_Play::sDoAction(const Action& action)
     else if(action.type() == "END")
     {
         // TODO: code values for end of actions 
-        if(action.name() == "RIGHT") {m_player->get<CINPUT>().right = false;}
+        if(action.name() == "RIGHT") {m_player->get<CInput>().right = false;}
     }
 }
 
 void Scene_Play::sAnimation()
 {
+    std::cerr << "TODO function: " << __func__ << " complete all animation code\n";
     // TODO: Complete the Animation class code first 
 
     // TODO: for each entity with an animation, call entity->get<CAnimation>().animation.update() 
@@ -246,6 +251,7 @@ void Scene_Play::sAnimation()
 
     // TODO: set the animation of the player based on its CState component 
     // if the player's state has be set to running
+    #if 0
     if(m_player->get<CState>().state == "run")
     {
         // change ist animation to a repeating run animation 
@@ -254,17 +260,21 @@ void Scene_Play::sAnimation()
 
         // Don't forget that if player has already been running this should not be set again 
     }
+    #endif
 
 }
 
-void Scene_Play::oneEnd()
+void Scene_Play::onEnd()
 {
+    std::cerr << "TODO function: " << __func__ << " complete code, what to do when scene ends?\n";
     // TODO: When the scene ends, change back to the MENU scene 
     // use m_game.changeScene(correct params)
 }
 
 void Scene_Play::sGui()
 {
+    std::cerr << "TODO function: " << __func__ << " implement GUI, don't forget to init, check events,  and render\n";
+    #if 0
     ImGui::Begin("Scene Properties");
     if(ImGui::BeginTabBar("MyTabBar"))
     {
@@ -311,14 +321,18 @@ void Scene_Play::sGui()
     }
 
     ImGui::End();
+    #endif 
 }
 
 
 void Scene_Play::sRender()
 {
+    std::cerr << "TODO function " << __func__ << " blank window until all code is written to render\n";
     // color the background darker so that you know the game is paused 
-    if(!m_paused) {m_game.window().clear(sf::Color(100, 100, 255));}
-    else { m_game.window().clear(sf::Color(50, 50, 150));}
+    if(!m_paused) {m_game->window().clear(sf::Color(100, 100, 255));}
+    else { m_game->window().clear(sf::Color(50, 50, 150));}
+
+    #if 0
 
     sf::Text gridText(Assets::Instance().getFont("Tech"), "", 12);
 
@@ -392,10 +406,6 @@ void Scene_Play::sRender()
             }
         }
     }
-}
 
-void Scene_Play::drawLine(const Vec2f& p1, const Vec2f& p2)
-{
-    sf::Vertex line[] = { {p1, sf::Color::White}, {p2, sf::Color::White}};
-    m_game.window().draw(line, 2, sf::PrimitiveType::Lines);
+    #endif 
 }

@@ -67,10 +67,21 @@ const ActionMap& Scene::getActionMap() const
 
 void Scene::drawLine(const Vec2f& p1, const Vec2f& p2)
 {
+    std::cerr << "TODO function: " << __func__ << "how to set line color to white?\n";
+    #if 0
+    sf::Vertex line[] = { {p1, sf::Color::White}, {p2, sf::Color::White}};
+    m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
+    #endif 
+
+    #if 1
     std::array vertices = {
-        sf::Vertex{sf::Vector2f{p1.x, p1.y}},
-        sf::Vertex{sf::Vector2f{p2.x, p2.y}}
+        sf::Vertex{sf::Vector2f{p1.x, p1.y}, sf::Color::White},
+        sf::Vertex{sf::Vector2f{p2.x, p2.y}, sf::Color::White}
     };
     
     m_game->window().draw(vertices.data(), vertices.size(), sf::PrimitiveType::Lines);
+    #endif
+
 }
+
+
