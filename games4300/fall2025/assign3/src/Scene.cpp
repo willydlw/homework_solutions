@@ -4,6 +4,8 @@
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include <array>
+
 Scene::Scene() {}
 
 Scene::Scene(GameEngine* gameEngine) 
@@ -59,10 +61,11 @@ ActionMap& Scene::getActionMap()
 
 void Scene::drawLine(const Vec2f& p1, const Vec2f& p2)
 {
-    sf::Vertex line[] = {
-        sf::Vertex{p1.x, p1.y},
-        sf::Vertex{p2.x, p2.y}
+    std::array vertices = {
+        sf::Vertex{sf::Vector2f{p1.x, p1.y}},
+        sf::Vertex{sf::Vector2f{p2.x, p2.y}}
     };
+    
 
-    m_game->window().draw(line, 2, sf::PrimitiveType::Lines);
+    m_game->window().draw(vertices.data(), vertices.size(), sf::PrimitiveType::Lines);
 }

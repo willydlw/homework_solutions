@@ -122,7 +122,7 @@ void Scene_Menu::sDoAction(const Action& action)
 void Scene_Menu::sRender()
 {
     // set menu background 
-    m_game->window().clear(sf:Color(100, 100, 255));
+    m_game->window().clear(sf::Color(100, 100, 255));
 
     // draw title 
     m_game->window().draw(m_menuText);
