@@ -11,14 +11,15 @@ GameEngine::GameEngine(const std::string& path)
 
 void GameEngine::init(const std::string& path)
 {
-    std::cerr << "Entering " << __func__ << "\n";
-
+    std::cerr << "Entering " << __PRETTY_FUNCTION__ << "\n";
     Assets::Instance().loadFromFile(path);
     m_window.create(sf::VideoMode({1280, 768}), "Definitely Not Mario");
     m_window.setFramerateLimit(60);
+
+    std::cerr << "calling changeScene\n";
     changeScene("MENU", std::make_shared<Scene_Menu>(this));
     
-    std::cerr << "Exiting " << __func__ << "\n\n";
+    std::cerr << "Exiting " << __PRETTY_FUNCTION__ << "\n\n";
 }
 
 
@@ -39,15 +40,13 @@ sf::RenderWindow& GameEngine::window()
 
 void GameEngine::run()
 {
-    std::cerr << "Entering " << __func__ << "\n";
-    #if 1
+    std::cerr << "Entering " << __PRETTY_FUNCTION__ << "\n";
     while(isRunning())
     {
         sUserInput();
         update();
         m_window.display();
     }
-    #endif
 }
 
 void GameEngine::sUserInput()
@@ -108,10 +107,13 @@ void GameEngine::sUserInput()
 void GameEngine::changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, 
         bool endCurrentScene)
 {
-    std::cerr << "TODO function " << __func__ << " understand code\n";
+    std::cerr << "TODO function " << __PRETTY_FUNCTION__
+    
+    
+     << " understand code\n";
     m_currentScene = sceneName;
     m_sceneMap[sceneName] = scene;
-    std::cerr << "TODO function " << __func__ << " endCurrentScene: " << endCurrentScene 
+    std::cerr << "TODO function " << __PRETTY_FUNCTION__ << " endCurrentScene: " << endCurrentScene 
         << " is unused parameter\n";
 }
 

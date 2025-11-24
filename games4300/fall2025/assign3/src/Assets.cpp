@@ -18,7 +18,7 @@ Assets& Assets::Instance()
 
 void Assets::addTexture(const std::string& textureName, const std::string& path, bool smooth)
 {
-    std::cerr << "TODO: " << __func__ << " test function\n";
+    std::cerr << "TODO: " << __PRETTY_FUNCTION__ << " test function\n";
     if(!m_textureMap[textureName].loadFromFile(path))
     {
         std::cerr << "Could not load texture file: " << path << std::endl;
@@ -35,7 +35,7 @@ void Assets::addAnimation(  const std::string& animationName,
                             const std::string& textureName, 
                             size_t frameCount, size_t animationSpeed)
 {
-    std::cerr << "TODO: " << __func__ << " test function\n";
+    std::cerr << "TODO: " << __PRETTY_FUNCTION__ << " test function\n";
     std::cerr << "is function: " << __PRETTY_FUNCTION__ << " missing a third parameter?"
         << " could not see it in lecture video\n";
     m_animationMap[animationName] 
@@ -44,11 +44,11 @@ void Assets::addAnimation(  const std::string& animationName,
 
 void Assets::addFont(const std::string& fontName, const std::string& path)
 {
-    std::cerr << "TODO: " << __func__ << " test function\n";
+    std::cerr << "TODO: " << __PRETTY_FUNCTION__ << " test function\n";
     m_fontMap[fontName] = sf::Font();
     if(!m_fontMap[fontName].openFromFile(path))
     {
-        std::cerr << "Could not load font file: " << path << std::endl;
+        std::cerr << "Could not load font: " << fontName << ", path: " << path << std::endl;
         m_fontMap.erase(fontName);
     }
     else 
@@ -59,13 +59,13 @@ void Assets::addFont(const std::string& fontName, const std::string& path)
 
 void Assets::loadFromFile(const std::string& path)
 {
-    std::cerr << "TODO: " << __func__ << " test function\n";
-    std::cerr << "Entering " << __func__ << "\n";
+    std::cerr << "TODO: " << __PRETTY_FUNCTION__ << " test function\n";
+    std::cerr << "Entering " << __PRETTY_FUNCTION__ << "\n";
 
     std::ifstream infile(path);
     if(!infile.is_open())
     {
-        std::cerr << __func__ << ", failed to open file, path: " << path << "\n";
+        std::cerr << __PRETTY_FUNCTION__ << ", failed to open file, path: " << path << "\n";
         std::exit(EXIT_FAILURE);
     }
 
@@ -73,7 +73,7 @@ void Assets::loadFromFile(const std::string& path)
     while(infile.good())
     {
         infile >> str;
-        std::cerr << "read str: " << str << "\n";
+        std::cerr << "iterating, read str: " << str << "\n";
         if(str == "Texture")
         {
             std::string name, path;
@@ -93,6 +93,7 @@ void Assets::loadFromFile(const std::string& path)
         {
             std::string name, path;
             infile >> name >> path;
+            std::cerr << "read name: " << name << ", path: " << path << "\n";
             addFont(name, path);
         }
         else 
@@ -100,6 +101,9 @@ void Assets::loadFromFile(const std::string& path)
             std::cerr << "Uknown: " << str << std::endl;
         }
     }
+
+    std::cerr << "exiting " << __PRETTY_FUNCTION__ << "\n";
+    infile.close();
 }
 
 
