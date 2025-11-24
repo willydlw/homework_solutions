@@ -1,5 +1,5 @@
 #ifndef A3_ENTITY_MANAGER_H
-#define A3_ENTITY_MANGER_H
+#define A3_ENTITY_MANAGER_H
 
 #include <algorithm>
 #include <map>

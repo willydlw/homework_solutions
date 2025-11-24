@@ -1,5 +1,5 @@
 #ifndef SCENE_MENU_H
-#define SCEEN_MENU_H
+#define SCENE_MENU_H
 
 #include "Action.hpp"
 #include "GameEngine.h"
