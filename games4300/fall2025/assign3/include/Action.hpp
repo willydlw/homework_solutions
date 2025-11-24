@@ -36,7 +36,8 @@
             m_actionMap[inputKey] = actionName
 */
 
-#pragma once 
+#ifndef A3_ACTION_H
+#define A3_ACTION_H
 
 #include <string>
 
@@ -58,3 +59,5 @@ class Action
     const std::string& type() const { return m_type; }
 
 };
+
+#endif // ACTION_H

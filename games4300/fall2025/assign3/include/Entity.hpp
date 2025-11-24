@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_ENTITY_H
+#define A3_ENTITY_H
 
 #include "Components.hpp"
 #include <string>
@@ -84,3 +85,5 @@ private:
     std::string         m_tag = "default";
     ComponentTuple      m_components;
 };
+
+#endif

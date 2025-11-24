@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_GAME_ENGINE_H
+#define A3_GAME_ENGINE_H
 
 #include <map>
 #include <memory>
@@ -19,6 +20,7 @@
     GameEngine may be implemented as a singleton class, instead of pointer,  in assignment 3
 */
 
+// forward declaration 
 class Scene;
 
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
@@ -41,7 +43,7 @@ class GameEngine
     sf::RenderWindow& window();
     bool isRunning();
 
-    private:
+    protected:
 
     sf::RenderWindow    m_window;
     std::string         m_currentScene;
@@ -77,3 +79,6 @@ class GameEngine
         - Menu tells game engine to change scenes 
         - game->changScene<Scene_play>("play", LevelPath)
 */
+
+
+#endif

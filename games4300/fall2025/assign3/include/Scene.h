@@ -6,6 +6,7 @@
 #include "Vec2.hpp"
 
 #include <map>
+#include <string>
 
 /* Base class
 

@@ -1,5 +1,5 @@
-#ifndef COMPONENTS_H
-#define COMPONENTS_H
+#ifndef A3_COMPONENTS_H
+#define A3_COMPONENTS_H
 
 #include "Animation.hpp"
 #include "Assets.h"

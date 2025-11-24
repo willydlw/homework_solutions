@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_PHYSICS_H
+#define A3_PHYSICS_H
 
 #include "Entity.hpp"
 
@@ -26,3 +27,5 @@ class Physics
     bool isIntersect(Line, Line);
     bool isInside(Vec2, Line);
 }
+
+#endif

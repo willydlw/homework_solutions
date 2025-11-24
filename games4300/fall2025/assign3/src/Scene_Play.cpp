@@ -2,7 +2,8 @@
 
 #include "Assets.h"
 #include "Components.hpp"
-#include "EntityManager.hpp"
+
+#include "GameEngine.h"
 
 //#include "Physics.hpp"
 //#include "Assets.h"
@@ -19,6 +20,7 @@ Scene_Play::Scene_Play(GameEngine* gameEngine, const std::string &levelPath)
 
 void Scene_Play::init(const std::string& levelPath)
 {
+    std::cerr << "TODO: add sf::Text data member to class Scene_Play\n";
     registerAction(static_cast<int>(sf::Keyboard::Key::P), "PAUSE");
     registerAction(static_cast<int>(sf::Keyboard::Key::Escape), "QUIT");
     registerAction(static_cast<int>(sf::Keyboard::Key::T), "TOGGLE_TEXTURE");    // Toggle drawing Textures

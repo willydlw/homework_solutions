@@ -2,13 +2,13 @@
 #define SCENE_PLAY_H
 
 #include "Entity.hpp"
-#include "GameEngine.h"
 #include "Scene.h"
 #include "Vec2.hpp"
 
 #include <SFML/Graphics/Text.hpp>
 
 #include <memory>
+#include <string>
 
 
 class Scene_Play : public Scene 

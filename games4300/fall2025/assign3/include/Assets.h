@@ -29,7 +29,8 @@
 */
 
 
-#pragma once 
+#ifndef A3_ASSETS_H
+#define A3_ASSETS_H
 
 #include <SFML/Graphics.hpp>
 #include <map>
@@ -71,3 +72,5 @@ public:
     const std::map<std::string, sf::Texture>& getTextures() const;
     const std::map<std::string, Animation>& getAnimations() const;
 };
+
+#endif

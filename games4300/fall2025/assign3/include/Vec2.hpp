@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_VEC2_HPP
+#define A3_VEC2_HPP
 
 #include <SFML/Graphics.hpp>
 #include <cmath>
@@ -205,3 +206,5 @@ public:
 using Vec2f = Vec2<float>;
 
 static_assert(std::is_default_constructible_v<Vec2f>);
+
+#endif

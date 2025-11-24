@@ -1,4 +1,3 @@
-# SubProject assign2/CMakeLists.txt
 project(a3solution)
 
 # specify binary output directory
@@ -10,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)   # optional: Set to OFF for more portable code
 
+include_directories("include")
 
 set(SRC_FILES
     src/main.cpp
@@ -30,13 +30,12 @@ set(SRC_FILES
 # executable
 set(exec_name a3)
 add_executable(${exec_name} ${SRC_FILES})
+
 target_link_libraries(${exec_name}
     PRIVATE SFML::Graphics
     PRIVATE ImGui-SFML::ImGui-SFML
     PUBLIC  m
 )
-
-include_directories("include")
 
 
 # copy resource files to binary directories

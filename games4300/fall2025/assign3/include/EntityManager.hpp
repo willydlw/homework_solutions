@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_ENTITY_MANAGER_H
+#define A3_ENTITY_MANGER_H
 
 #include <algorithm>
 #include <map>
@@ -7,6 +8,8 @@
 #include <vector>
 
 #include "Entity.hpp"
+
+class Entity;
 
 using EntityVec = std::vector<std::shared_ptr<Entity>>;
 using EntityMap = std::map<std::string, EntityVec>;
@@ -82,3 +85,5 @@ private:
         vec.erase(newEnd, vec.end());
     }
 };
+
+#endif

@@ -24,6 +24,11 @@ void Scene::doAction(const Action& action)
     sDoAction(action);
 }
 
+void Scene::setPaused(bool paused)
+{
+    m_paused = paused;
+}
+
 void Scene::simulate(const size_t frames) 
 {
     std::cerr << "TODO: function " << __PRETTY_FUNCTION__ << 

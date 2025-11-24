@@ -1,4 +1,5 @@
-#pragma once 
+#ifndef A3_ANIMATION_H
+#define A3_ANIMATION_H
 
 #include <iostream>
 #include <string>
@@ -67,9 +68,9 @@ class Animation
             << "m_frameCount:    " << obj.m_frameCount << "\n"
             << "m_currentFrame:  " << obj.m_currentFrame << "\n"
             << "m_speed:         " << obj.m_speed << "\n"
-            << "m_textureRect position x:  " << obj.m_textureRect.position.x
-            << ", y: " << obj.m_textureRect.position.y 
-            << ", size x: " << obj.m_textureRect.size.x
+            << "m_textureRect position x:  " << obj.m_textureRect.position.x 
+            << ", y: " << obj.m_textureRect.position.y
+            << ", size x: " << obj.m_textureRect.size.x 
             << ", size y: " << obj.m_textureRect.size.y << "\n";
         return os;  
     }
@@ -83,3 +84,4 @@ class Animation
     sf::IntRect m_textureRect;          // sub-rectangle to draw
 };
 
+#endif // ANIMATION_H
