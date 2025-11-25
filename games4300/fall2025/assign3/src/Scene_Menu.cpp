@@ -94,6 +94,7 @@ void Scene_Menu::init()
 
 void Scene_Menu::update()
 {
+    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
     sRender();
 }
 
@@ -138,6 +139,10 @@ void Scene_Menu::sDoAction(const Action& action)
 
 void Scene_Menu::sRender()
 {
+    static int printCount = 0;
+
+    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
+
     // set menu background 
     m_game->window().clear(sf::Color(100, 100, 255));
 
@@ -156,7 +161,11 @@ void Scene_Menu::sRender()
             m_menuItems[i].setFillColor(sf::Color::White);
         }
 
-        std::cerr << "TODO: what is correct value for globalBounds.top?\n";
+        if(printCount == 0){
+            std::cerr << "TODO: what is correct value for globalBounds.top?\n";
+            printCount++;
+        }
+        
         auto gbounds = m_menuText.getGlobalBounds();
         auto top = gbounds.position.y;
 
@@ -181,4 +190,6 @@ void Scene_Menu::sRender()
     );
 
     m_game->window().draw(help);
+
+     std::cerr << "Exiting function " << __PRETTY_FUNCTION__ << "\n";
 }

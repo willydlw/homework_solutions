@@ -51,6 +51,8 @@ void GameEngine::run()
 
 void GameEngine::sUserInput()
 {
+    static int printCount = 0;
+
     while(m_window.isOpen())
     {
         // check all the window's events that were triggered since 
@@ -62,11 +64,20 @@ void GameEngine::sUserInput()
                 quit();
             }
 
+
+            // This event trigger when a key is pressed
             if(const auto* keyPressed = event->getIf<sf::Event::KeyPressed>())
             {
                 std::cerr << "Key pressed with scancode = " 
                     << static_cast<int>(keyPressed->scancode) << "\n";
                 std::cerr << "TODO: implement game key codes\n";
+                
+                if(keyPressed->scancode == sf::Keyboard::Scan::X)
+                {
+                    std::cerr << "X was pressed\n";
+                    std::cerr << "TODO: save screenshot to file test.png\n";
+
+                }
 
                 #if 0
                 if(keyPressed->scancode == sf::Keyboard::Scancode::X)
@@ -83,7 +94,12 @@ void GameEngine::sUserInput()
                 #endif
             }
 
-            std::cerr << "TODO: handle KeyPressed/KeyReleased to send action to scene\n";
+            if(printCount == 0)
+            {
+                std::cerr << "TODO function " << __PRETTY_FUNCTION__ << " handle KeyPressed/KeyReleased to send action to scene\n";
+                printCount++;
+            }
+
             #if 0
             if(event->is<sf::Event::KeyPressed>() == sf::Event::KeyPressed || event->is<sf::Event::KeyReleased>())
             {
@@ -107,14 +123,19 @@ void GameEngine::sUserInput()
 void GameEngine::changeScene(const std::string& sceneName, std::shared_ptr<Scene> scene, 
         bool endCurrentScene)
 {
-    std::cerr << "TODO function " << __PRETTY_FUNCTION__
+    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
+    std::cerr << "parameter sceneName: " << sceneName << "\n";
+
+    if(endCurrentScene == true)
+    {
+        std::cerr << "TODO function: " << __PRETTY_FUNCTION__ << " endCurrentScene is true\n";
+        std::cerr << "m_currentScene: " << m_currentScene << ", parameter: sceneName: "
+                    << sceneName << "will be next scene?\n";
+        std::cerr << "How do I end the scene? which I think means call onEnd()\n";
+    }
     
-    
-     << " understand code\n";
     m_currentScene = sceneName;
     m_sceneMap[sceneName] = scene;
-    std::cerr << "TODO function " << __PRETTY_FUNCTION__ << " endCurrentScene: " << endCurrentScene 
-        << " is unused parameter\n";
 }
 
 void GameEngine::quit()
@@ -125,5 +146,7 @@ void GameEngine::quit()
 
 void GameEngine::update()
 {
+    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
+    std::cerr << "current scene: " << m_currentScene << "\n";
     currentScene()->update();
 }

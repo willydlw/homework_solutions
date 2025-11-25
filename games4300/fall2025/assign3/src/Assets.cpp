@@ -17,18 +17,47 @@ Assets& Assets::Instance()
 
 void Assets::addTexture(const std::string& textureName, const std::string& path, bool smooth)
 {
+    #if 0
+    sf::Texture texture;
+    if(!texture.loadFromFile(path))
+    {
+        std::cerr << "[ERROR], function: " << __PRETTY_FUNCTION__
+            << ", could not load texture file: " << path << std::endl;
+        std::exit(-1);
+    }
+
+    m_textureMap[textureName] = texture;
+    m_textureMap[textureName].setSmooth(smooth);
+
+    sf::Vector2u size = texture.getSize();
+
+    std::cerr << "Texture name: " << textureName << "\n";
+    std::cerr << "\tsize in pixels, x: " << size.x << ", y: " << size.y << "\n";
+
+    std::cerr << "Press enter key to continue: ";
+    char c;
+    std::cin >> c;
+
+    #endif 
+
+    #if 1
     if(!m_textureMap[textureName].loadFromFile(path))
     {
         std::cerr << "[ERROR], function: " << __PRETTY_FUNCTION__
             << ", could not load texture file: " << path << std::endl;
         m_textureMap.erase(textureName);
+        std::exit(-1);
     }
     else 
     {
         m_textureMap[textureName].setSmooth(smooth);
         std::cerr << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
             << ", loaded texture: " << path << std::endl;
+        std::cerr << "Texture name: " << textureName << "\n";
+        std::cerr << "\tsize in pixels, x: " << m_textureMap[textureName].getSize(). x 
+                << ", y: " << m_textureMap[textureName].getSize().y << "\n\n";
     }
+    #endif 
 }
 
 void Assets::addAnimation(  const std::string& animationName, 
@@ -48,10 +77,11 @@ void Assets::addFont(const std::string& fontName, const std::string& path)
             << __PRETTY_FUNCTION__ << ", could not load font: " 
             << fontName << ", path: " << path << std::endl;
         m_fontMap.erase(fontName);
+        std::exit(-1);
     }
     else 
     {
-        std::cout << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
+        std::cerr << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
             << ", Loaded font: " << path << std::endl;
     }
 }

@@ -4,7 +4,13 @@
 #include <iostream>
 #include <string>
 
+#include <cmath>        // floor
+
 #include <SFML/Graphics/Rect.hpp>
+#include <SFML/Graphics/Texture.hpp>
+#include <SFML/Graphics/Sprite.hpp>
+
+#include "Vec2.hpp"
 
 class Animation 
 {
@@ -12,35 +18,41 @@ class Animation
 
     Animation() = default;
 
-    Animation(const std::string& name, const std::string& textureName) 
-        : Animation(name, textureName, 1, 0)
+    Animation(const std::string& name, const sf::Texture &texture) 
+        : Animation(name, texture, 1, 0)
     {
         std::cerr << "Animation default constructor\n";
     }
 
-    Animation(const std::string& name, const std::string& textureName, 
+    Animation(const std::string& name, const sf::Texture& texture, 
                 size_t frameCount, size_t speed)
-        : m_name(name)
-        , m_textureName(textureName)
+        : m_sprite(texture) 
         , m_frameCount(frameCount)
         , m_currentFrame(0)
         , m_speed(speed)
-    
+        , m_name(name)
     {
+
+        FIX THIS
+        m_size = Vec2f{(float)texture.getSize().x, (float)texture.getSize().y};
+        m_sprite.setOrigin({m_size.x / 2.0f, m_size.y / 2.0f});
+        m_sprite.setTextureRect(sf::IntRect({static_cast<int>(std::floor(static_cast<float<(m_currentFrame) * m_size.x)), 0}, {m_size.x, m_size.y}));
         std::cerr << "Animation constructor, data member values\n";
         std::cerr << *this << "\n";
     }
 
-    // updates the animation to show the next frame, depending on its
+    // updates the animation to show the next frame, depending on its speed
     // animation loops when it reaches the end
     void update()
     {
         std::cerr << "TODO, function: " << __PRETTY_FUNCTION__ << "\n";
+
+        // add the speed variable to the current frame?
         m_currentFrame++;
 
         // TODO: 1) calculate the correct frame of animation to play based on currentFrame
         //       2) set the texture rectangle properly (see constructor for sample)
-        std::cerr << "1. Calculate the correct fram of animation to play based on currentFrame\n";
+        std::cerr << "1. Calculate the correct frame of animation to play based on currentFrame\n";
         std::cerr << "2. Set the texture rectangle properly\n";
     }
 
@@ -51,37 +63,37 @@ class Animation
         return false;
     }
 
+    const Vec2f& getSize() const
+    {
+        return m_size;
+    }
+
     const std::string& getName() const 
     { 
         return m_name;
     }
 
-    const sf::IntRect& getRect() const 
+    sf::Sprite& getSprite()
     {
-        return m_textureRect;
+        return m_sprite;
     }
 
     friend std::ostream& operator << (std::ostream& os, const Animation& obj)
     {
         os  << "m_name:          " << obj.m_name << "\n"
-            << "m_textureName:   " << obj.m_textureName << "\n"
             << "m_frameCount:    " << obj.m_frameCount << "\n"
             << "m_currentFrame:  " << obj.m_currentFrame << "\n"
-            << "m_speed:         " << obj.m_speed << "\n"
-            << "m_textureRect position x:  " << obj.m_textureRect.position.x 
-            << ", y: " << obj.m_textureRect.position.y
-            << ", size x: " << obj.m_textureRect.size.x 
-            << ", size y: " << obj.m_textureRect.size.y << "\n";
+            << "m_speed:         " << obj.m_speed << "\n";
         return os;  
     }
 
     private:
-    std::string m_name = "none";        // name of animation
-    std::string m_textureName = "none"; // name of the texture to get the frames from
+    sf::Sprite  m_sprite;
     std::size_t m_frameCount = 1;       // total number of frames of animation 
     std::size_t m_currentFrame = 0;     // the current frame of animation being played 
     std::size_t m_speed = 0;            // speed to play this animation
-    sf::IntRect m_textureRect;          // sub-rectangle to draw
+    std::string m_name = "none";        // name of animation
+    Vec2f       m_size = {1.0f, 1.0f};  // size of the animation frame
 };
 
 #endif // ANIMATION_H
