@@ -23,11 +23,11 @@ class CTransform : public Component
     float angle   = 0.0f;
 
     CTransform() = default;
-    explicit CTransform(const Vec2f& p)
+    CTransform(const Vec2f& p)
         : position(p) {}
 
-    CTransform(const Vec2f& p, const Vec2f& sp, const Vec2f& sc, float a)
-        : position(p), prevPosition(p), velocity(sp), scale(sc), angle(a) {}
+    CTransform(const Vec2f& pos, const Vec2f& vel, const Vec2f& sc, float a)
+        : position(pos), prevPosition(pos), velocity(vel), scale(sc), angle(a) {}
 };
 
 class CLifespan : public Component
@@ -63,7 +63,7 @@ class CBoundingBox : public Component
     Vec2f size;
     Vec2f halfSize;
     CBoundingBox() = default;
-    explicit CBoundingBox(const Vec2f& s)
+    CBoundingBox(const Vec2f& s)
         : size(s), halfSize(s.x/2.0f, s.y/2.0f) {}
 };
 
@@ -98,6 +98,7 @@ public:
 
 // In order for a class to be stored in a tuple, it must be default constructible
 // Compile time assert will check to see if these are default constructible
+static_assert(std::is_default_constructible_v<Component>);
 static_assert(std::is_default_constructible_v<CTransform>);
 static_assert(std::is_default_constructible_v<CLifespan>);
 static_assert(std::is_default_constructible_v<CInput>);

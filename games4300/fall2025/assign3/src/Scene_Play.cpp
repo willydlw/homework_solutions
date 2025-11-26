@@ -103,10 +103,10 @@ void Scene_Play::loadLevel(const std::string& filename)
     auto block = m_entityManager.addEntity("tile");
     block->add<CAnimation>(Assets::Instance().getAnimation("Block"), true);
     block->add<CTransform>(Vec2f(224, 480));
-    // add a bounding box, this will now show up if we press the 'C' key
 
+    // add a bounding box, this will now show up if we press the 'C' key
     auto blockSize = Assets::Instance().getAnimation("Block").getRect().size;
-    Vec2f fSize = {static_cast<float>(blockSize.x), static_cast<float>(blockSize.y)};
+    Vec2f fSize(static_cast<float>(blockSize.x), static_cast<float>(blockSize.y));
     block->add<CBoundingBox>(fSize);
 
     auto question = m_entityManager.addEntity("tile");

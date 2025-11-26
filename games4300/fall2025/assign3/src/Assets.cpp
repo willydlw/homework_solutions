@@ -1,7 +1,7 @@
 #include "Assets.h"
 #include "Animation.hpp"
 
-#include <SFML/Graphics.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <map>
 #include <cassert>
@@ -64,6 +64,7 @@ void Assets::addAnimation(  const std::string& animationName,
                             const std::string& textureName, 
                             size_t frameCount, size_t animationSpeed)
 {
+    sf::Texture texture = Assets::Instance().getTexture(textureName);
     m_animationMap[animationName] 
         = Animation(animationName, textureName, frameCount, animationSpeed);
 }
@@ -155,10 +156,10 @@ void Assets::loadFromFile(const std::string& path)
     infile.close();
 }
 
-
 const sf::Texture& Assets::getTexture(const std::string& textureName) const
 {
-    return m_textureMap.at(textureName);
+    // Assuming textureName key exists in the map, no error handling for exception
+    return m_textureMap.at(textureName); // throws out of range exception for key not found
 }
 
 const Animation& Assets::getAnimation(const std::string& animationName) const

@@ -2,14 +2,14 @@
 #define A3_ANIMATION_H
 
 #include <iostream>
+#include <optional>
 #include <string>
-
-#include <cmath>        // floor
 
 #include <SFML/Graphics/Rect.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
+#include "Assets.h"
 #include "Vec2.hpp"
 
 class Animation 
@@ -18,25 +18,20 @@ class Animation
 
     Animation() = default;
 
-    Animation(const std::string& name, const sf::Texture &texture) 
-        : Animation(name, texture, 1, 0)
+    Animation(const std::string& name, const std::string& textureName) 
+        : Animation(name, textureName, 1, 0)
     {
-        std::cerr << "Animation default constructor\n";
+        std::cerr << "Animation constructor\n";
     }
 
-    Animation(const std::string& name, const sf::Texture& texture, 
+    Animation(const std::string& name, const std::string& textureName, 
                 size_t frameCount, size_t speed)
-        : m_sprite(texture) 
-        , m_frameCount(frameCount)
+        : m_frameCount(frameCount)
         , m_currentFrame(0)
         , m_speed(speed)
         , m_name(name)
+        , m_textureName(textureName)
     {
-
-        FIX THIS
-        m_size = Vec2f{(float)texture.getSize().x, (float)texture.getSize().y};
-        m_sprite.setOrigin({m_size.x / 2.0f, m_size.y / 2.0f});
-        m_sprite.setTextureRect(sf::IntRect({static_cast<int>(std::floor(static_cast<float<(m_currentFrame) * m_size.x)), 0}, {m_size.x, m_size.y}));
         std::cerr << "Animation constructor, data member values\n";
         std::cerr << *this << "\n";
     }
@@ -47,10 +42,10 @@ class Animation
     {
         std::cerr << "TODO, function: " << __PRETTY_FUNCTION__ << "\n";
 
-        // add the speed variable to the current frame?
         m_currentFrame++;
 
         // TODO: 1) calculate the correct frame of animation to play based on currentFrame
+        // sub-rectangle divide by speed mod by total. See pseudo code from Animation lecture
         //       2) set the texture rectangle properly (see constructor for sample)
         std::cerr << "1. Calculate the correct frame of animation to play based on currentFrame\n";
         std::cerr << "2. Set the texture rectangle properly\n";
@@ -59,13 +54,10 @@ class Animation
     bool hasEnded() const 
     {
         // TODO: detect when animation has ended (last frame was played) and return true
+
+        // if we have gone back to the first frame of animation, we have ended
         std::cerr << "TODO, function: " << __func__ << " detect when animation has ended\n";
         return false;
-    }
-
-    const Vec2f& getSize() const
-    {
-        return m_size;
     }
 
     const std::string& getName() const 
@@ -73,9 +65,9 @@ class Animation
         return m_name;
     }
 
-    sf::Sprite& getSprite()
+    const sf::IntRect& getRect() const 
     {
-        return m_sprite;
+        return m_textureRect;
     }
 
     friend std::ostream& operator << (std::ostream& os, const Animation& obj)
@@ -88,12 +80,12 @@ class Animation
     }
 
     private:
-    sf::Sprite  m_sprite;
-    std::size_t m_frameCount = 1;       // total number of frames of animation 
-    std::size_t m_currentFrame = 0;     // the current frame of animation being played 
-    std::size_t m_speed = 0;            // speed to play this animation
-    std::string m_name = "none";        // name of animation
-    Vec2f       m_size = {1.0f, 1.0f};  // size of the animation frame
+    std::size_t m_frameCount    = 1;        // total number of frames of animation 
+    std::size_t m_currentFrame  = 0;        // the current frame of animation being played 
+    std::size_t m_speed         = 0;        // speed to play this animation
+    std::string m_name          = "none";   // name of animation
+    std::string m_textureName   = "none";   // name of the texture to get the frames from
+    sf::IntRect m_textureRect;              // sub-rectangle to draw (set in update?)
 };
 
 #endif // ANIMATION_H
