@@ -5,7 +5,7 @@
 #include "GameEngine.h"
 #include "Scene.h"
 
-#include <SFML/Graphics/Text.hpp>
+#include <SFML/Graphics.hpp>
 
 #include <string>
 #include <vector>

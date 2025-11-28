@@ -1,14 +1,15 @@
 #ifndef A3_GAME_ENGINE_H
 #define A3_GAME_ENGINE_H
 
+#include "Assets.h"
+#include "Scene.h"
+
+#include <SFML/Graphics/RenderWindow.hpp>
+
 #include <map>
 #include <memory>
 #include <string>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
-#include "Assets.h"
-#include "Scene.h"
 
 /*  Stores top level game data 
         Assets, sf::Window, Scenes 
@@ -20,8 +21,6 @@
     GameEngine may be implemented as a singleton class, instead of pointer,  in assignment 3
 */
 
-// forward declaration 
-class Scene;
 
 typedef std::map<std::string, std::shared_ptr<Scene>> SceneMap;
 
@@ -29,7 +28,7 @@ class GameEngine
 {
     public:
 
-    GameEngine(const std::string& path);
+    explicit GameEngine(const std::string& path);
 
     void changeScene(
         const std::string& sceneName,

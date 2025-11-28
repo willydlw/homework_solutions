@@ -21,11 +21,13 @@ namespace Physics
 }
 
 // From lecture notes, but not shown as part of physics.hpp in assignment 3
+/*
 class Physics 
 {
     bool isCollision(Entity, Enity);
     bool isIntersect(Line, Line);
     bool isInside(Vec2, Line);
-}
+};
+*/
 
 #endif

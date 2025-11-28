@@ -51,11 +51,13 @@ void Assets::addTexture(const std::string& textureName, const std::string& path,
     else 
     {
         m_textureMap[textureName].setSmooth(smooth);
+        #if 0
         std::cerr << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
             << ", loaded texture: " << path << std::endl;
         std::cerr << "Texture name: " << textureName << "\n";
         std::cerr << "\tsize in pixels, x: " << m_textureMap[textureName].getSize(). x 
                 << ", y: " << m_textureMap[textureName].getSize().y << "\n\n";
+        #endif
     }
     #endif 
 }
@@ -82,8 +84,8 @@ void Assets::addFont(const std::string& fontName, const std::string& path)
     }
     else 
     {
-        std::cerr << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
-            << ", Loaded font: " << path << std::endl;
+        //std::cerr << "[SUCCESS] function: " << __PRETTY_FUNCTION__ 
+        //    << ", Loaded font: " << path << std::endl;
     }
 }
 
@@ -101,7 +103,7 @@ void Assets::loadFromFile(const std::string& path)
     {
         std::string assetCategory;
         infile >> assetCategory;
-        std::cerr << "iterating, read assetCategory: " << assetCategory << "\n";
+        //std::cerr << "iterating, read assetCategory: " << assetCategory << "\n";
 
         if(assetCategory == "Texture")
         {

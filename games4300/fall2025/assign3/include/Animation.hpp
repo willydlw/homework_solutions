@@ -21,7 +21,7 @@ class Animation
     Animation(const std::string& name, const std::string& textureName) 
         : Animation(name, textureName, 1, 0)
     {
-        std::cerr << "Animation constructor\n";
+        //std::cerr << "Animation constructor\n";
     }
 
     Animation(const std::string& name, const std::string& textureName, 
@@ -32,8 +32,8 @@ class Animation
         , m_name(name)
         , m_textureName(textureName)
     {
-        std::cerr << "Animation constructor, data member values\n";
-        std::cerr << *this << "\n";
+        //std::cerr << "Animation constructor, data member values\n";
+        //std::cerr << *this << "\n";
     }
 
     // updates the animation to show the next frame, depending on its speed

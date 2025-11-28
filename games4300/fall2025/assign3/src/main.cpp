@@ -4,7 +4,6 @@
 
 int main()
 {
-    std::cerr << "Assignment 3\n";
     GameEngine ge("resources/config/assets.txt");
     ge.run();
     return 0;
