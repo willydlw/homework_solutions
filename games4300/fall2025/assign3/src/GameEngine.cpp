@@ -59,8 +59,9 @@ void GameEngine::run()
     int count = 0;
 
     #if 0
-    sf::Font testFont = Assets::Instance().getFont("Mario");
-    sf::Text testText(testFont);
+    //sf::Font testFont = Assets::Instance().getFont("Mario");
+    //sf::Text testText(testFont);
+    sf::Text testText(Assets::Instance().getFont("Mario"));
     testText.setString("Test");
     testText.setCharacterSize(24);
     testText.setFillColor(sf::Color::Red);
@@ -80,6 +81,7 @@ void GameEngine::run()
     }
     #endif
 
+    #if 1
     std::cerr << "Function: " << __PRETTY_FUNCTION__ << " ready to enter while(running) loop, "
             << " m_running: " << std::boolalpha << m_running << "\n";
     while(isRunning())
@@ -100,7 +102,7 @@ void GameEngine::run()
         m_window.display();
 
     }
-   
+    #endif
 }
 
 void GameEngine::sUserInput()

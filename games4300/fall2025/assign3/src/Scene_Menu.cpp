@@ -28,11 +28,7 @@ void Scene_Menu::init()
 
     // defining local variables for readability and to avoid multiple function calls
     int titleSize = 30;
-    //unsigned int menuItemSize = 26;
-    //int menuItemOffset = 10;
     int centerX = m_game->window().getSize().x / 2;
-
-    sf::Font font = Assets::Instance().getFont("Mario");
 
     std::cerr << "m_menuStrings.size(): " << m_menuStrings.size() << "\n";
     std::cerr << "m_levelPaths.size():  " << m_levelPaths.size() << "\n";
@@ -50,10 +46,9 @@ void Scene_Menu::init()
     std::cerr << "m_levelPaths.size():  " << m_levelPaths.size() << "\n";
 
     // set up text attributes
-    m_menuText.setFont(font);
     m_menuText.setString(m_title);
     m_menuText.setCharacterSize(titleSize);
-    m_menuText.setFillColor(sf::Color::Black);
+    m_menuText.setFillColor(sf::Color::Red);
 
     // position title
     m_menuText.setPosition(
@@ -62,7 +57,6 @@ void Scene_Menu::init()
         }
     );
 
-    #if 0
     /* Returned rectangle is in global coordinates, which means it takes into 
        account any transformations, rotations, scaling, ... that are applied 
        to the entity;
@@ -71,13 +65,12 @@ void Scene_Menu::init()
     */
     sf::FloatRect gBounds = m_menuText.getGlobalBounds();
     auto gPosition = gBounds.position;
-    //auto gSize = gBounds.size;
-
+   
     // set up menu items
     for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
         sf::Text text(
-            font,
+            Assets::Instance().getFont("Mario"),
             m_menuStrings[i], 26);
 
         if(i != m_selectedMenuIndex)
@@ -86,15 +79,13 @@ void Scene_Menu::init()
         }
         
         text.setPosition( 
-            { static_cast<float>(centerX - menuItemSize * (m_menuStrings[i].length() + 1) / 2),
-              static_cast<float>(gPosition.y + menuItemOffset + titleSize * (i + 1))
+            { static_cast<float>(centerX - 26 * (m_menuStrings[i].length() + 1) / 2),
+              static_cast<float>(gPosition.y + 10 + titleSize * (i + 1))
             }
         );
 
         m_menuItems.push_back(text);
     }
-
-    #endif
 
     std::cerr << "Exiting function:  " << __PRETTY_FUNCTION__ << "\n";
 }
@@ -167,21 +158,13 @@ void Scene_Menu::sRender()
         std::cerr << "m_menuText position x: " << pos.x << ", y: " << pos.y << "\n";
     }
     
-    std::cerr << "Is font valid? Is that causing the Segmentation fault?\n";
-    const sf::Font& myFont = m_menuText.getFont();
-
-    auto myInfo = myFont.getInfo();
-
-    std::cerr << "myInfo font family: " << myInfo.family << "\n";
-
-
+  
     std::cerr << "Calling window draw menuText\n";
     m_game->window().draw(m_menuText);
     std::cerr << "Back from call to m_game->window().draw(m_menutText)\n";
 
     //std::cerr << "m_game->isRunning()" << m_game->isRunning() << "\n";
 
-    #if 0
     // draw menu items 
     for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
@@ -223,7 +206,6 @@ void Scene_Menu::sRender()
     );
 
     m_game->window().draw(help);
-    #endif 
 
     std::cerr << "m_game->isRunning()" << m_game->isRunning() << "\n";
     std::cerr << "Exiting function " << __PRETTY_FUNCTION__ << "\n";
