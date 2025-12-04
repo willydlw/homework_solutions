@@ -18,9 +18,6 @@ Scene_Menu::Scene_Menu(GameEngine* gameEngine)
 
 void Scene_Menu::init()
 {
-    static int count = 0;
-    std::cerr << "Entering function: " << __PRETTY_FUNCTION__ << ", count: " << count++ << "\n";
-
     registerAction(static_cast<int>(sf::Keyboard::Key::W),  "UP");
     registerAction(static_cast<int>(sf::Keyboard::Key::S),  "DOWN");
     registerAction(static_cast<int>(sf::Keyboard::Key::D),  "PLAY");
@@ -30,9 +27,6 @@ void Scene_Menu::init()
     int titleSize = 30;
     int centerX = m_game->window().getSize().x / 2;
 
-    std::cerr << "m_menuStrings.size(): " << m_menuStrings.size() << "\n";
-    std::cerr << "m_levelPaths.size():  " << m_levelPaths.size() << "\n";
-
     // initialize menu data
     m_title = "TODO: Scene Menu Title";
     m_menuStrings.push_back("LEVEL 1");
@@ -41,9 +35,6 @@ void Scene_Menu::init()
     m_levelPaths.push_back("config/level1.txt");
     m_levelPaths.push_back("config/level2.txt");
     m_levelPaths.push_back("config/level3.txt");
-
-    std::cerr << "m_menuStrings.size(): " << m_menuStrings.size() << "\n";
-    std::cerr << "m_levelPaths.size():  " << m_levelPaths.size() << "\n";
 
     // set up text attributes
     m_menuText.setString(m_title);
@@ -86,15 +77,11 @@ void Scene_Menu::init()
 
         m_menuItems.push_back(text);
     }
-
-    std::cerr << "Exiting function:  " << __PRETTY_FUNCTION__ << "\n";
 }
 
 void Scene_Menu::update()
 {
-    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
     sRender();
-    std::cerr << "Exiting function  " << __PRETTY_FUNCTION__ << "\n";
 }
 
 void Scene_Menu::onEnd()
@@ -139,32 +126,12 @@ void Scene_Menu::sDoAction(const Action& action)
 
 void Scene_Menu::sRender()
 {
-    static int printCount = 0;
-
-    std::cerr << "Entering function " << __PRETTY_FUNCTION__ << "\n";
-
     // set menu background 
-    std::cerr << "Calling window clear to blue\n";
     m_game->window().clear(sf::Color::Blue);
-    std::cerr << "m_game->isRunning()" << m_game->isRunning() << "\n";
-
-
+ 
     // draw title 
-    if(printCount == 0)
-    {
-        std::string title = m_menuText.getString();
-        std::cerr << "m_menuText string: " << title << "\n";
-        auto pos = m_menuText.getPosition();
-        std::cerr << "m_menuText position x: " << pos.x << ", y: " << pos.y << "\n";
-    }
-    
-  
-    std::cerr << "Calling window draw menuText\n";
     m_game->window().draw(m_menuText);
-    std::cerr << "Back from call to m_game->window().draw(m_menutText)\n";
-
-    //std::cerr << "m_game->isRunning()" << m_game->isRunning() << "\n";
-
+    
     // draw menu items 
     for(size_t i = 0; i < m_menuStrings.size(); i++)
     {
@@ -175,11 +142,6 @@ void Scene_Menu::sRender()
         else
         {
             m_menuItems[i].setFillColor(sf::Color::White);
-        }
-
-        if(printCount == 0){
-            std::cerr << "TODO: what is correct value for globalBounds.top?\n";
-            printCount++;
         }
         
         auto gbounds = m_menuText.getGlobalBounds();
@@ -206,7 +168,4 @@ void Scene_Menu::sRender()
     );
 
     m_game->window().draw(help);
-
-    std::cerr << "m_game->isRunning()" << m_game->isRunning() << "\n";
-    std::cerr << "Exiting function " << __PRETTY_FUNCTION__ << "\n";
 }
